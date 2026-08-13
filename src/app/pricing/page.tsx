@@ -1,16 +1,6 @@
 import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
 
-// Membership tiers and checkout stay on GHL (Membership Products + Stripe).
-// This page presents the plans and sends people to your existing GHL
-// checkout/signup flow rather than re-implementing payments here.
-//
-// TODO: replace GHL_PRICING_URL with your real GHL hosted pricing/checkout
-// page, and fill in real tier names, prices, and features below once
-// finalised — currently shown as "Pricing on request" so nothing false
-// gets published.
-const GHL_PRICING_URL = "https://thronesideassets.app.clientclub.net/";
-
 const plans = [
   {
     name: "Essential",
@@ -76,16 +66,10 @@ export default function PricingPage() {
               </ul>
               <div className="mt-8 flex flex-wrap gap-3">
                 <a
-                  href={GHL_PRICING_URL}
+                  href="/contact"
                   className="inline-block rounded-full bg-brass px-6 py-3 text-sm font-medium text-ink transition-colors hover:bg-brass-bright"
                 >
                   Register
-                </a>
-                <a
-                  href="/contact"
-                  className="inline-block rounded-full border rule px-6 py-3 text-sm font-medium text-paper transition-colors hover:border-paper-dim"
-                >
-                  Ask About Pricing
                 </a>
               </div>
             </div>
