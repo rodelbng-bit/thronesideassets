@@ -66,7 +66,7 @@ export default function PricingPage() {
               </ul>
               <div className="mt-8 flex flex-wrap gap-3">
                 <a
-                  href="/contact"
+                  href="https://api.leadconnectorhq.com/widget/booking/u1093rNHSQ03sJCDKKFF"
                   className="inline-block rounded-full bg-brass px-6 py-3 text-sm font-medium text-ink transition-colors hover:bg-brass-bright"
                 >
                   Register
