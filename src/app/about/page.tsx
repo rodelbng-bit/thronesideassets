@@ -125,7 +125,8 @@ export default function AboutPage() {
             </h2>
             <p className="mt-6 max-w-xl text-lg leading-relaxed text-paper-dim">
               We source across London, Manchester, Liverpool, Birmingham,
-              Southampton, and other major UK cities, choosing areas based on
+              Southampton, Bromley, and other major UK cities, choosing areas
+              based on
               occupancy data, demand drivers, and rental yield rather than
               guesswork. We&apos;re UK-only for now, with plans to expand
               internationally starting in 2027.
