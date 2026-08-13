@@ -1,12 +1,6 @@
 import Link from "next/link";
-
-const nav = [
-  { label: "Home", href: "/" },
-  { label: "Deals", href: "/deals" },
-  { label: "About Us", href: "/about" },
-  { label: "Pricing", href: "/pricing" },
-  { label: "FAQ", href: "/faq" },
-];
+import { navLinks } from "./nav-links";
+import MobileMenu from "./MobileMenu";
 
 export default function SiteHeader() {
   return (
@@ -17,7 +11,7 @@ export default function SiteHeader() {
         </Link>
 
         <nav className="hidden items-center gap-8 md:flex">
-          {nav.map((item) => (
+          {navLinks.map((item) => (
             <Link
               key={item.href}
               href={item.href}
@@ -29,6 +23,7 @@ export default function SiteHeader() {
         </nav>
 
         <div className="flex items-center gap-3">
+          <MobileMenu />
           <Link
             href="/login"
             className="text-sm text-paper-dim transition-colors hover:text-paper"
