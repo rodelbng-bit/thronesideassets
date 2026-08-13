@@ -31,7 +31,7 @@ export default function SiteHeader() {
         <div className="flex items-center gap-3">
           <Link
             href="/login"
-            className="hidden text-sm text-paper-dim transition-colors hover:text-paper sm:block"
+            className="text-sm text-paper-dim transition-colors hover:text-paper"
           >
             Member Login
           </Link>
