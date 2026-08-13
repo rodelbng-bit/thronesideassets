@@ -1,3 +1,4 @@
+import Link from "next/link";
 import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
 
@@ -14,6 +15,8 @@ const plans = [
       "Member community access",
       "No 1:1 support",
     ],
+    // Fixed pricing, so this is the only plan with self-serve checkout.
+    joinHref: "/join",
   },
   {
     name: "Investor",
@@ -23,6 +26,7 @@ const plans = [
       "1:1 consulting calls",
       "Priority deal access",
     ],
+    joinHref: undefined,
   },
 ];
 
@@ -65,9 +69,21 @@ export default function PricingPage() {
                 ))}
               </ul>
               <div className="mt-8 flex flex-wrap gap-3">
+                {plan.joinHref && (
+                  <Link
+                    href={plan.joinHref}
+                    className="inline-block rounded-full bg-brass px-6 py-3 text-sm font-medium text-ink transition-colors hover:bg-brass-bright"
+                  >
+                    Join Now
+                  </Link>
+                )}
                 <a
                   href="https://api.leadconnectorhq.com/widget/booking/u1093rNHSQ03sJCDKKFF"
-                  className="inline-block rounded-full bg-brass px-6 py-3 text-sm font-medium text-ink transition-colors hover:bg-brass-bright"
+                  className={
+                    plan.joinHref
+                      ? "inline-block rounded-full border rule px-6 py-3 text-sm font-medium text-paper transition-colors hover:border-paper-dim"
+                      : "inline-block rounded-full bg-brass px-6 py-3 text-sm font-medium text-ink transition-colors hover:bg-brass-bright"
+                  }
                 >
                   Register
                 </a>

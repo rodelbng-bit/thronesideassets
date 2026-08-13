@@ -6,23 +6,35 @@ Assets, a UK property-deal-sourcing membership business. See
 
 ## Architecture
 
-- **This repo**: marketing pages only — Home, About, Pricing, Contact,
-  FAQ (`src/app/*/page.tsx`), shared UI in `src/components/`.
-- **GoHighLevel (GHL)**, unchanged and out of scope for this repo:
-  membership billing (Stripe), CRM, pipelines, workflows, member login
-  at `thronesideassets.app.clientclub.net`.
+- **Marketing pages**: Home, About, Pricing, Contact, FAQ
+  (`src/app/*/page.tsx`), shared UI in `src/components/`.
+- **Membership billing + login now live in this repo** (moved off GHL):
+  Postgres via Drizzle (`src/lib/db.ts`, `src/lib/schema.ts`), Auth.js
+  Credentials-based sessions (`src/lib/auth.ts`, `src/lib/auth.config.ts`,
+  `middleware.ts` gates `/members/*`), Stripe Checkout + webhook
+  (`src/lib/stripe.ts`, `src/app/api/checkout`,
+  `src/app/api/webhooks/stripe`) for the Essential plan, and Resend for
+  password-reset/invite email (`src/lib/mailer.ts`). New members sign up
+  at `/join` → pay → set a password → land on `/members`. See
+  `.env.example` for the full list of required env vars.
+- **GoHighLevel (GHL)** stays the system of record for CRM, pipelines,
+  workflows, and the "book a call" flow (Register buttons →
+  `thronesideassets.app.clientclub.net` calendar widget). It is no
+  longer used for membership billing or login — the Investor tier
+  (no fixed price yet) still routes through GHL/a call until it has
+  one.
 - The `/contact` page posts to `src/app/api/contact/route.ts`, which
   forwards into GHL's Contacts API via `src/lib/ghl.ts` (needs
   `GHL_API_KEY` / `GHL_LOCATION_ID` in `.env.local`, see
-  `.env.example`). Don't reimplement CRM/billing logic locally — GHL
-  stays the system of record.
+  `.env.example`). Keep CRM/pipeline logic in GHL — don't reimplement
+  that part locally.
 
 ## Design system
 
 Dark "ledger" theme defined in `src/app/globals.css` as CSS custom
 properties (`--ink`, `--paper`, `--brass`, `--ledger-green`, etc.),
 exposed to Tailwind via `@theme inline`. Fonts: Fraunces (`font-display`,
-headings), Inter (body), IBM Plex Mono (`.ledger-figure`, used for
+headings), Work Sans (body), IBM Plex Mono (`.ledger-figure`, used for
 stats/figures with tabular numerals). Reuse these tokens and existing
 component patterns (bordered stat strips, numbered process lists,
 pill buttons) rather than introducing new colors or one-off styles.
@@ -40,8 +52,11 @@ npm run lint      # eslint
 - Don't invent real business facts (pricing, FAQ answers, deal data,
   testimonials) — flag what's missing and ask, rather than publishing
   placeholder content as if it were real.
-- Keep GHL as the source of truth for billing/CRM; this repo is
-  frontend only.
+- Billing/auth is now real, user-facing infrastructure (Postgres +
+  Stripe + email) — treat schema changes, webhook logic, and password/
+  token handling with the same care as production financial code, not
+  as marketing-site copy edits.
+- Keep GHL as the source of truth for CRM/pipelines/workflows only.
 
 <!-- BEGIN:nextjs-agent-rules -->
 

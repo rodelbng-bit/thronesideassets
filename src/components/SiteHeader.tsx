@@ -29,12 +29,12 @@ export default function SiteHeader() {
         </nav>
 
         <div className="flex items-center gap-3">
-          <a
-            href="https://thronesideassets.app.clientclub.net/"
+          <Link
+            href="/login"
             className="hidden text-sm text-paper-dim transition-colors hover:text-paper sm:block"
           >
             Member Login
-          </a>
+          </Link>
           <a
             href="https://api.leadconnectorhq.com/widget/booking/u1093rNHSQ03sJCDKKFF"
             className="rounded-full bg-brass px-4 py-2 text-sm font-medium text-ink transition-colors hover:bg-brass-bright"

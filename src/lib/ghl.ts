@@ -14,6 +14,8 @@
 //
 // Docs: https://highlevel.stoplight.io/docs/integrations/
 
+import { getEnv } from "./env";
+
 const GHL_API_BASE = "https://services.leadconnectorhq.com";
 const GHL_API_VERSION = "2021-07-28";
 
@@ -29,16 +31,6 @@ export type ContactPayload = {
   propertyId?: string;
   tags?: string[];
 };
-
-function getEnv(name: string): string {
-  const value = process.env[name];
-  if (!value) {
-    throw new Error(
-      `Missing environment variable ${name}. Set it in .env.local (see .env.example).`
-    );
-  }
-  return value;
-}
 
 /**
  * Creates or updates (upserts, by email/phone) a contact in GHL and fires

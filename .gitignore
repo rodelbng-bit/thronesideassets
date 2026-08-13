@@ -24,6 +24,10 @@ yarn-error.log*
 # vercel
 .vercel
 
+# member PII lists for scripts/invite-existing-members.ts — never commit
+scripts/*.txt
+scripts/*.csv
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts
