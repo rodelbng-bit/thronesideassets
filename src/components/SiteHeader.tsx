@@ -33,7 +33,7 @@ export default function SiteHeader() {
             href="/login"
             className="text-sm text-paper-dim transition-colors hover:text-paper"
           >
-            Member Login
+            Login
           </Link>
           <a
             href="https://api.leadconnectorhq.com/widget/booking/u1093rNHSQ03sJCDKKFF"
