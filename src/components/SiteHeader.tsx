@@ -30,12 +30,12 @@ export default function SiteHeader() {
           >
             Login
           </Link>
-          <a
-            href="https://api.leadconnectorhq.com/widget/booking/u1093rNHSQ03sJCDKKFF"
+          <Link
+            href="/join"
             className="rounded-full bg-brass px-4 py-2 text-sm font-medium text-ink transition-colors hover:bg-brass-bright"
           >
             Register
-          </a>
+          </Link>
         </div>
       </div>
     </header>
