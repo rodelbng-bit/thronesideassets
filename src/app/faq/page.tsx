@@ -3,36 +3,24 @@ import SiteFooter from "@/components/SiteFooter";
 
 const faqs = [
   {
-    q: "What do I actually get with membership?",
-    a: "Membership gets you the weekly deal sheet plus the guidance around it — business consulting, management support, and education, tailored to your package. You're not just handed a list of listings; you get support acting on them.",
+    q: "What are your fees?",
+    a: "Our membership starts at £497/month (Essential). See the plans above for full details. Annual options save up to £994.",
   },
   {
-    q: "How often do I receive new deals?",
-    a: "We deliver 12–20 new, vetted deals per week. Our team contacts 300+ landlords and agents daily, so the deal sheet stays full even as the market moves.",
+    q: "How does the 3-month partner programme work?",
+    a: "For a limited number of investors, we waive our sourcing fees for the first 3 months. You get full access to vetted deals while we build a working relationship. After 3 months, you continue on your chosen plan.",
   },
   {
-    q: "How are deals sourced and vetted?",
-    a: "We Source: our team builds relationships with landlords and agents directly, surfacing deals before they're widely listed. We Analyse: nothing reaches a client until it's been through a full financial breakdown — yield, expenses, and profit and loss — checked against real occupancy and demand data. If the numbers don't hold up, the deal doesn't go out.",
+    q: "What kind of deals do you source?",
+    a: "We source across multiple strategies: Rent-to-Rent (R2R), Serviced Accommodation (SA), HMO, Buy-to-Let, and BRRR — matched to your investment criteria.",
   },
   {
-    q: "Which areas do you cover?",
-    a: "We currently source across London, Manchester, Liverpool, Birmingham, Southampton, and other major UK cities, choosing areas based on occupancy data, demand drivers, and rental yield.",
+    q: "How quickly will I see deals?",
+    a: "Once onboarded, our team begins sourcing immediately. Typical timeline: 1-4 weeks for your first vetted deal, depending on your criteria and market availability. We send weekly updates regardless.",
   },
   {
-    q: "Do you help with execution, or just the deal sheet?",
-    a: "Both. Alongside each opportunity you get access to trusted operators and strategic guidance to act on it, so you're not left to work out financing, management, or execution on your own.",
-  },
-  {
-    q: "Do you operate outside the UK?",
-    a: "Not yet — we're UK-only today, with plans to expand internationally from 2027.",
-  },
-  {
-    q: "What does membership cost?",
-    a: "Pricing depends on the package. See our Pricing page for an overview, or book a call and we'll walk you through current tiers and what fits your goals.",
-  },
-  {
-    q: "How do I get started?",
-    a: "Book a call with our UK team, or register through the membership options on the Pricing page. We'll get you set up and onto the next deal sheet.",
+    q: "Do I have to take a deal?",
+    a: "No. We present you with opportunities and the numbers — you decide. There's never an obligation to proceed on any deal we show you.",
   },
 ];
 
