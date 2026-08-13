@@ -13,13 +13,13 @@ export default function DealsPage() {
           This week&apos;s deals.
         </h1>
         <p className="mt-4 max-w-xl text-paper-dim">
-          A preview of the kind of deals members get — reserving requires
-          membership, coming soon.
+          A preview of the kind of deals members get — join to see rates,
+          earnings, and reserve.
         </p>
 
         <div className="mt-10 space-y-8">
           {deals.map((deal) => (
-            <DealCard key={deal.id} deal={deal} />
+            <DealCard key={deal.id} deal={deal} blurred />
           ))}
         </div>
       </main>
