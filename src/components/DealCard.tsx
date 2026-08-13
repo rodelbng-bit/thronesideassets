@@ -11,7 +11,8 @@ export default function DealCard({
   reserveState,
 }: {
   deal: Deal;
-  reserveState: ReserveState;
+  /** Omit to render without a Reserve control — used on the public preview page. */
+  reserveState?: ReserveState;
 }) {
   const freshness = freshnessFromDate(deal.dateAdded);
   const earnings = estimateMonthlyEarnings(deal);
@@ -69,7 +70,9 @@ export default function DealCard({
 
       <div className="flex flex-row items-center justify-between gap-6 border-t rule pt-6 lg:flex-col lg:justify-center lg:border-l lg:border-t-0 lg:pl-6 lg:pt-0">
         <DealThermometer freshness={freshness} />
-        <ReserveButton dealId={deal.id} initialState={reserveState} />
+        {reserveState && (
+          <ReserveButton dealId={deal.id} initialState={reserveState} />
+        )}
       </div>
     </div>
   );
