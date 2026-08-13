@@ -13,15 +13,23 @@ const GHL_PRICING_URL = "https://thronesideassets.app.clientclub.net/";
 
 const plans = [
   {
-    name: "Starter",
-    price: "Pricing on request",
-    features: ["Weekly deal sheet", "Community access"],
+    name: "Essential",
+    price: "£497/mo",
+    priceNote: "£4,970/yr upfront (save £994)",
+    features: [
+      "Unlimited deal alerts (FCFS)",
+      "Full deal packs with P&L",
+      "R2SA news & hot area feeds",
+      "Referral to vetted management & cleaners",
+      "Member community access",
+      "No 1:1 support",
+    ],
   },
   {
     name: "Investor",
     price: "Pricing on request",
     features: [
-      "Everything in Starter",
+      "Everything in Essential",
       "1:1 consulting calls",
       "Priority deal access",
     ],
@@ -56,6 +64,11 @@ export default function PricingPage() {
               <p className="ledger-figure mt-2 text-lg text-brass-bright">
                 {plan.price}
               </p>
+              {plan.priceNote && (
+                <p className="ledger-figure mt-1 text-sm text-paper-dim">
+                  {plan.priceNote}
+                </p>
+              )}
               <ul className="mt-6 space-y-2 text-sm text-paper-dim">
                 {plan.features.map((f) => (
                   <li key={f}>— {f}</li>
