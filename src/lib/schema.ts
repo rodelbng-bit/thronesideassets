@@ -3,6 +3,7 @@ import {
   text,
   timestamp,
   uuid,
+  integer,
   pgEnum,
 } from "drizzle-orm/pg-core";
 
@@ -46,10 +47,25 @@ export const passwordResetTokens = pgTable("password_reset_tokens", {
 
 export type PasswordResetToken = typeof passwordResetTokens.$inferSelect;
 
-// Deal content itself (photos, rates, etc.) lives in src/lib/deals.ts as
-// hardcoded example data for now — this table only tracks which deal IDs
-// have been claimed. The unique constraint on dealId is what makes
-// reservations first-come-first-served under concurrent requests.
+export const deals = pgTable("deals", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  title: text("title").notNull(),
+  location: text("location").notNull(),
+  description: text("description").notNull(),
+  photos: text("photos").array().notNull(),
+  ratePerNight: integer("rate_per_night").notNull(),
+  utilityCostPerMonth: integer("utility_cost_per_month").notNull(),
+  dateAdded: timestamp("date_added", { withTimezone: true })
+    .notNull()
+    .defaultNow(),
+});
+
+export type DealRow = typeof deals.$inferSelect;
+
+// The unique constraint on dealId is what makes reservations
+// first-come-first-served under concurrent requests. Not a foreign key
+// against deals.id on purpose — reservations should stay put even if a
+// listing is later removed.
 export const dealReservations = pgTable("deal_reservations", {
   id: uuid("id").primaryKey().defaultRandom(),
   dealId: text("deal_id").notNull().unique(),

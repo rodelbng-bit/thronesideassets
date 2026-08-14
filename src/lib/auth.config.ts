@@ -14,8 +14,10 @@ export const authConfig = {
   callbacks: {
     authorized({ auth, request }) {
       const isLoggedIn = !!auth?.user;
-      const isOnMembers = request.nextUrl.pathname.startsWith("/members");
-      if (isOnMembers) return isLoggedIn;
+      const { pathname } = request.nextUrl;
+      const isProtected =
+        pathname.startsWith("/members") || pathname.startsWith("/admin");
+      if (isProtected) return isLoggedIn;
       return true;
     },
   },

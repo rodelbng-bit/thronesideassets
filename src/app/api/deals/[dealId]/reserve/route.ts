@@ -14,7 +14,7 @@ export async function POST(
   }
 
   const { dealId } = await params;
-  if (!getDeal(dealId)) {
+  if (!(await getDeal(dealId))) {
     return NextResponse.json({ error: "Deal not found" }, { status: 404 });
   }
 

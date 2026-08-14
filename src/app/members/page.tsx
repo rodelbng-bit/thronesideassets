@@ -8,7 +8,7 @@ import DealCard from "@/components/DealCard";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { users, dealReservations } from "@/lib/schema";
-import { deals } from "@/lib/deals";
+import { getDeals } from "@/lib/deals";
 
 export default async function MembersPage() {
   const session = await auth();
@@ -24,7 +24,10 @@ export default async function MembersPage() {
 
   const isActive = user?.subscriptionStatus === "active";
 
-  const reservations = isActive ? await db.select().from(dealReservations) : [];
+  const [deals, reservations] = await Promise.all([
+    isActive ? getDeals() : Promise.resolve([]),
+    isActive ? db.select().from(dealReservations) : Promise.resolve([]),
+  ]);
   const reservationByDealId = new Map(
     reservations.map((r) => [r.dealId, r])
   );

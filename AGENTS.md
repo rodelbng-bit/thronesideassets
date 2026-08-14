@@ -17,6 +17,12 @@ Assets, a UK property-deal-sourcing membership business. See
   password-reset/invite email (`src/lib/mailer.ts`). New members sign up
   at `/join` → pay → set a password → land on `/members`. See
   `.env.example` for the full list of required env vars.
+- **Deal listings** live in the `deals` table (`src/lib/deals.ts`,
+  `getDeals`/`getDeal`), with photos hosted on Vercel Blob. Admins (see
+  `ADMIN_EMAILS`, `src/lib/admin.ts`) add new listings at
+  `/admin/deals/new` (`src/components/NewDealForm.tsx`, which uploads
+  photos client-side via `@vercel/blob/client` then posts to
+  `/api/admin/deals`).
 - **GoHighLevel (GHL)** stays the system of record for CRM, pipelines,
   workflows, and the "book a call" flow (Register buttons →
   `thronesideassets.app.clientclub.net` calendar widget). It is no

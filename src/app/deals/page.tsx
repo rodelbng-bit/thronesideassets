@@ -1,9 +1,11 @@
 import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
 import DealCard from "@/components/DealCard";
-import { deals } from "@/lib/deals";
+import { getDeals } from "@/lib/deals";
 
-export default function DealsPage() {
+export default async function DealsPage() {
+  const deals = await getDeals();
+
   return (
     <>
       <SiteHeader />
