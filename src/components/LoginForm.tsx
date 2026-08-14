@@ -7,6 +7,20 @@ import { signIn } from "next-auth/react";
 
 type Status = "idle" | "submitting" | "error";
 
+// NextAuth's middleware sets callbackUrl to a full absolute URL
+// (request.nextUrl.href), not a relative path, so this must resolve it
+// against the current origin rather than only accepting "/"-prefixed paths.
+function resolveDestination(callbackUrl: string | null): string {
+  if (!callbackUrl) return "/members";
+  try {
+    const url = new URL(callbackUrl, window.location.origin);
+    if (url.origin !== window.location.origin) return "/members";
+    return `${url.pathname}${url.search}`;
+  } catch {
+    return "/members";
+  }
+}
+
 export default function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -29,12 +43,7 @@ export default function LoginForm() {
       if (result?.error) {
         throw new Error("Incorrect email or password.");
       }
-      const callbackUrl = searchParams.get("callbackUrl");
-      const destination =
-        callbackUrl && callbackUrl.startsWith("/") && !callbackUrl.startsWith("//")
-          ? callbackUrl
-          : "/members";
-      router.push(destination);
+      router.push(resolveDestination(searchParams.get("callbackUrl")));
       router.refresh();
     } catch (err) {
       setStatus("error");
