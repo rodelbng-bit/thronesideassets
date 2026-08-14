@@ -1,3 +1,5 @@
+import Image from "next/image";
+
 const company = [
   { label: "Home", href: "/" },
   { label: "About Us", href: "/about" },
@@ -19,7 +21,18 @@ export default function SiteFooter() {
     <footer className="mt-auto">
       <div className="mx-auto grid max-w-6xl grid-cols-1 gap-10 px-6 py-16 sm:grid-cols-3">
         <div>
-          <p className="font-display text-lg text-paper">Throneside Assets</p>
+          <div className="flex items-center gap-2.5">
+            <Image
+              src="/logo-mark.png"
+              alt=""
+              width={28}
+              height={28}
+              className="h-7 w-7"
+            />
+            <p className="font-display text-lg text-paper">
+              Throneside Assets
+            </p>
+          </div>
           <p className="mt-3 max-w-xs text-sm text-paper-dim">
             Vetted property deals delivered to you, every week.
           </p>
