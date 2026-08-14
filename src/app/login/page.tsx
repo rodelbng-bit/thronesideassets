@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
 import LoginForm from "@/components/LoginForm";
@@ -18,7 +19,9 @@ export default function LoginPage() {
         </p>
 
         <div className="mt-10">
-          <LoginForm />
+          <Suspense>
+            <LoginForm />
+          </Suspense>
         </div>
       </main>
       <SiteFooter />

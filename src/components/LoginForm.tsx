@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { signIn } from "next-auth/react";
 
@@ -9,6 +9,7 @@ type Status = "idle" | "submitting" | "error";
 
 export default function LoginForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [status, setStatus] = useState<Status>("idle");
   const [errorMessage, setErrorMessage] = useState("");
 
@@ -28,7 +29,12 @@ export default function LoginForm() {
       if (result?.error) {
         throw new Error("Incorrect email or password.");
       }
-      router.push("/members");
+      const callbackUrl = searchParams.get("callbackUrl");
+      const destination =
+        callbackUrl && callbackUrl.startsWith("/") && !callbackUrl.startsWith("//")
+          ? callbackUrl
+          : "/members";
+      router.push(destination);
       router.refresh();
     } catch (err) {
       setStatus("error");
