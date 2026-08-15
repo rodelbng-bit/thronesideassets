@@ -1,10 +1,12 @@
 import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
 import DealCard from "@/components/DealCard";
+import NewsSection from "@/components/NewsSection";
 import { getDeals } from "@/lib/deals";
+import { getR2SANews } from "@/lib/news";
 
 export default async function DealsPage() {
-  const deals = await getDeals();
+  const [deals, news] = await Promise.all([getDeals(), getR2SANews()]);
 
   return (
     <>
@@ -24,6 +26,8 @@ export default async function DealsPage() {
             <DealCard key={deal.id} deal={deal} blurred />
           ))}
         </div>
+
+        <NewsSection items={news} />
       </main>
       <SiteFooter />
     </>
