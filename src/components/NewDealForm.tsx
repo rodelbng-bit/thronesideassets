@@ -6,7 +6,15 @@ import { upload } from "@vercel/blob/client";
 
 type Status = "idle" | "uploading" | "submitting" | "error" | "done";
 
-export default function NewDealForm() {
+type Props = {
+  initialRatePerNight?: number;
+  initialUtilityCostPerMonth?: number;
+};
+
+export default function NewDealForm({
+  initialRatePerNight,
+  initialUtilityCostPerMonth,
+}: Props) {
   const router = useRouter();
   const [status, setStatus] = useState<Status>("idle");
   const [errorMessage, setErrorMessage] = useState("");
@@ -125,6 +133,7 @@ export default function NewDealForm() {
             required
             min={1}
             step={1}
+            defaultValue={initialRatePerNight || undefined}
             className="mt-2 w-full rounded-md border rule bg-ink px-4 py-3 text-sm text-paper focus:border-brass focus:outline-none"
           />
         </div>
@@ -138,6 +147,7 @@ export default function NewDealForm() {
             required
             min={0}
             step={1}
+            defaultValue={initialUtilityCostPerMonth || undefined}
             className="mt-2 w-full rounded-md border rule bg-ink px-4 py-3 text-sm text-paper focus:border-brass focus:outline-none"
           />
         </div>
