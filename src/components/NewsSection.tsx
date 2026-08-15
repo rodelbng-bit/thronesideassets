@@ -15,7 +15,7 @@ export default function NewsSection({ items }: { items: NewsItem[] }) {
   if (items.length === 0) return null;
 
   return (
-    <div className="mt-20">
+    <div className="mt-10">
       <div className="flex items-center gap-3">
         <p className="ledger-figure shrink-0 text-sm text-brass-bright">
           R2SA NEWS

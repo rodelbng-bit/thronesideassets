@@ -21,13 +21,13 @@ export default async function DealsPage() {
           earnings, and reserve.
         </p>
 
-        <div className="mt-10 space-y-8">
+        <NewsSection items={news} />
+
+        <div className="mt-16 space-y-8">
           {deals.map((deal) => (
             <DealCard key={deal.id} deal={deal} blurred />
           ))}
         </div>
-
-        <NewsSection items={news} />
       </main>
       <SiteFooter />
     </>
