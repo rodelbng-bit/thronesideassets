@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { eq } from "drizzle-orm";
+import { revalidatePath } from "next/cache";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { users, deals } from "@/lib/schema";
@@ -57,6 +58,8 @@ export async function POST(req: NextRequest) {
       utilityCostPerMonth: Math.round(utilityCostPerMonth),
     })
     .returning();
+
+  revalidatePath("/deals");
 
   return NextResponse.json({ deal });
 }
