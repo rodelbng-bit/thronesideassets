@@ -17,13 +17,17 @@ const plans = [
     ],
   },
   {
-    name: "Investor",
-    price: "Pricing on request",
+    name: "Growth Package",
+    price: "£797/mo",
+    priceNote: "£7,970/yr upfront (save £1,594)",
     features: [
       "Everything in Essential",
-      "1:1 consulting calls",
-      "Priority deal access",
+      "Priority deal alerts (before Essential tier)",
+      "Monthly 1:1 strategy call",
+      "Deal negotiation guidance",
+      "Investor resources & templates",
     ],
+    comingSoon: true,
   },
 ];
 
@@ -66,12 +70,18 @@ export default function PricingPage() {
                 ))}
               </ul>
               <div className="mt-8 flex flex-wrap gap-3">
-                <Link
-                  href="/join"
-                  className="inline-block rounded-full bg-brass px-6 py-3 text-sm font-medium text-ink transition-colors hover:bg-brass-bright"
-                >
-                  Register
-                </Link>
+                {plan.comingSoon ? (
+                  <span className="inline-block rounded-full border rule px-6 py-3 text-sm font-medium text-paper-dim">
+                    Coming Soon
+                  </span>
+                ) : (
+                  <Link
+                    href="/join"
+                    className="inline-block rounded-full bg-brass px-6 py-3 text-sm font-medium text-ink transition-colors hover:bg-brass-bright"
+                  >
+                    Register
+                  </Link>
+                )}
               </div>
             </div>
           ))}
