@@ -90,12 +90,18 @@ export default function DealCard({
           </div>
 
           {blurred && (
-            <div className="absolute inset-0 flex items-center justify-center">
+            <div className="absolute inset-0 flex items-center justify-center gap-3">
               <Link
                 href="/join"
                 className="rounded-full bg-brass px-6 py-3 text-sm font-medium text-ink shadow-lg transition-colors hover:bg-brass-bright"
               >
                 Join to unlock
+              </Link>
+              <Link
+                href="/login"
+                className="rounded-full border rule bg-ink px-6 py-3 text-sm font-medium text-paper shadow-lg transition-colors hover:bg-ink-soft"
+              >
+                Login
               </Link>
             </div>
           )}

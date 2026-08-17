@@ -71,8 +71,17 @@ export default function SiteFooter() {
         </div>
       </div>
 
-      <div className="border-t rule px-6 py-6 text-center text-xs text-paper-dim">
-        © {new Date().getFullYear()} Throneside Assets. All rights reserved.
+      <div className="flex flex-col items-center gap-3 border-t rule px-6 py-6 text-center text-xs text-paper-dim sm:flex-row sm:justify-between">
+        <p>
+          © {new Date().getFullYear()} Throneside Assets. All rights
+          reserved.
+        </p>
+        <a
+          href="/admin/deals/new"
+          className="rounded-full border rule px-4 py-1.5 text-xs text-paper-dim transition-colors hover:text-paper"
+        >
+          Admin Login
+        </a>
       </div>
     </footer>
   );
