@@ -3,6 +3,8 @@ import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { dealReservations } from "@/lib/schema";
 import { getDeal, getActiveReservationForUser } from "@/lib/deals";
+import { getAdminEmails } from "@/lib/admin";
+import { sendReservationNotificationEmail } from "@/lib/mailer";
 
 export async function POST(
   req: NextRequest,
@@ -42,6 +44,12 @@ export async function POST(
       dealId,
       userId: session.user.id,
     });
+
+    // Best-effort — a failed notification shouldn't undo the reservation.
+    sendReservationNotificationEmail(getAdminEmails(), session.user.email ?? "a member", deal).catch(
+      (err) => console.error("Failed to send reservation notification", err)
+    );
+
     return NextResponse.json({ ok: true });
   } catch (err) {
     // Unique constraint on dealId — someone else got there first.

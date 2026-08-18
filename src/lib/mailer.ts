@@ -5,7 +5,7 @@ function siteUrl() {
   return process.env.SITE_URL ?? "http://localhost:3000";
 }
 
-async function send(to: string, subject: string, html: string) {
+async function send(to: string | string[], subject: string, html: string) {
   const resend = new Resend(getEnv("RESEND_API_KEY"));
   const from = getEnv("RESEND_FROM_EMAIL");
   const { error } = await resend.emails.send({ from, to, subject, html });
@@ -44,5 +44,20 @@ export async function sendMemberInviteEmail(email: string, token: string) {
     `<p>Your Throneside Assets membership now has its own login, separate from the old member portal.</p>
      <p><a href="${link}">Set your password</a> to access your account.</p>
      <p>This link expires in 24 hours.</p>`
+  );
+}
+
+export async function sendReservationNotificationEmail(
+  adminEmails: string[],
+  memberEmail: string,
+  deal: { id: string; title: string; location: string }
+) {
+  if (adminEmails.length === 0) return;
+  const link = `${siteUrl()}/members/deals/${deal.id}`;
+  await send(
+    adminEmails,
+    `Deal reserved: ${deal.title}`,
+    `<p><strong>${memberEmail}</strong> just reserved <strong>${deal.title}</strong> (${deal.location}).</p>
+     <p><a href="${link}">View the deal</a> to confirm it and mark it Unavailable once it's closed.</p>`
   );
 }
