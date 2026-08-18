@@ -6,37 +6,37 @@ const properties = [
   {
     image:
       "https://images.unsplash.com/photo-1633694705199-bc1e0a87c97a?w=1200&q=80&auto=format&fit=crop",
-    type: "2-bed conversion",
+    type: "Conversion properties",
     area: "Zone 2, East London",
   },
   {
     image:
       "https://images.unsplash.com/photo-1676680071181-0a0b45968d23?w=1200&q=80&auto=format&fit=crop",
-    type: "Purpose-built block",
+    type: "Purpose-built blocks",
     area: "Zone 1, Central London",
   },
   {
     image:
       "https://images.unsplash.com/photo-1595846519845-68e298c2edd8?w=1200&q=80&auto=format&fit=crop",
-    type: "Ex-local authority flat",
+    type: "Ex-local authority flats",
     area: "Zone 3, South London",
   },
   {
     image:
       "https://images.unsplash.com/photo-1595846265893-f433f6cca81d?w=1200&q=80&auto=format&fit=crop",
-    type: "Victorian conversion",
+    type: "Victorian conversions",
     area: "Zone 2, North London",
   },
   {
     image:
       "https://images.unsplash.com/photo-1716576587284-691abcf83267?w=1200&q=80&auto=format&fit=crop",
-    type: "New-build apartment",
+    type: "New-build apartments",
     area: "Zone 2, East London",
   },
   {
     image:
       "https://images.unsplash.com/photo-1595848463742-764e6b5c11d2?w=1200&q=80&auto=format&fit=crop",
-    type: "1-bed apartment",
+    type: "New-build apartments",
     area: "Zone 3, West London",
   },
 ];
