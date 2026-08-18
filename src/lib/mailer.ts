@@ -61,3 +61,17 @@ export async function sendReservationNotificationEmail(
      <p><a href="${link}">View the deal</a> to confirm it and mark it Unavailable once it's closed.</p>`
   );
 }
+
+export async function sendNewDealNotificationEmail(
+  adminEmails: string[],
+  deal: { id: string; title: string; location: string }
+) {
+  if (adminEmails.length === 0) return;
+  const link = `${siteUrl()}/members/deals/${deal.id}`;
+  await send(
+    adminEmails,
+    `New deal uploaded: ${deal.title}`,
+    `<p>A new deal was just published: <strong>${deal.title}</strong> (${deal.location}).</p>
+     <p><a href="${link}">View the deal</a>.</p>`
+  );
+}

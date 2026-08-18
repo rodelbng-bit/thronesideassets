@@ -4,7 +4,8 @@ import { revalidatePath } from "next/cache";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { users, deals } from "@/lib/schema";
-import { isAdminEmail } from "@/lib/admin";
+import { isAdminEmail, getAdminEmails } from "@/lib/admin";
+import { sendNewDealNotificationEmail } from "@/lib/mailer";
 
 export async function POST(req: NextRequest) {
   const session = await auth();
@@ -60,6 +61,11 @@ export async function POST(req: NextRequest) {
     .returning();
 
   revalidatePath("/deals");
+
+  // Best-effort — a failed notification shouldn't undo the deal creation.
+  sendNewDealNotificationEmail(getAdminEmails(), deal).catch((err) =>
+    console.error("Failed to send new deal notification", err)
+  );
 
   return NextResponse.json({ deal });
 }
