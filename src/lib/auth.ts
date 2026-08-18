@@ -5,6 +5,7 @@ import { authConfig } from "./auth.config";
 import { db } from "./db";
 import { users } from "./schema";
 import { verifyPassword } from "./password";
+import { isAdminEmail } from "./admin";
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   ...authConfig,
@@ -33,19 +34,27 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         const valid = await verifyPassword(password, user.passwordHash);
         if (!valid) return null;
 
-        return { id: user.id, email: user.email };
+        return {
+          id: user.id,
+          email: user.email,
+          isAdmin: isAdminEmail(user.email),
+        };
       },
     }),
   ],
   callbacks: {
     ...authConfig.callbacks,
     jwt({ token, user }) {
-      if (user) token.id = user.id;
+      if (user) {
+        token.id = user.id;
+        token.isAdmin = (user as { isAdmin: boolean }).isAdmin;
+      }
       return token;
     },
     session({ session, token }) {
       if (session.user) {
         session.user.id = token.id as string;
+        session.user.isAdmin = token.isAdmin as boolean;
       }
       return session;
     },

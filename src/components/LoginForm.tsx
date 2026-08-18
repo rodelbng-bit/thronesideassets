@@ -3,21 +3,27 @@
 import { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
-import { signIn } from "next-auth/react";
+import { getSession, signIn } from "next-auth/react";
 
 type Status = "idle" | "submitting" | "error";
 
 // NextAuth's middleware sets callbackUrl to a full absolute URL
 // (request.nextUrl.href), not a relative path, so this must resolve it
 // against the current origin rather than only accepting "/"-prefixed paths.
-function resolveDestination(callbackUrl: string | null): string {
-  if (!callbackUrl) return "/members";
+// With no callbackUrl (e.g. landing on /login directly), admins go to the
+// upload form and everyone else goes to the members deal list.
+function resolveDestination(
+  callbackUrl: string | null,
+  isAdmin: boolean
+): string {
+  const fallback = isAdmin ? "/admin/deals/new" : "/members";
+  if (!callbackUrl) return fallback;
   try {
     const url = new URL(callbackUrl, window.location.origin);
-    if (url.origin !== window.location.origin) return "/members";
+    if (url.origin !== window.location.origin) return fallback;
     return `${url.pathname}${url.search}`;
   } catch {
-    return "/members";
+    return fallback;
   }
 }
 
@@ -43,7 +49,13 @@ export default function LoginForm() {
       if (result?.error) {
         throw new Error("Incorrect email or password.");
       }
-      router.push(resolveDestination(searchParams.get("callbackUrl")));
+      const session = await getSession();
+      router.push(
+        resolveDestination(
+          searchParams.get("callbackUrl"),
+          session?.user?.isAdmin ?? false
+        )
+      );
       router.refresh();
     } catch (err) {
       setStatus("error");
