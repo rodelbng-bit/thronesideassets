@@ -56,7 +56,6 @@ export default function LoginForm() {
           session?.user?.isAdmin ?? false
         )
       );
-      router.refresh();
     } catch (err) {
       setStatus("error");
       setErrorMessage(
