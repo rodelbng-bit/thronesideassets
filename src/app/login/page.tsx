@@ -1,9 +1,16 @@
 import { Suspense } from "react";
+import { redirect } from "next/navigation";
 import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
 import LoginForm from "@/components/LoginForm";
+import { auth } from "@/lib/auth";
 
-export default function LoginPage() {
+export default async function LoginPage() {
+  const session = await auth();
+  if (session?.user) {
+    redirect("/members");
+  }
+
   return (
     <>
       <SiteHeader />

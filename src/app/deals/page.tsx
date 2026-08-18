@@ -1,11 +1,18 @@
+import { redirect } from "next/navigation";
 import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
 import DealCard from "@/components/DealCard";
 import NewsSection from "@/components/NewsSection";
+import { auth } from "@/lib/auth";
 import { getDeals } from "@/lib/deals";
 import { getR2SANews } from "@/lib/news";
 
 export default async function DealsPage() {
+  const session = await auth();
+  if (session?.user) {
+    redirect("/members");
+  }
+
   const [deals, news] = await Promise.all([getDeals(), getR2SANews()]);
 
   return (
