@@ -2,7 +2,7 @@ const steps = [
   {
     n: "01",
     title: "We Source",
-    body: "Our team contacts 300+ landlords and agents every day, building relationships that surface deals before they're widely listed. That volume of daily groundwork is what keeps the weekly deal sheet full.",
+    body: "We're in network with hundreds to thousands of landlords and agents across the UK, building relationships that surface deals before they're widely listed. That reach is what keeps the weekly deal sheet full.",
   },
   {
     n: "02",

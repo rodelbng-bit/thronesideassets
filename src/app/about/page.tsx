@@ -20,9 +20,9 @@ const process = [
 ];
 
 const facts = [
-  { label: "Landlords contacted / day", value: "300+" },
-  { label: "New deals delivered / week", value: "12–20" },
-  { label: "UK cities covered", value: "06" },
+  { label: "Landlord network, UK-wide", value: "100s–1,000s" },
+  { label: "New deals delivered", value: "Weekly" },
+  { label: "Cities covered", value: "UK-wide" },
 ];
 
 export default function AboutPage() {
