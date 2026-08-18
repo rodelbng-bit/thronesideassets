@@ -1,0 +1,36 @@
+import Link from "next/link";
+import Image from "next/image";
+import type { Deal } from "@/lib/deals";
+
+export default function DealSummaryCard({ deal }: { deal: Deal }) {
+  return (
+    <div className="grid grid-cols-1 gap-6 rounded-lg border rule bg-ink-soft p-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,2fr)]">
+      <div className="relative aspect-4/3 w-full overflow-hidden rounded-lg border rule">
+        <Image
+          src={deal.photos[0]}
+          alt={deal.title}
+          fill
+          sizes="(min-width: 1024px) 25vw, 100vw"
+          className="object-cover"
+        />
+      </div>
+
+      <div className="flex flex-col">
+        <h3 className="font-display text-2xl text-paper">{deal.title}</h3>
+        <p className="ledger-figure mt-1 text-sm text-brass-bright">
+          {deal.location}
+        </p>
+        <p className="mt-3 text-sm leading-relaxed text-paper-dim">
+          {deal.description}
+        </p>
+
+        <Link
+          href={`/members/deals/${deal.id}`}
+          className="mt-6 inline-flex w-fit items-center rounded-full bg-brass px-6 py-3 text-sm font-medium text-ink transition-colors hover:bg-brass-bright"
+        >
+          Access Property
+        </Link>
+      </div>
+    </div>
+  );
+}
