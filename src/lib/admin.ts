@@ -11,3 +11,12 @@ export function isAdminEmail(email: string | null | undefined): boolean {
   if (!email) return false;
   return getAdminEmails().includes(email.toLowerCase());
 }
+
+// Optional — SMS notifications are skipped (not an error) if unset, unlike
+// ADMIN_EMAILS which every deployment is expected to configure.
+export function getAdminPhoneNumbers(): string[] {
+  return (process.env.ADMIN_PHONE_NUMBERS ?? "")
+    .split(",")
+    .map((p) => p.trim())
+    .filter(Boolean);
+}

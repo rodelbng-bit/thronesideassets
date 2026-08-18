@@ -3,8 +3,9 @@ import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { dealReservations } from "@/lib/schema";
 import { getDeal, getActiveReservationForUser } from "@/lib/deals";
-import { getAdminEmails } from "@/lib/admin";
+import { getAdminEmails, getAdminPhoneNumbers } from "@/lib/admin";
 import { sendReservationNotificationEmail } from "@/lib/mailer";
+import { sendReservationSmsNotification } from "@/lib/sms";
 
 export async function POST(
   req: NextRequest,
@@ -46,8 +47,12 @@ export async function POST(
     });
 
     // Best-effort — a failed notification shouldn't undo the reservation.
-    sendReservationNotificationEmail(getAdminEmails(), session.user.email ?? "a member", deal).catch(
-      (err) => console.error("Failed to send reservation notification", err)
+    const memberEmail = session.user.email ?? "a member";
+    sendReservationNotificationEmail(getAdminEmails(), memberEmail, deal).catch((err) =>
+      console.error("Failed to send reservation notification email", err)
+    );
+    sendReservationSmsNotification(getAdminPhoneNumbers(), memberEmail, deal).catch((err) =>
+      console.error("Failed to send reservation notification SMS", err)
     );
 
     return NextResponse.json({ ok: true });
