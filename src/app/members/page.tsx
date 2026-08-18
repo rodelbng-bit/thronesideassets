@@ -7,7 +7,7 @@ import SignOutButton from "@/components/SignOutButton";
 import DealSummaryCard from "@/components/DealSummaryCard";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
-import { users } from "@/lib/schema";
+import { users, dealReservations } from "@/lib/schema";
 import { getDeals } from "@/lib/deals";
 
 export default async function MembersPage() {
@@ -24,7 +24,13 @@ export default async function MembersPage() {
 
   const isActive = user?.subscriptionStatus === "active";
 
-  const deals = isActive ? await getDeals() : [];
+  const [deals, reservations] = await Promise.all([
+    isActive ? getDeals() : Promise.resolve([]),
+    isActive ? db.select().from(dealReservations) : Promise.resolve([]),
+  ]);
+  const reservationByDealId = new Map(
+    reservations.map((r) => [r.dealId, r])
+  );
 
   return (
     <>
@@ -46,9 +52,22 @@ export default async function MembersPage() {
             </p>
 
             <div className="mt-10 space-y-8">
-              {deals.map((deal) => (
-                <DealSummaryCard key={deal.id} deal={deal} />
-              ))}
+              {deals.map((deal) => {
+                const reservation = reservationByDealId.get(deal.id);
+                const reserveState = !reservation
+                  ? "available"
+                  : reservation.userId === session.user.id
+                    ? "reserved-by-me"
+                    : "reserved-by-other";
+
+                return (
+                  <DealSummaryCard
+                    key={deal.id}
+                    deal={deal}
+                    reserveState={reserveState}
+                  />
+                );
+              })}
             </div>
           </>
         ) : (
