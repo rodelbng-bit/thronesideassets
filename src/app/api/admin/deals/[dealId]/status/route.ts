@@ -3,7 +3,7 @@ import { eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
-import { users, deals } from "@/lib/schema";
+import { users, deals, dealReservations } from "@/lib/schema";
 import { isAdminEmail } from "@/lib/admin";
 import { getDeal } from "@/lib/deals";
 
@@ -39,6 +39,14 @@ export async function PATCH(
   }
 
   await db.update(deals).set({ status }).where(eq(deals.id, dealId));
+
+  // Re-opening a deal gives it a clean slate — any reservation made
+  // before/during it being unavailable no longer holds.
+  if (status === "available") {
+    await db
+      .delete(dealReservations)
+      .where(eq(dealReservations.dealId, dealId));
+  }
 
   revalidatePath("/deals");
   revalidatePath("/members");

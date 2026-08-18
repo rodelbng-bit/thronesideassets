@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import type { ReserveState } from "@/lib/deals";
 
@@ -17,6 +17,13 @@ export default function ReserveButton({
   const [state, setState] = useState<ReserveState>(initialState);
   const [status, setStatus] = useState<Status>("idle");
   const [errorMessage, setErrorMessage] = useState("");
+
+  // initialState only reflects the latest server data on re-renders (e.g.
+  // after router.refresh() from an admin availability toggle), not on
+  // mount — this keeps the displayed state in sync with it.
+  useEffect(() => {
+    setState(initialState);
+  }, [initialState]);
 
   async function handleReserve() {
     setStatus("submitting");
