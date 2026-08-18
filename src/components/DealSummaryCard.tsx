@@ -1,8 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
-import type { Deal } from "@/lib/deals";
-
-type ReserveState = "available" | "reserved-by-me" | "reserved-by-other";
+import type { Deal, ReserveState } from "@/lib/deals";
 
 const statusBadge: Record<ReserveState, { label: string; className: string }> = {
   available: {
@@ -16,6 +14,10 @@ const statusBadge: Record<ReserveState, { label: string; className: string }> = 
   "reserved-by-other": {
     label: "Reserved",
     className: "border rule text-paper-dim",
+  },
+  unavailable: {
+    label: "Unavailable",
+    className: "border rule text-paper-dim opacity-70",
   },
 };
 

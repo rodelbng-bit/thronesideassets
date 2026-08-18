@@ -2,8 +2,8 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import type { ReserveState } from "@/lib/deals";
 
-type ReserveState = "available" | "reserved-by-me" | "reserved-by-other";
 type Status = "idle" | "submitting" | "error";
 
 export default function ReserveButton({
@@ -46,6 +46,14 @@ export default function ReserveButton({
     } finally {
       setStatus("idle");
     }
+  }
+
+  if (state === "unavailable") {
+    return (
+      <span className="rounded-full border rule px-5 py-2.5 text-sm text-paper-dim">
+        Unavailable
+      </span>
+    );
   }
 
   if (state === "reserved-by-me") {

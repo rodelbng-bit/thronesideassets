@@ -54,11 +54,14 @@ export default async function MembersPage() {
             <div className="mt-10 space-y-8">
               {deals.map((deal) => {
                 const reservation = reservationByDealId.get(deal.id);
-                const reserveState = !reservation
-                  ? "available"
-                  : reservation.userId === session.user.id
-                    ? "reserved-by-me"
-                    : "reserved-by-other";
+                const reserveState =
+                  deal.status === "unavailable"
+                    ? "unavailable"
+                    : !reservation
+                      ? "available"
+                      : reservation.userId === session.user.id
+                        ? "reserved-by-me"
+                        : "reserved-by-other";
 
                 return (
                   <DealSummaryCard

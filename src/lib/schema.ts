@@ -14,6 +14,11 @@ export const subscriptionStatusEnum = pgEnum("subscription_status", [
   "canceled",
 ]);
 
+export const dealStatusEnum = pgEnum("deal_status", [
+  "available",
+  "unavailable",
+]);
+
 export const users = pgTable("users", {
   id: uuid("id").primaryKey().defaultRandom(),
   email: text("email").notNull().unique(),
@@ -59,6 +64,7 @@ export const deals = pgTable("deals", {
   photos: text("photos").array().notNull(),
   ratePerNight: integer("rate_per_night").notNull(),
   utilityCostPerMonth: integer("utility_cost_per_month").notNull(),
+  status: dealStatusEnum("status").notNull().default("available"),
   dateAdded: timestamp("date_added", { withTimezone: true })
     .notNull()
     .defaultNow(),

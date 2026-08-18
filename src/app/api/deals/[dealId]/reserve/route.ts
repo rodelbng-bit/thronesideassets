@@ -14,8 +14,15 @@ export async function POST(
   }
 
   const { dealId } = await params;
-  if (!(await getDeal(dealId))) {
+  const deal = await getDeal(dealId);
+  if (!deal) {
     return NextResponse.json({ error: "Deal not found" }, { status: 404 });
+  }
+  if (deal.status === "unavailable") {
+    return NextResponse.json(
+      { error: "This deal is no longer available." },
+      { status: 409 }
+    );
   }
 
   try {

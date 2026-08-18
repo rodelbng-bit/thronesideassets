@@ -1,11 +1,9 @@
 import Link from "next/link";
-import type { Deal } from "@/lib/deals";
+import type { Deal, ReserveState } from "@/lib/deals";
 import { estimateMonthlyEarnings, freshnessFromDate } from "@/lib/deals";
 import DealGallery from "./DealGallery";
 import DealThermometer from "./DealThermometer";
 import ReserveButton from "./ReserveButton";
-
-type ReserveState = "available" | "reserved-by-me" | "reserved-by-other";
 
 export default function DealCard({
   deal,

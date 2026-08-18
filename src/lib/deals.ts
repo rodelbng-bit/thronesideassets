@@ -10,8 +10,17 @@ export type Deal = {
   photos: string[];
   ratePerNight: number;
   utilityCostPerMonth: number;
+  status: "available" | "unavailable";
   dateAdded: Date;
 };
+
+// "unavailable" is an admin override that takes priority over whatever
+// the reservation table says — used on the members deal list/detail views.
+export type ReserveState =
+  | "available"
+  | "reserved-by-me"
+  | "reserved-by-other"
+  | "unavailable";
 
 export async function getDeals(): Promise<Deal[]> {
   return db.select().from(dealsTable).orderBy(desc(dealsTable.dateAdded));

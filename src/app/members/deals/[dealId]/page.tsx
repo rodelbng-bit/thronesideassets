@@ -4,10 +4,12 @@ import { eq } from "drizzle-orm";
 import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
 import DealCard from "@/components/DealCard";
+import DealAvailabilityToggle from "@/components/DealAvailabilityToggle";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { users, dealReservations } from "@/lib/schema";
 import { getDeal } from "@/lib/deals";
+import { isAdminEmail } from "@/lib/admin";
 
 export default async function MemberDealPage({
   params,
@@ -41,11 +43,14 @@ export default async function MemberDealPage({
     .where(eq(dealReservations.dealId, dealId))
     .limit(1);
 
-  const reserveState = !reservation
-    ? "available"
-    : reservation.userId === session.user.id
-      ? "reserved-by-me"
-      : "reserved-by-other";
+  const reserveState =
+    deal.status === "unavailable"
+      ? "unavailable"
+      : !reservation
+        ? "available"
+        : reservation.userId === session.user.id
+          ? "reserved-by-me"
+          : "reserved-by-other";
 
   return (
     <>
@@ -57,6 +62,15 @@ export default async function MemberDealPage({
         >
           ← Back to deals
         </Link>
+
+        {isAdminEmail(user?.email) && (
+          <div className="mt-6">
+            <DealAvailabilityToggle
+              dealId={deal.id}
+              initialStatus={deal.status}
+            />
+          </div>
+        )}
 
         <div className="mt-6">
           <DealCard deal={deal} reserveState={reserveState} />
