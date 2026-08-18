@@ -41,6 +41,12 @@ export default async function SiteHeader() {
 
         <div className="flex items-center gap-3">
           <MobileMenu />
+          <Link
+            href="/admin/deals/new"
+            className="rounded-full border rule px-4 py-1.5 text-xs text-paper-dim transition-colors hover:text-paper"
+          >
+            Upload deal
+          </Link>
           {isLoggedIn ? (
             <>
               <Link
