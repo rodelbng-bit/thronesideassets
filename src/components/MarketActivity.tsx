@@ -4,7 +4,6 @@ const cities = [
   "Liverpool",
   "Birmingham",
   "Southampton",
-  "Bromley",
   "and other major UK cities",
 ];
 
