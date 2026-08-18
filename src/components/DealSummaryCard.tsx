@@ -66,7 +66,7 @@ export default function DealSummaryCard({
 
         <div className="mt-3 flex flex-col gap-6 sm:flex-row sm:items-start sm:justify-between">
           <div>
-            <p className="text-sm leading-relaxed text-paper-dim">
+            <p className="line-clamp-2 text-sm leading-relaxed text-paper-dim">
               {deal.description}
             </p>
 
