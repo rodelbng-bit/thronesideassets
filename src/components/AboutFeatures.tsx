@@ -7,7 +7,7 @@ const cards = [
   {
     tag: "Features",
     title: "One membership, full access",
-    body: "Clients join through a monthly membership, gaining access to exclusive property deals, business consulting, management support, education, and investment opportunities tailored to their package.",
+    body: "Clients join through a fixed 12-month membership agreement, gaining access to exclusive property deals, business consulting, management support, education, and investment opportunities tailored to their package.",
   },
   {
     tag: "Growing",

@@ -106,8 +106,9 @@ export default function AboutPage() {
               Full access, not just listings.
             </h2>
             <p className="mt-6 max-w-xl text-lg leading-relaxed text-paper-dim">
-              Clients join through a monthly membership rather than paying
-              per deal or per lead. That gets you the weekly deal sheet plus
+              Clients join through a fixed 12-month membership agreement
+              rather than paying per deal or per lead. That gets you the
+              weekly deal sheet plus
               the guidance around it — business consulting, management
               support, and education — tailored to your package, so you&apos;re
               not left to work out execution on your own.

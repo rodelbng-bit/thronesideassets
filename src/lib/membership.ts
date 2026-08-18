@@ -28,6 +28,9 @@ export async function ensureUserForCheckoutSession(
     typeof session.customer === "string"
       ? session.customer
       : session.customer?.id;
+  const termsAcceptedAt = session.metadata?.termsAcceptedAt
+    ? new Date(session.metadata.termsAcceptedAt)
+    : undefined;
 
   const [existing] = await db
     .select()
@@ -45,6 +48,7 @@ export async function ensureUserForCheckoutSession(
         stripeCustomerId: customerId ?? existing.stripeCustomerId,
         subscriptionStatus: "active",
         subscriptionPlan: "essential",
+        termsAcceptedAt: termsAcceptedAt ?? existing.termsAcceptedAt,
       })
       .where(eq(users.id, existing.id));
     userId = existing.id;
@@ -57,6 +61,7 @@ export async function ensureUserForCheckoutSession(
         stripeCustomerId: customerId,
         subscriptionStatus: "active",
         subscriptionPlan: "essential",
+        termsAcceptedAt,
       })
       .returning();
     userId = created.id;

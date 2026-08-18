@@ -31,12 +31,14 @@ export function essentialPriceId(interval: BillingInterval) {
 
 export function createEssentialCheckoutSession(
   interval: BillingInterval,
-  origin: string
+  origin: string,
+  termsAcceptedAt: string
 ) {
   return stripe.checkout.sessions.create({
     mode: "subscription",
     line_items: [{ price: essentialPriceId(interval), quantity: 1 }],
     success_url: `${origin}/join/success?session_id={CHECKOUT_SESSION_ID}`,
     cancel_url: `${origin}/join`,
+    metadata: { termsAcceptedAt },
   });
 }

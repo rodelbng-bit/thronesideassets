@@ -41,7 +41,8 @@ export default function PricingPage() {
           Choose your plan.
         </h1>
         <p className="mt-4 max-w-xl text-paper-dim">
-          Every plan is a monthly membership, not a per-deal fee — you get
+          Every plan is a fixed 12-month membership agreement, not a
+          per-deal fee — you get
           the weekly deal sheet plus the guidance around it, tailored to
           your package. Book a call and we&apos;ll walk you through current
           pricing and which tier fits.

@@ -23,6 +23,10 @@ export const users = pgTable("users", {
     .notNull()
     .default("none"),
   subscriptionPlan: text("subscription_plan"),
+  // Set from the Checkout Session metadata written at /api/checkout —
+  // the auditable record that this account agreed to the fixed 12-month
+  // term (checkbox in JoinForm) before paying.
+  termsAcceptedAt: timestamp("terms_accepted_at", { withTimezone: true }),
   createdAt: timestamp("created_at", { withTimezone: true })
     .notNull()
     .defaultNow(),
