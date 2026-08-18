@@ -25,9 +25,12 @@ const statusBadge: Record<ReserveState, { label: string; className: string }> = 
 export default function DealSummaryCard({
   deal,
   reserveState,
+  reservationLimitReached = false,
 }: {
   deal: Deal;
   reserveState: ReserveState;
+  /** This member already holds an unconfirmed reservation elsewhere. */
+  reservationLimitReached?: boolean;
 }) {
   const badge = statusBadge[reserveState];
 
@@ -70,7 +73,11 @@ export default function DealSummaryCard({
             Access Property
           </Link>
           {reserveState === "available" && (
-            <ReserveButton dealId={deal.id} initialState={reserveState} />
+            <ReserveButton
+              dealId={deal.id}
+              initialState={reserveState}
+              limitReached={reservationLimitReached}
+            />
           )}
         </div>
       </div>

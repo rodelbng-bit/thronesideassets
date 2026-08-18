@@ -8,7 +8,7 @@ import DealAvailabilityToggle from "@/components/DealAvailabilityToggle";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { users, dealReservations } from "@/lib/schema";
-import { getDeal } from "@/lib/deals";
+import { getDeal, getActiveReservationForUser } from "@/lib/deals";
 import { isAdminEmail } from "@/lib/admin";
 
 export default async function MemberDealPage({
@@ -52,6 +52,9 @@ export default async function MemberDealPage({
           ? "reserved-by-me"
           : "reserved-by-other";
 
+  const active = await getActiveReservationForUser(session.user.id);
+  const reservationLimitReached = !!active && active.deal.id !== dealId;
+
   return (
     <>
       <SiteHeader />
@@ -73,7 +76,11 @@ export default async function MemberDealPage({
         )}
 
         <div className="mt-6">
-          <DealCard deal={deal} reserveState={reserveState} />
+          <DealCard
+            deal={deal}
+            reserveState={reserveState}
+            reservationLimitReached={reservationLimitReached}
+          />
         </div>
       </main>
       <SiteFooter />

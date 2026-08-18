@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { dealReservations } from "@/lib/schema";
-import { getDeal } from "@/lib/deals";
+import { getDeal, getActiveReservationForUser } from "@/lib/deals";
 
 export async function POST(
   req: NextRequest,
@@ -20,7 +20,19 @@ export async function POST(
   }
   if (deal.status === "unavailable") {
     return NextResponse.json(
-      { error: "This deal is no longer available." },
+      { error: "This deal is no longer available.", reason: "unavailable" },
+      { status: 409 }
+    );
+  }
+
+  const active = await getActiveReservationForUser(session.user.id);
+  if (active && active.deal.id !== dealId) {
+    return NextResponse.json(
+      {
+        error:
+          "You already have an active reservation. It needs to be confirmed (marked Unavailable) before you can reserve another property.",
+        reason: "limit-reached",
+      },
       { status: 409 }
     );
   }
@@ -36,7 +48,10 @@ export async function POST(
     const code = (err as { code?: string }).code;
     if (code === "23505") {
       return NextResponse.json(
-        { error: "This deal has already been reserved." },
+        {
+          error: "This deal has already been reserved.",
+          reason: "already-reserved",
+        },
         { status: 409 }
       );
     }

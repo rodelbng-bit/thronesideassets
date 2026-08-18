@@ -8,11 +8,14 @@ import ReserveButton from "./ReserveButton";
 export default function DealCard({
   deal,
   reserveState,
+  reservationLimitReached = false,
   blurred = false,
 }: {
   deal: Deal;
   /** Omit to render without a Reserve control — used on the public preview page. */
   reserveState?: ReserveState;
+  /** This member already holds an unconfirmed reservation elsewhere. */
+  reservationLimitReached?: boolean;
   /** Obscures rate/utilities/earnings/thermometer behind a "Join to unlock" prompt — used on the public preview page. */
   blurred?: boolean;
 }) {
@@ -81,7 +84,11 @@ export default function DealCard({
               <div className="flex flex-row items-center justify-between gap-6 border-t rule pt-6 sm:flex-col sm:justify-center sm:border-l sm:border-t-0 sm:pl-6 sm:pt-0">
                 <DealThermometer freshness={freshness} />
                 {reserveState && (
-                  <ReserveButton dealId={deal.id} initialState={reserveState} />
+                  <ReserveButton
+                    dealId={deal.id}
+                    initialState={reserveState}
+                    limitReached={reservationLimitReached}
+                  />
                 )}
               </div>
             </div>

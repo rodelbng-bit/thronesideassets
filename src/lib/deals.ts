@@ -1,6 +1,6 @@
 import { desc, eq } from "drizzle-orm";
 import { db } from "./db";
-import { deals as dealsTable } from "./schema";
+import { deals as dealsTable, dealReservations } from "./schema";
 
 export type Deal = {
   id: string;
@@ -33,6 +33,26 @@ export async function getDeal(id: string): Promise<Deal | undefined> {
     .where(eq(dealsTable.id, id))
     .limit(1);
   return deal;
+}
+
+// Members are limited to one reservation at a time — the reservation
+// only stops counting once an admin confirms it by marking that deal
+// Unavailable. Matched in application code rather than a SQL join
+// since dealReservations.dealId is text, not the deals.id uuid.
+export async function getActiveReservationForUser(userId: string) {
+  const [userReservations, allDeals] = await Promise.all([
+    db.select().from(dealReservations).where(eq(dealReservations.userId, userId)),
+    getDeals(),
+  ]);
+  const dealById = new Map(allDeals.map((d) => [d.id, d]));
+
+  for (const reservation of userReservations) {
+    const deal = dealById.get(reservation.dealId);
+    if (deal && deal.status === "available") {
+      return { reservation, deal };
+    }
+  }
+  return null;
 }
 
 const OCCUPANCY_TIERS = [0.5, 0.75, 1] as const;

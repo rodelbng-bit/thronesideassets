@@ -9,9 +9,12 @@ type Status = "idle" | "submitting" | "error";
 export default function ReserveButton({
   dealId,
   initialState,
+  limitReached = false,
 }: {
   dealId: string;
   initialState: ReserveState;
+  /** This member already holds an unconfirmed reservation elsewhere. */
+  limitReached?: boolean;
 }) {
   const router = useRouter();
   const [state, setState] = useState<ReserveState>(initialState);
@@ -35,7 +38,7 @@ export default function ReserveButton({
       });
       const data = await res.json();
 
-      if (res.status === 409) {
+      if (res.status === 409 && data.reason === "already-reserved") {
         setState("reserved-by-other");
         return;
       }
@@ -76,6 +79,19 @@ export default function ReserveButton({
       <span className="rounded-full border rule px-5 py-2.5 text-sm text-paper-dim">
         Reserved
       </span>
+    );
+  }
+
+  if (limitReached) {
+    return (
+      <div className="flex flex-col items-center gap-1">
+        <span className="rounded-full border rule px-5 py-2.5 text-sm text-paper-dim opacity-70">
+          Reserve
+        </span>
+        <p className="max-w-[12rem] text-center text-xs text-paper-dim">
+          Confirm your current reservation first
+        </p>
+      </div>
     );
   }
 

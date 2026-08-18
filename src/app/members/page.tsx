@@ -32,6 +32,15 @@ export default async function MembersPage() {
     reservations.map((r) => [r.dealId, r])
   );
 
+  // Members can only hold one reservation at a time — it stops counting
+  // once an admin confirms it by marking that deal Unavailable.
+  const myReservation = reservations.find((r) => r.userId === session.user.id);
+  const myReservedDeal = myReservation
+    ? deals.find((d) => d.id === myReservation.dealId)
+    : undefined;
+  const hasActiveReservationElsewhere =
+    !!myReservedDeal && myReservedDeal.status === "available";
+
   return (
     <>
       <SiteHeader />
@@ -68,6 +77,7 @@ export default async function MembersPage() {
                     key={deal.id}
                     deal={deal}
                     reserveState={reserveState}
+                    reservationLimitReached={hasActiveReservationElsewhere}
                   />
                 );
               })}
