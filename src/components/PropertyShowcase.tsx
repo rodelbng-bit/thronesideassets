@@ -73,9 +73,6 @@ export default function PropertyShowcase() {
               </div>
               <div className="px-5 py-4">
                 <p className="text-sm text-paper">{property.type}</p>
-                <p className="ledger-figure mt-1 text-xs text-paper-dim">
-                  {property.area}
-                </p>
               </div>
             </div>
           ))}
