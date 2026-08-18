@@ -1,7 +1,9 @@
 import Link from "next/link";
 import Image from "next/image";
 import type { Deal, ReserveState } from "@/lib/deals";
+import { freshnessFromDate } from "@/lib/deals";
 import ReserveButton from "./ReserveButton";
+import DealThermometer from "./DealThermometer";
 
 const statusBadge: Record<ReserveState, { label: string; className: string }> = {
   available: {
@@ -33,6 +35,7 @@ export default function DealSummaryCard({
   reservationLimitReached?: boolean;
 }) {
   const badge = statusBadge[reserveState];
+  const freshness = freshnessFromDate(deal.dateAdded);
 
   return (
     <div className="grid grid-cols-1 gap-6 rounded-lg border rule bg-ink-soft p-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,2fr)]">
@@ -61,24 +64,30 @@ export default function DealSummaryCard({
           </span>
         </div>
 
-        <p className="mt-3 text-sm leading-relaxed text-paper-dim">
-          {deal.description}
-        </p>
+        <div className="mt-3 flex flex-col gap-6 sm:flex-row sm:items-start sm:justify-between">
+          <div>
+            <p className="text-sm leading-relaxed text-paper-dim">
+              {deal.description}
+            </p>
 
-        <div className="mt-6 flex flex-wrap items-center gap-3">
-          <Link
-            href={`/members/deals/${deal.id}`}
-            className="inline-flex w-fit items-center rounded-full bg-brass px-6 py-3 text-sm font-medium text-ink transition-colors hover:bg-brass-bright"
-          >
-            Access Property
-          </Link>
-          {reserveState === "available" && (
-            <ReserveButton
-              dealId={deal.id}
-              initialState={reserveState}
-              limitReached={reservationLimitReached}
-            />
-          )}
+            <div className="mt-6 flex flex-wrap items-center gap-3">
+              <Link
+                href={`/members/deals/${deal.id}`}
+                className="inline-flex w-fit items-center rounded-full bg-brass px-6 py-3 text-sm font-medium text-ink transition-colors hover:bg-brass-bright"
+              >
+                Access Property
+              </Link>
+              {reserveState === "available" && (
+                <ReserveButton
+                  dealId={deal.id}
+                  initialState={reserveState}
+                  limitReached={reservationLimitReached}
+                />
+              )}
+            </div>
+          </div>
+
+          <DealThermometer freshness={freshness} />
         </div>
       </div>
     </div>
