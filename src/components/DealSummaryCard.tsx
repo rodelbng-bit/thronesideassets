@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import type { Deal, ReserveState } from "@/lib/deals";
+import ReserveButton from "./ReserveButton";
 
 const statusBadge: Record<ReserveState, { label: string; className: string }> = {
   available: {
@@ -61,12 +62,17 @@ export default function DealSummaryCard({
           {deal.description}
         </p>
 
-        <Link
-          href={`/members/deals/${deal.id}`}
-          className="mt-6 inline-flex w-fit items-center rounded-full bg-brass px-6 py-3 text-sm font-medium text-ink transition-colors hover:bg-brass-bright"
-        >
-          Access Property
-        </Link>
+        <div className="mt-6 flex flex-wrap items-center gap-3">
+          <Link
+            href={`/members/deals/${deal.id}`}
+            className="inline-flex w-fit items-center rounded-full bg-brass px-6 py-3 text-sm font-medium text-ink transition-colors hover:bg-brass-bright"
+          >
+            Access Property
+          </Link>
+          {reserveState === "available" && (
+            <ReserveButton dealId={deal.id} initialState={reserveState} />
+          )}
+        </div>
       </div>
     </div>
   );
