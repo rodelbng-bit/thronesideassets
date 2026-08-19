@@ -44,7 +44,7 @@ export default async function MembersPage() {
   return (
     <>
       <SiteHeader />
-      <main className="mx-auto max-w-6xl px-6 py-20">
+      <main className="mx-auto max-w-7xl px-6 py-20">
         <div className="flex items-center justify-between">
           <p className="ledger-figure text-sm text-brass-bright">MEMBERS</p>
           <SignOutButton />

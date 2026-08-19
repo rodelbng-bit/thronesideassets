@@ -19,7 +19,7 @@ const social = [
 export default function SiteFooter() {
   return (
     <footer className="mt-auto">
-      <div className="mx-auto grid max-w-6xl grid-cols-1 gap-10 px-6 py-16 sm:grid-cols-3">
+      <div className="mx-auto grid max-w-7xl grid-cols-1 gap-10 px-6 py-16 sm:grid-cols-3">
         <div>
           <div className="flex items-center gap-2.5">
             <Image

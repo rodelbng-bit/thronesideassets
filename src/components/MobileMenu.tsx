@@ -32,7 +32,7 @@ export default function MobileMenu({
 
       {open && (
         <div className="absolute inset-x-0 top-full border-b rule bg-ink/95 backdrop-blur">
-          <nav className="mx-auto flex max-w-6xl flex-col px-6 py-2">
+          <nav className="mx-auto flex max-w-7xl flex-col px-6 py-2">
             {navLinks.map((item) => (
               <Link key={item.href} href={item.href} onClick={close} className={rowClass}>
                 {item.label}

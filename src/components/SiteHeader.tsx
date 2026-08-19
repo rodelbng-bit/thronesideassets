@@ -12,7 +12,7 @@ export default async function SiteHeader() {
 
   return (
     <header className="sticky top-0 z-50 border-b rule bg-ink/90 backdrop-blur">
-      <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
+      <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
         <Link
           href="/"
           className="flex items-center gap-2.5 font-display text-lg tracking-tight text-paper"

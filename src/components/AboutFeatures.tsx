@@ -19,7 +19,7 @@ const cards = [
 export default function AboutFeatures() {
   return (
     <section className="border-b rule">
-      <div className="mx-auto grid max-w-6xl grid-cols-1 gap-px overflow-hidden border-x rule sm:grid-cols-3">
+      <div className="mx-auto grid max-w-7xl grid-cols-1 gap-px overflow-hidden border-x rule sm:grid-cols-3">
         {cards.map((card, i) => (
           <div
             key={card.tag}

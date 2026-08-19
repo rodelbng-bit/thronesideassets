@@ -7,7 +7,7 @@ const stats = [
 export default function Hero() {
   return (
     <section className="border-b rule">
-      <div className="mx-auto max-w-6xl px-6 pb-16 pt-20 md:pb-24 md:pt-28">
+      <div className="mx-auto max-w-7xl px-6 pb-16 pt-20 md:pb-24 md:pt-28">
         <p className="ledger-figure text-sm text-brass-bright">
           No. 001 — WEEKLY DEAL SHEET
         </p>

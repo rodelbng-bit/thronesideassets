@@ -44,7 +44,7 @@ const properties = [
 export default function PropertyShowcase() {
   return (
     <section className="border-b rule bg-ink-soft">
-      <div className="mx-auto max-w-6xl px-6 py-20">
+      <div className="mx-auto max-w-7xl px-6 py-20">
         <p className="ledger-figure text-sm text-brass-bright">
           THE DEALS WE SOURCE
         </p>

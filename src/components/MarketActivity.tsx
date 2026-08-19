@@ -25,7 +25,7 @@ const criteria = [
 export default function MarketActivity() {
   return (
     <section id="deals" className="border-b rule bg-ink-soft">
-      <div className="mx-auto max-w-6xl px-6 py-20">
+      <div className="mx-auto max-w-7xl px-6 py-20">
         <p className="ledger-figure text-sm text-brass-bright">
           WHERE WE SOURCE
         </p>

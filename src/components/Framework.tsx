@@ -19,7 +19,7 @@ const steps = [
 export default function Framework() {
   return (
     <section className="border-b rule">
-      <div className="mx-auto max-w-6xl px-6 py-20">
+      <div className="mx-auto max-w-7xl px-6 py-20">
         <p className="ledger-figure text-sm text-brass-bright">
           THE INVESTMENT FRAMEWORK
         </p>
