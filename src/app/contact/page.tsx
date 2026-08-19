@@ -1,6 +1,6 @@
 import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
-import ContactForm from "@/components/ContactForm";
+import CallScreenerFlow from "@/components/CallScreenerFlow";
 
 export default function ContactPage() {
   return (
@@ -12,13 +12,12 @@ export default function ContactPage() {
           Book a call with our UK team.
         </h1>
         <p className="mt-4 text-paper-dim">
-          Tell us a bit about what you&apos;re looking to invest in, and
-          we&apos;ll be in touch to find out how we can source your next
-          deal.
+          A few quick questions first so we can prepare for the call — then
+          pick a time that works for you.
         </p>
 
         <div className="mt-10">
-          <ContactForm />
+          <CallScreenerFlow />
         </div>
       </main>
       <SiteFooter />

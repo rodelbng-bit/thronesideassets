@@ -91,3 +91,26 @@ export const dealReservations = pgTable("deal_reservations", {
 });
 
 export type DealReservation = typeof dealReservations.$inferSelect;
+
+// Answers from the pre-call screener shown before a visitor reaches the
+// booking calendar on /contact. Also pushed into GHL as a readable summary
+// on the matching contact (see /api/call-screener), but this table is the
+// authoritative copy our team reviews from — it doesn't depend on GHL
+// custom fields being set up.
+export const callScreenerResponses = pgTable("call_screener_responses", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  firstName: text("first_name").notNull(),
+  lastName: text("last_name"),
+  email: text("email").notNull(),
+  phone: text("phone").notNull(),
+  budget: text("budget").notNull(),
+  goals: text("goals").notNull(),
+  preferredLocation: text("preferred_location").notNull(),
+  experienceLevel: text("experience_level").notNull(),
+  additionalInfo: text("additional_info"),
+  createdAt: timestamp("created_at", { withTimezone: true })
+    .notNull()
+    .defaultNow(),
+});
+
+export type CallScreenerResponse = typeof callScreenerResponses.$inferSelect;
