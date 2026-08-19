@@ -5,8 +5,9 @@ import SiteFooter from "@/components/SiteFooter";
 const plans = [
   {
     name: "Essential",
-    price: "£497/mo",
-    priceNote: "£4,970/yr upfront (save £994)",
+    price: "£497/month",
+    term: "12-month contract, billed monthly",
+    priceNote: "Or £4,970 upfront — the full 12-month term paid in one payment (save £994)",
     features: [
       "Unlimited deal alerts (FCFS)",
       "Full deal packs with P&L",
@@ -18,8 +19,9 @@ const plans = [
   },
   {
     name: "Growth Package",
-    price: "£797/mo",
-    priceNote: "£7,970/yr upfront (save £1,594)",
+    price: "£797/month",
+    term: "12-month contract, billed monthly",
+    priceNote: "Or £7,970 upfront — the full 12-month term paid in one payment (save £1,594)",
     features: [
       "Everything in Essential",
       "Priority deal alerts (before Essential tier)",
@@ -41,8 +43,8 @@ export default function PricingPage() {
           Choose your plan.
         </h1>
         <p className="mt-4 max-w-xl text-paper-dim">
-          Every plan is a fixed 12-month membership agreement, not a
-          per-deal fee — you get
+          Every plan is a fixed 12-month membership agreement — not a
+          month-to-month subscription and not a per-deal fee — you get
           the weekly deal sheet plus the guidance around it, tailored to
           your package. Book a call and we&apos;ll walk you through current
           pricing and which tier fits.
@@ -60,8 +62,13 @@ export default function PricingPage() {
               <p className="ledger-figure mt-2 text-lg text-brass-bright">
                 {plan.price}
               </p>
+              {plan.term && (
+                <p className="mt-1 text-xs font-medium uppercase tracking-wide text-paper-dim">
+                  {plan.term}
+                </p>
+              )}
               {plan.priceNote && (
-                <p className="ledger-figure mt-1 text-sm text-paper-dim">
+                <p className="mt-2 text-sm text-paper-dim">
                   {plan.priceNote}
                 </p>
               )}

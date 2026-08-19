@@ -5,9 +5,17 @@ import { useState } from "react";
 type Interval = "monthly" | "annual";
 type Status = "idle" | "submitting" | "error";
 
-const options: { value: Interval; label: string; note?: string }[] = [
-  { value: "monthly", label: "£497/mo" },
-  { value: "annual", label: "£4,970/yr", note: "save £994" },
+const options: { value: Interval; label: string; note: string }[] = [
+  {
+    value: "monthly",
+    label: "£497/month",
+    note: "12-month contract, billed monthly",
+  },
+  {
+    value: "annual",
+    label: "£4,970 upfront",
+    note: "Full 12-month term paid in one payment — save £994",
+  },
 ];
 
 export default function JoinForm() {

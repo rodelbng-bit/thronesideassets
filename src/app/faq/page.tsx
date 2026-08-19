@@ -4,7 +4,7 @@ import SiteFooter from "@/components/SiteFooter";
 const faqs = [
   {
     q: "What are your fees?",
-    a: "Our membership starts at £497/month (Essential). See the plans above for full details. Annual options save up to £994.",
+    a: "Our membership starts at £497/month (Essential), on a fixed 12-month contract billed monthly. You can instead pay the full 12-month term upfront in one payment — £4,970 for Essential, saving £994. See the plans above for full details.",
   },
   {
     q: "How does the 3-month partner programme work?",
