@@ -55,6 +55,23 @@ export default async function SiteHeader() {
               >
                 Members
               </Link>
+              <Link
+                href="/members/account"
+                aria-label="My account"
+                className="flex h-9 w-9 items-center justify-center rounded-full border rule text-paper-dim transition-colors hover:text-paper"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.5"
+                  className="h-4.5 w-4.5"
+                >
+                  <circle cx="12" cy="8" r="3.5" />
+                  <path d="M4.5 19.5c1.5-3.5 5-5 7.5-5s6 1.5 7.5 5" strokeLinecap="round" />
+                </svg>
+              </Link>
               <SignOutButton />
             </>
           ) : (

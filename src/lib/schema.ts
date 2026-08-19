@@ -22,6 +22,7 @@ export const dealStatusEnum = pgEnum("deal_status", [
 export const users = pgTable("users", {
   id: uuid("id").primaryKey().defaultRandom(),
   email: text("email").notNull().unique(),
+  name: text("name"),
   passwordHash: text("password_hash"),
   stripeCustomerId: text("stripe_customer_id"),
   subscriptionStatus: subscriptionStatusEnum("subscription_status")
