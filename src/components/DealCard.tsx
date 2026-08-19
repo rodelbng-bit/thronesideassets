@@ -30,10 +30,10 @@ export default function DealCard({
   const earnings = estimateMonthlyEarnings(deal);
 
   return (
-    <div className="grid grid-cols-1 gap-6 rounded-lg border rule bg-ink-soft p-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,2fr)]">
+    <div className="rounded-lg border rule bg-ink-soft p-6">
       <DealGallery photos={deal.photos} alt={deal.title} />
 
-      <div>
+      <div className="mt-6">
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div>
             <h3 className="font-display text-2xl text-paper">{deal.title}</h3>

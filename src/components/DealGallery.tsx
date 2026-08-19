@@ -23,7 +23,7 @@ export default function DealGallery({
 
   return (
     <div>
-      <div className="relative aspect-4/3 w-full overflow-hidden rounded-lg border rule">
+      <div className="relative aspect-video w-full overflow-hidden rounded-lg border rule">
         <button
           type="button"
           onClick={() => setLightboxOpen(true)}
@@ -34,7 +34,7 @@ export default function DealGallery({
             src={photos[index]}
             alt={`${alt} — photo ${index + 1} of ${photos.length}`}
             fill
-            sizes="(min-width: 1024px) 25vw, 100vw"
+            sizes="(min-width: 1024px) 850px, 100vw"
             className="object-cover"
           />
         </button>
