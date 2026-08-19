@@ -57,11 +57,22 @@ export default function DealSummaryCard({
               {deal.location}
             </p>
           </div>
-          <span
-            className={`shrink-0 rounded-full px-3 py-1 text-xs font-medium ${badge.className}`}
-          >
-            {badge.label}
-          </span>
+          <div className="flex shrink-0 flex-col items-end gap-2">
+            <span
+              className={`rounded-full px-3 py-1 text-xs font-medium ${badge.className}`}
+            >
+              {badge.label}
+            </span>
+            <span
+              className={`rounded-full border rule px-3 py-1 text-xs font-medium ${
+                deal.guarantorRequired ? "text-paper" : "text-paper-dim"
+              }`}
+            >
+              {deal.guarantorRequired
+                ? "Guarantor required"
+                : "No guarantor required"}
+            </span>
+          </div>
         </div>
 
         <div className="mt-3 flex flex-col gap-6 sm:flex-row sm:items-start sm:justify-between">

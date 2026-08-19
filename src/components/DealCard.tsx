@@ -27,10 +27,25 @@ export default function DealCard({
       <DealGallery photos={deal.photos} alt={deal.title} />
 
       <div>
-        <h3 className="font-display text-2xl text-paper">{deal.title}</h3>
-        <p className="ledger-figure mt-1 text-sm text-brass-bright">
-          {deal.location}
-        </p>
+        <div className="flex flex-wrap items-start justify-between gap-3">
+          <div>
+            <h3 className="font-display text-2xl text-paper">{deal.title}</h3>
+            <p className="ledger-figure mt-1 text-sm text-brass-bright">
+              {deal.location}
+            </p>
+          </div>
+          <span
+            className={`shrink-0 rounded-full border rule px-3 py-1 text-xs font-medium ${
+              deal.guarantorRequired
+                ? "text-paper"
+                : "text-paper-dim"
+            }`}
+          >
+            {deal.guarantorRequired
+              ? "Guarantor required"
+              : "No guarantor required"}
+          </span>
+        </div>
         <p className="mt-3 text-sm leading-relaxed text-paper-dim">
           {deal.description}
         </p>

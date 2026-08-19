@@ -24,8 +24,15 @@ export async function POST(req: NextRequest) {
   }
 
   const data = await req.json();
-  const { title, location, description, photos, ratePerNight, utilityCostPerMonth } =
-    data;
+  const {
+    title,
+    location,
+    description,
+    photos,
+    ratePerNight,
+    utilityCostPerMonth,
+    guarantorRequired,
+  } = data;
 
   if (
     typeof title !== "string" ||
@@ -40,7 +47,8 @@ export async function POST(req: NextRequest) {
     !Number.isFinite(ratePerNight) ||
     ratePerNight <= 0 ||
     !Number.isFinite(utilityCostPerMonth) ||
-    utilityCostPerMonth < 0
+    utilityCostPerMonth < 0 ||
+    typeof guarantorRequired !== "boolean"
   ) {
     return NextResponse.json(
       { error: "Missing or invalid fields." },
@@ -57,6 +65,7 @@ export async function POST(req: NextRequest) {
       photos,
       ratePerNight: Math.round(ratePerNight),
       utilityCostPerMonth: Math.round(utilityCostPerMonth),
+      guarantorRequired,
     })
     .returning();
 

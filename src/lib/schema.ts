@@ -4,6 +4,7 @@ import {
   timestamp,
   uuid,
   integer,
+  boolean,
   pgEnum,
 } from "drizzle-orm/pg-core";
 
@@ -65,6 +66,7 @@ export const deals = pgTable("deals", {
   photos: text("photos").array().notNull(),
   ratePerNight: integer("rate_per_night").notNull(),
   utilityCostPerMonth: integer("utility_cost_per_month").notNull(),
+  guarantorRequired: boolean("guarantor_required").notNull().default(false),
   status: dealStatusEnum("status").notNull().default("available"),
   dateAdded: timestamp("date_added", { withTimezone: true })
     .notNull()

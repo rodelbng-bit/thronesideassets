@@ -60,6 +60,7 @@ export default function NewDealForm({
           description: data.get("description"),
           ratePerNight: Number(data.get("ratePerNight")),
           utilityCostPerMonth: Number(data.get("utilityCostPerMonth")),
+          guarantorRequired: data.get("guarantorRequired") === "yes",
           photos: photoUrls,
         }),
       });
@@ -151,6 +152,21 @@ export default function NewDealForm({
             className="mt-2 w-full rounded-md border rule bg-ink px-4 py-3 text-sm text-paper focus:border-brass focus:outline-none"
           />
         </div>
+      </div>
+
+      <div>
+        <label className="text-xs uppercase tracking-wide text-paper-dim">
+          Guarantor required?
+        </label>
+        <select
+          name="guarantorRequired"
+          required
+          defaultValue="no"
+          className="mt-2 w-full rounded-md border rule bg-ink px-4 py-3 text-sm text-paper focus:border-brass focus:outline-none"
+        >
+          <option value="no">No</option>
+          <option value="yes">Yes</option>
+        </select>
       </div>
 
       <div>

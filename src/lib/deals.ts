@@ -10,6 +10,7 @@ export type Deal = {
   photos: string[];
   ratePerNight: number;
   utilityCostPerMonth: number;
+  guarantorRequired: boolean;
   status: "available" | "unavailable";
   dateAdded: Date;
 };
