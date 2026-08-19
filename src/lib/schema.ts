@@ -121,3 +121,28 @@ export const callScreenerResponses = pgTable("call_screener_responses", {
 });
 
 export type CallScreenerResponse = typeof callScreenerResponses.$inferSelect;
+
+export const viewingRequestStatusEnum = pgEnum("viewing_request_status", [
+  "pending",
+  "confirmed",
+  "declined",
+]);
+
+// Not a live-availability booking — the client names a preferred slot and
+// the team follows up to confirm it. dealId is text (not a FK), same
+// reasoning as dealReservations: the request should stay put even if the
+// listing is later removed.
+export const viewingRequests = pgTable("viewing_requests", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  dealId: text("deal_id").notNull(),
+  userId: uuid("user_id")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
+  preferredAt: timestamp("preferred_at", { withTimezone: true }).notNull(),
+  status: viewingRequestStatusEnum("status").notNull().default("pending"),
+  createdAt: timestamp("created_at", { withTimezone: true })
+    .notNull()
+    .defaultNow(),
+});
+
+export type ViewingRequest = typeof viewingRequests.$inferSelect;

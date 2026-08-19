@@ -58,6 +58,12 @@ export default async function SiteHeader() {
                 >
                   Screener
                 </Link>
+                <Link
+                  href="/admin/viewing-requests"
+                  className="rounded-full border rule px-4 py-1.5 text-xs text-paper-dim transition-colors hover:text-paper"
+                >
+                  Viewings
+                </Link>
               </>
             )}
             {isLoggedIn ? (

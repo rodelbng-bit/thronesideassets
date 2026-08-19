@@ -62,6 +62,26 @@ export async function sendReservationNotificationEmail(
   );
 }
 
+export async function sendViewingRequestNotificationEmail(
+  adminEmails: string[],
+  memberEmail: string,
+  deal: { id: string; title: string; location: string },
+  preferredAt: Date
+) {
+  if (adminEmails.length === 0) return;
+  const link = `${siteUrl()}/admin/viewing-requests`;
+  const when = preferredAt.toLocaleString("en-GB", {
+    dateStyle: "full",
+    timeStyle: "short",
+  });
+  await send(
+    adminEmails,
+    `Viewing requested: ${deal.title}`,
+    `<p><strong>${memberEmail}</strong> requested a viewing for <strong>${deal.title}</strong> (${deal.location}), preferring <strong>${when}</strong>.</p>
+     <p><a href="${link}">Review viewing requests</a> to confirm it with them.</p>`
+  );
+}
+
 export async function sendNewDealNotificationEmail(
   adminEmails: string[],
   deal: { id: string; title: string; location: string }

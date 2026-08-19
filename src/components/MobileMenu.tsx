@@ -47,6 +47,9 @@ export default function MobileMenu({
                 <Link href="/admin/call-screener" onClick={close} className={rowClass}>
                   Screener
                 </Link>
+                <Link href="/admin/viewing-requests" onClick={close} className={rowClass}>
+                  Viewings
+                </Link>
               </>
             )}
 

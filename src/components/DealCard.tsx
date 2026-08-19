@@ -4,12 +4,14 @@ import { estimateMonthlyEarnings, freshnessFromDate } from "@/lib/deals";
 import DealGallery from "./DealGallery";
 import DealThermometer from "./DealThermometer";
 import ReserveButton from "./ReserveButton";
+import RequestViewingButton from "./RequestViewingButton";
 
 export default function DealCard({
   deal,
   reserveState,
   reservationLimitReached = false,
   reservationExpiresAt,
+  viewingRequest,
   blurred = false,
 }: {
   deal: Deal;
@@ -19,6 +21,8 @@ export default function DealCard({
   reservationLimitReached?: boolean;
   /** Set when reserveState is "reserved-by-me" — when this reservation auto-releases. */
   reservationExpiresAt?: Date;
+  /** This member's latest viewing request for this deal, if any. */
+  viewingRequest?: { preferredAt: Date; status: "pending" | "confirmed" | "declined" };
   /** Obscures rate/utilities/earnings/thermometer behind a "Join to unlock" prompt — used on the public preview page. */
   blurred?: boolean;
 }) {
@@ -111,6 +115,15 @@ export default function DealCard({
                 )}
               </div>
             </div>
+
+            {reserveState === "reserved-by-me" && (
+              <div className="mt-6 flex justify-center border-t rule pt-6">
+                <RequestViewingButton
+                  dealId={deal.id}
+                  existingRequest={viewingRequest}
+                />
+              </div>
+            )}
           </div>
 
           {blurred && (

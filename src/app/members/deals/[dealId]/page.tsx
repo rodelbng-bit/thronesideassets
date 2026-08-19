@@ -14,6 +14,7 @@ import {
   releaseExpiredReservations,
 } from "@/lib/deals";
 import { isAdminEmail } from "@/lib/admin";
+import { getViewingRequestForUser } from "@/lib/viewingRequests";
 
 export default async function MemberDealPage({
   params,
@@ -62,6 +63,11 @@ export default async function MemberDealPage({
   const active = await getActiveReservationForUser(session.user.id);
   const reservationLimitReached = !!active && active.deal.id !== dealId;
 
+  const viewingRequest =
+    reserveState === "reserved-by-me"
+      ? await getViewingRequestForUser(dealId, session.user.id)
+      : undefined;
+
   return (
     <>
       <SiteHeader />
@@ -90,6 +96,14 @@ export default async function MemberDealPage({
             reservationExpiresAt={
               reserveState === "reserved-by-me"
                 ? reservation?.expiresAt
+                : undefined
+            }
+            viewingRequest={
+              viewingRequest
+                ? {
+                    preferredAt: viewingRequest.preferredAt,
+                    status: viewingRequest.status,
+                  }
                 : undefined
             }
           />
