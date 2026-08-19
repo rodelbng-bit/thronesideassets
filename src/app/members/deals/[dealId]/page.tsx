@@ -8,7 +8,11 @@ import DealAvailabilityToggle from "@/components/DealAvailabilityToggle";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { users, dealReservations } from "@/lib/schema";
-import { getDeal, getActiveReservationForUser } from "@/lib/deals";
+import {
+  getDeal,
+  getActiveReservationForUser,
+  releaseExpiredReservations,
+} from "@/lib/deals";
 import { isAdminEmail } from "@/lib/admin";
 
 export default async function MemberDealPage({
@@ -32,6 +36,9 @@ export default async function MemberDealPage({
   }
 
   const { dealId } = await params;
+
+  await releaseExpiredReservations();
+
   const deal = await getDeal(dealId);
   if (!deal) {
     notFound();
@@ -80,6 +87,11 @@ export default async function MemberDealPage({
             deal={deal}
             reserveState={reserveState}
             reservationLimitReached={reservationLimitReached}
+            reservationExpiresAt={
+              reserveState === "reserved-by-me"
+                ? reservation?.expiresAt
+                : undefined
+            }
           />
         </div>
       </main>

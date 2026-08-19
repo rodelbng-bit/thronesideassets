@@ -9,6 +9,7 @@ export default function DealCard({
   deal,
   reserveState,
   reservationLimitReached = false,
+  reservationExpiresAt,
   blurred = false,
 }: {
   deal: Deal;
@@ -16,6 +17,8 @@ export default function DealCard({
   reserveState?: ReserveState;
   /** This member already holds an unconfirmed reservation elsewhere. */
   reservationLimitReached?: boolean;
+  /** Set when reserveState is "reserved-by-me" — when this reservation auto-releases. */
+  reservationExpiresAt?: Date;
   /** Obscures rate/utilities/earnings/thermometer behind a "Join to unlock" prompt — used on the public preview page. */
   blurred?: boolean;
 }) {
@@ -103,6 +106,7 @@ export default function DealCard({
                     dealId={deal.id}
                     initialState={reserveState}
                     limitReached={reservationLimitReached}
+                    expiresAt={reservationExpiresAt}
                   />
                 )}
               </div>

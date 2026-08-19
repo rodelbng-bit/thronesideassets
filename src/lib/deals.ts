@@ -1,6 +1,10 @@
-import { desc, eq } from "drizzle-orm";
+import { desc, eq, inArray, lt } from "drizzle-orm";
 import { db } from "./db";
 import { deals as dealsTable, dealReservations } from "./schema";
+
+// How long an unconfirmed reservation holds a deal before it auto-releases
+// back to "first come, first served".
+export const RESERVATION_HOLD_DAYS = 3;
 
 export type Deal = {
   id: string;
@@ -34,6 +38,36 @@ export async function getDeal(id: string): Promise<Deal | undefined> {
     .where(eq(dealsTable.id, id))
     .limit(1);
   return deal;
+}
+
+// Deletes unconfirmed reservations past their hold window so the deal
+// becomes reservable again. Skips reservations on deals an admin has
+// already marked "unavailable" (i.e. confirmed) — those are a record of
+// who the deal was confirmed for, not an expiring hold. Called at every
+// read/write path that touches reservations rather than a cron job, since
+// dealId carries a unique constraint that a stale expired row would still
+// block.
+export async function releaseExpiredReservations(): Promise<void> {
+  const [expired, allDeals] = await Promise.all([
+    db
+      .select()
+      .from(dealReservations)
+      .where(lt(dealReservations.expiresAt, new Date())),
+    getDeals(),
+  ]);
+  if (expired.length === 0) return;
+
+  const availableDealIds = new Set(
+    allDeals.filter((d) => d.status === "available").map((d) => d.id)
+  );
+  const idsToRelease = expired
+    .filter((r) => availableDealIds.has(r.dealId))
+    .map((r) => r.id);
+  if (idsToRelease.length === 0) return;
+
+  await db
+    .delete(dealReservations)
+    .where(inArray(dealReservations.id, idsToRelease));
 }
 
 // Members are limited to one reservation at a time — the reservation

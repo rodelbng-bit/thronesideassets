@@ -28,11 +28,14 @@ export default function DealSummaryCard({
   deal,
   reserveState,
   reservationLimitReached = false,
+  reservationExpiresAt,
 }: {
   deal: Deal;
   reserveState: ReserveState;
   /** This member already holds an unconfirmed reservation elsewhere. */
   reservationLimitReached?: boolean;
+  /** Set when reserveState is "reserved-by-me" — when this reservation auto-releases. */
+  reservationExpiresAt?: Date;
 }) {
   const badge = statusBadge[reserveState];
   const freshness = freshnessFromDate(deal.dateAdded);
@@ -88,11 +91,13 @@ export default function DealSummaryCard({
               >
                 Access Property
               </Link>
-              {reserveState === "available" && (
+              {(reserveState === "available" ||
+                reserveState === "reserved-by-me") && (
                 <ReserveButton
                   dealId={deal.id}
                   initialState={reserveState}
                   limitReached={reservationLimitReached}
+                  expiresAt={reservationExpiresAt}
                 />
               )}
             </div>

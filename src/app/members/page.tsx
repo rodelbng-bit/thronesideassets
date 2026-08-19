@@ -8,7 +8,7 @@ import DealSummaryCard from "@/components/DealSummaryCard";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { users, dealReservations } from "@/lib/schema";
-import { getDeals } from "@/lib/deals";
+import { getDeals, releaseExpiredReservations } from "@/lib/deals";
 
 export default async function MembersPage() {
   const session = await auth();
@@ -23,6 +23,10 @@ export default async function MembersPage() {
     .limit(1);
 
   const isActive = user?.subscriptionStatus === "active";
+
+  if (isActive) {
+    await releaseExpiredReservations();
+  }
 
   const [deals, reservations] = await Promise.all([
     isActive ? getDeals() : Promise.resolve([]),
@@ -78,6 +82,11 @@ export default async function MembersPage() {
                     deal={deal}
                     reserveState={reserveState}
                     reservationLimitReached={hasActiveReservationElsewhere}
+                    reservationExpiresAt={
+                      reserveState === "reserved-by-me"
+                        ? reservation?.expiresAt
+                        : undefined
+                    }
                   />
                 );
               })}

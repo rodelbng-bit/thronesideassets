@@ -7,6 +7,7 @@ import {
   boolean,
   pgEnum,
 } from "drizzle-orm/pg-core";
+import { sql } from "drizzle-orm";
 
 export const subscriptionStatusEnum = pgEnum("subscription_status", [
   "none",
@@ -88,6 +89,12 @@ export const dealReservations = pgTable("deal_reservations", {
   reservedAt: timestamp("reserved_at", { withTimezone: true })
     .notNull()
     .defaultNow(),
+  // Unconfirmed reservations auto-release after RESERVATION_HOLD_DAYS
+  // (see lib/deals.ts) so a member sitting on a deal doesn't block it
+  // for everyone else indefinitely.
+  expiresAt: timestamp("expires_at", { withTimezone: true })
+    .notNull()
+    .default(sql`(now() + interval '3 days')`),
 });
 
 export type DealReservation = typeof dealReservations.$inferSelect;
