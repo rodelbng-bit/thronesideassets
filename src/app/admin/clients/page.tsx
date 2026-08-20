@@ -4,6 +4,7 @@ import { eq } from "drizzle-orm";
 import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
 import ClientApprovalStatus from "@/components/ClientApprovalStatus";
+import ClientsFilterBar from "@/components/ClientsFilterBar";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { users } from "@/lib/schema";
@@ -14,9 +15,21 @@ import {
   stageLabel,
   stageClass,
   abandonedStageClass,
+  type RegistrationWithUser,
 } from "@/lib/registrations";
 
-export default async function ClientsAdminPage() {
+export default async function ClientsAdminPage({
+  searchParams,
+}: {
+  searchParams: Promise<{
+    stage?: string;
+    status?: string;
+    payment?: string;
+    interval?: string;
+    approval?: string;
+    sort?: string;
+  }>;
+}) {
   const session = await auth();
   if (!session?.user) {
     redirect("/login");
@@ -32,7 +45,34 @@ export default async function ClientsAdminPage() {
     redirect("/members");
   }
 
-  const rows = await getRegistrationsWithUsers();
+  const {
+    stage: stageFilter,
+    status: statusFilter,
+    payment: paymentFilter,
+    interval: intervalFilter,
+    approval: approvalFilter,
+    sort,
+  } = await searchParams;
+
+  const allRows = await getRegistrationsWithUsers();
+
+  let rows = allRows.filter(({ registration, user }: RegistrationWithUser) => {
+    if (stageFilter && registration.stage !== stageFilter) return false;
+    if (statusFilter && getRegistrationStatus(registration) !== statusFilter)
+      return false;
+    if (
+      paymentFilter &&
+      (user?.subscriptionStatus ?? "not_paid") !== paymentFilter
+    )
+      return false;
+    if (intervalFilter && registration.interval !== intervalFilter) return false;
+    if (approvalFilter && user?.approvalStatus !== approvalFilter) return false;
+    return true;
+  });
+
+  if (sort === "oldest") {
+    rows = [...rows].reverse();
+  }
 
   return (
     <>
@@ -43,18 +83,26 @@ export default async function ClientsAdminPage() {
           Clients.
         </h1>
         <p className="mt-4 max-w-xl text-paper-dim">
-          Every visitor who has entered the /join funnel, newest first —
-          whether or not they completed it. Click a client for their full
-          profile, or approve/reject a client once they&apos;ve paid to
-          give or withhold access to the deals list.
+          Every visitor who has entered the /join funnel — whether or not
+          they completed it. Click a client for their full profile, or
+          approve/reject a client once they&apos;ve paid to give or
+          withhold access to the deals list.
         </p>
 
-        {rows.length === 0 ? (
-          <div className="mt-10 rounded-lg border rule bg-ink-soft p-6 text-sm text-paper-dim">
+        <div className="mt-10">
+          <ClientsFilterBar />
+        </div>
+
+        {allRows.length === 0 ? (
+          <div className="mt-6 rounded-lg border rule bg-ink-soft p-6 text-sm text-paper-dim">
             No registrations yet.
           </div>
+        ) : rows.length === 0 ? (
+          <div className="mt-6 rounded-lg border rule bg-ink-soft p-6 text-sm text-paper-dim">
+            No clients match these filters.
+          </div>
         ) : (
-          <div className="mt-10 space-y-6">
+          <div className="mt-6 space-y-6">
             {rows.map(({ registration, user }) => {
               const isAbandoned =
                 getRegistrationStatus(registration) === "abandoned";
