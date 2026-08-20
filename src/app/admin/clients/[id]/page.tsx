@@ -4,6 +4,9 @@ import { eq } from "drizzle-orm";
 import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
 import ClientApprovalStatus from "@/components/ClientApprovalStatus";
+import MarkPaymentReceived from "@/components/MarkPaymentReceived";
+import RegistrationStageSelect from "@/components/RegistrationStageSelect";
+import InternalNotesEditor from "@/components/InternalNotesEditor";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { users } from "@/lib/schema";
@@ -213,13 +216,25 @@ export default async function ClientProfilePage({
               label="Date payment completed"
               value={formatDate(registration.paidAt)}
             />
+            {!user && (
+              <div className="sm:col-span-2">
+                <MarkPaymentReceived registrationId={registration.id} />
+              </div>
+            )}
           </Section>
 
           <Section title="Registration Information">
-            <Field
-              label="Current registration stage"
-              value={stageLabel[registration.stage] ?? registration.stage}
-            />
+            <div>
+              <p className="text-xs uppercase tracking-wide text-paper-dim">
+                Current registration stage
+              </p>
+              <div className="mt-1">
+                <RegistrationStageSelect
+                  registrationId={registration.id}
+                  initialStage={registration.stage}
+                />
+              </div>
+            </div>
             <Field label="Registration status" value={registrationStatusText} />
             <Field
               label={
@@ -274,6 +289,21 @@ export default async function ClientProfilePage({
               value={contractEndDate ? formatDate(contractEndDate) : "—"}
             />
           </Section>
+
+          <div className="rounded-lg border rule bg-ink-soft p-6">
+            <h2 className="font-display text-lg text-paper">
+              Internal Notes
+            </h2>
+            <p className="mt-1 text-xs text-paper-dim">
+              Not visible to the client.
+            </p>
+            <div className="mt-4">
+              <InternalNotesEditor
+                registrationId={registration.id}
+                initialNotes={registration.internalNotes}
+              />
+            </div>
+          </div>
 
           {otherAttempts.length > 0 && (
             <div className="rounded-lg border rule bg-ink-soft p-6">

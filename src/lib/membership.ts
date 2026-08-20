@@ -13,25 +13,21 @@ type EnsureResult = {
 };
 
 /**
- * Turns a completed Checkout Session into an active user account. Called
- * from both the Stripe webhook and the /join/success page — whichever
- * fires first does the work, the other is a harmless no-op update.
+ * Turns a paid-up registration into an active user account — the shared
+ * core behind both ensureUserForCheckoutSession (Stripe webhook /
+ * /join/success) and the admin "mark payment as received" action for
+ * clients who paid outside Stripe. Whichever caller fires first does the
+ * work; a second call for the same email is a harmless no-op update.
  */
-export async function ensureUserForCheckoutSession(
-  session: Stripe.Checkout.Session
-): Promise<EnsureResult> {
-  const email = session.customer_details?.email ?? session.customer_email;
-  if (!email) {
-    throw new Error(`Checkout session ${session.id} has no customer email`);
-  }
-  const normalizedEmail = email.toLowerCase();
-  const customerId =
-    typeof session.customer === "string"
-      ? session.customer
-      : session.customer?.id;
-  const termsAcceptedAt = session.metadata?.termsAcceptedAt
-    ? new Date(session.metadata.termsAcceptedAt)
-    : undefined;
+export async function ensureUserForRegistration(params: {
+  email: string;
+  registrationId?: string;
+  stripeCustomerId?: string;
+  termsAcceptedAt?: Date;
+}): Promise<EnsureResult> {
+  const { registrationId, stripeCustomerId: customerId, termsAcceptedAt } =
+    params;
+  const normalizedEmail = params.email.toLowerCase();
 
   const [existing] = await db
     .select()
@@ -83,10 +79,8 @@ export async function ensureUserForCheckoutSession(
     ? await createPasswordResetToken(userId)
     : undefined;
 
-  const registrationId = session.metadata?.registrationId;
   if (registrationId) {
-    // Same whichever-fires-first idempotency as the rest of this function —
-    // called from both the Stripe webhook and /join/success's fallback.
+    // Same whichever-fires-first idempotency as the rest of this function.
     // Jumps straight to under_review/approved/rejected rather than resting
     // on a "payment completed" stage — this function classifies the
     // account in the same synchronous call, so there's no real window
@@ -104,6 +98,30 @@ export async function ensureUserForCheckoutSession(
   }
 
   return { userId, email: normalizedEmail, resetToken };
+}
+
+/**
+ * Turns a completed Checkout Session into an active user account. Called
+ * from both the Stripe webhook and the /join/success page.
+ */
+export async function ensureUserForCheckoutSession(
+  session: Stripe.Checkout.Session
+): Promise<EnsureResult> {
+  const email = session.customer_details?.email ?? session.customer_email;
+  if (!email) {
+    throw new Error(`Checkout session ${session.id} has no customer email`);
+  }
+  return ensureUserForRegistration({
+    email,
+    registrationId: session.metadata?.registrationId,
+    stripeCustomerId:
+      typeof session.customer === "string"
+        ? session.customer
+        : session.customer?.id,
+    termsAcceptedAt: session.metadata?.termsAcceptedAt
+      ? new Date(session.metadata.termsAcceptedAt)
+      : undefined,
+  });
 }
 
 export type SyncableStatus = "active" | "past_due" | "canceled";

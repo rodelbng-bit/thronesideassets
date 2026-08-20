@@ -207,6 +207,8 @@ export const registrations = pgTable("registrations", {
   // see resolveSource() in JoinForm.tsx. Null for direct/organic visits
   // where nothing was captured.
   source: text("source"),
+  // Free-text, admin-only — never rendered on any client-facing page.
+  internalNotes: text("internal_notes"),
   interval: text("interval"), // "monthly" | "annual", set at plan_selected
   stripeCheckoutSessionId: text("stripe_checkout_session_id"),
   // Not a hard dependency for the funnel row's own lifecycle — set null on

@@ -9,7 +9,7 @@ import { approvalStatusToStage } from "@/lib/registrations";
 
 export async function PATCH(
   req: NextRequest,
-  { params }: { params: Promise<{ userId: string }> }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   const session = await auth();
   if (!session?.user) {
@@ -26,7 +26,11 @@ export async function PATCH(
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 
-  const { userId } = await params;
+  // This param is a userId (not a registration id, unlike its siblings
+  // under /api/admin/clients/[id]/...) — named `id` only because Next.js
+  // requires every dynamic segment at the same route level to share one
+  // slug name.
+  const { id: userId } = await params;
   const data = await req.json();
   const { status } = data;
 
