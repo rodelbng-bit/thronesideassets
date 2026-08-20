@@ -137,7 +137,16 @@ export default async function ClientsAdminPage({
                         {registration.interval
                           ? ` · ${registration.interval}`
                           : ""}
+                        {registration.source ? ` · via ${registration.source}` : ""}
                       </p>
+                      {isAbandoned && (
+                        <p className="mt-1 text-xs text-paper-dim">
+                          Abandoned since{" "}
+                          {new Date(registration.updatedAt).toLocaleString(
+                            "en-GB"
+                          )}
+                        </p>
+                      )}
                       {(registration.budget || registration.experienceLevel) && (
                         <p className="mt-1 text-xs text-paper-dim">
                           Screening: {registration.budget}

@@ -35,9 +35,33 @@ const EXPERIENCE_OPTIONS = [
   "10+ properties",
 ];
 
+// Best-effort — captures how this visitor reached /join so abandoned
+// registrations can be traced back to a campaign/channel. SSR-safe: on
+// the server there's no window, so it falls back to "" and gets the real
+// value once this runs again during client hydration.
+function resolveSource(): string {
+  if (typeof window === "undefined") return "";
+  const params = new URLSearchParams(window.location.search);
+  const utmSource = params.get("utm_source");
+  if (utmSource) {
+    return [utmSource, params.get("utm_medium"), params.get("utm_campaign")]
+      .filter(Boolean)
+      .join(" / ");
+  }
+  if (document.referrer) {
+    try {
+      return new URL(document.referrer).hostname;
+    } catch {
+      return document.referrer;
+    }
+  }
+  return "Direct";
+}
+
 export default function JoinForm() {
   const [step, setStep] = useState<Step>("details");
   const [registrationId, setRegistrationId] = useState<string | null>(null);
+  const [source] = useState(() => resolveSource());
 
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -65,7 +89,7 @@ export default function JoinForm() {
       const res = await fetch("/api/registrations", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, email, phone }),
+        body: JSON.stringify({ name, email, phone, source }),
       });
       const data = await res.json();
       if (!res.ok || !data.id) {

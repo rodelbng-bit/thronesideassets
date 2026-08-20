@@ -145,6 +145,10 @@ export default async function ClientProfilePage({
               label="Date/time registered"
               value={formatDate(registration.startedAt)}
             />
+            <Field
+              label="Source / referral"
+              value={registration.source ?? "Direct / Unknown"}
+            />
           </Section>
 
           <Section title="Screening Information">
@@ -204,7 +208,9 @@ export default async function ClientProfilePage({
             />
             <Field label="Registration status" value={registrationStatusText} />
             <Field
-              label="Last interaction"
+              label={
+                status === "abandoned" ? "Date/time abandoned" : "Last interaction"
+              }
               value={formatDate(registration.updatedAt)}
             />
             <div className="sm:col-span-2">

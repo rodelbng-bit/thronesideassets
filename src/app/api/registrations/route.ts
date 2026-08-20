@@ -8,7 +8,7 @@ import { registrations } from "@/lib/schema";
 // zero trace of the visit.
 export async function POST(req: NextRequest) {
   const data = await req.json().catch(() => ({}));
-  const { name, email, phone } = data;
+  const { name, email, phone, source } = data;
 
   if (
     typeof name !== "string" ||
@@ -30,6 +30,7 @@ export async function POST(req: NextRequest) {
       name: name.trim(),
       email: email.trim().toLowerCase(),
       phone: phone.trim(),
+      source: typeof source === "string" ? source.trim() || null : null,
     })
     .returning();
 

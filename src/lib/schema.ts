@@ -203,6 +203,10 @@ export const registrations = pgTable("registrations", {
   additionalInfo: text("additional_info"),
   companyName: text("company_name"), // optional — not every applicant has one
   hasGuarantor: boolean("has_guarantor"), // nullable until screening step completed
+  // Best-effort UTM/referrer capture at the moment the row is created —
+  // see resolveSource() in JoinForm.tsx. Null for direct/organic visits
+  // where nothing was captured.
+  source: text("source"),
   interval: text("interval"), // "monthly" | "annual", set at plan_selected
   stripeCheckoutSessionId: text("stripe_checkout_session_id"),
   // Not a hard dependency for the funnel row's own lifecycle — set null on
