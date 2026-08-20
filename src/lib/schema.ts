@@ -50,6 +50,10 @@ export const users = pgTable("users", {
   approvalStatus: approvalStatusEnum("approval_status")
     .notNull()
     .default("approved"),
+  // "Membership activation date" — stamped the moment an admin sets
+  // approvalStatus to 'approved'. Left untouched on reject/re-pending so a
+  // mistaken toggle doesn't erase the original activation history.
+  approvedAt: timestamp("approved_at", { withTimezone: true }),
   createdAt: timestamp("created_at", { withTimezone: true })
     .notNull()
     .defaultNow(),
@@ -197,6 +201,8 @@ export const registrations = pgTable("registrations", {
   preferredLocation: text("preferred_location"),
   experienceLevel: text("experience_level"),
   additionalInfo: text("additional_info"),
+  companyName: text("company_name"), // optional — not every applicant has one
+  hasGuarantor: boolean("has_guarantor"), // nullable until screening step completed
   interval: text("interval"), // "monthly" | "annual", set at plan_selected
   stripeCheckoutSessionId: text("stripe_checkout_session_id"),
   // Not a hard dependency for the funnel row's own lifecycle — set null on

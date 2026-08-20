@@ -36,7 +36,13 @@ export async function PATCH(
 
   const updated = await db
     .update(users)
-    .set({ approvalStatus: status })
+    .set({
+      approvalStatus: status,
+      // "Membership activation date" — only stamped on approval, left
+      // untouched on reject/re-pending so a mistaken toggle doesn't erase
+      // the original activation history.
+      ...(status === "approved" ? { approvedAt: new Date() } : {}),
+    })
     .where(eq(users.id, userId))
     .returning();
 
@@ -52,6 +58,7 @@ export async function PATCH(
     .where(eq(registrations.userId, userId));
 
   revalidatePath("/admin/clients");
+  revalidatePath("/admin/clients/[id]", "page");
 
   return NextResponse.json({ ok: true });
 }

@@ -43,10 +43,12 @@ export default function JoinForm() {
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
 
+  const [companyName, setCompanyName] = useState("");
   const [budget, setBudget] = useState("");
   const [goals, setGoals] = useState("");
   const [preferredLocation, setPreferredLocation] = useState("");
   const [experienceLevel, setExperienceLevel] = useState("");
+  const [hasGuarantor, setHasGuarantor] = useState<boolean | null>(null);
   const [additionalInfo, setAdditionalInfo] = useState("");
 
   const [interval, setInterval] = useState<Interval>("monthly");
@@ -81,7 +83,7 @@ export default function JoinForm() {
   }
 
   async function handleSubmitScreening() {
-    if (!registrationId) return;
+    if (!registrationId || hasGuarantor === null) return;
     setStatus("submitting");
     setErrorMessage("");
 
@@ -90,10 +92,12 @@ export default function JoinForm() {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
+          companyName,
           budget,
           goals,
           preferredLocation,
           experienceLevel,
+          hasGuarantor,
           additionalInfo,
         }),
       });
@@ -179,6 +183,13 @@ export default function JoinForm() {
     return (
       <div className="space-y-6">
         <div className="space-y-4">
+          <TextField
+            label="Company name"
+            value={companyName}
+            onChange={setCompanyName}
+            placeholder="Optional — if you invest through a company"
+            required={false}
+          />
           <SelectField
             label="Current budget"
             value={budget}
@@ -203,6 +214,30 @@ export default function JoinForm() {
             onChange={setExperienceLevel}
             options={EXPERIENCE_OPTIONS}
           />
+          <div>
+            <label className="mb-1.5 block text-sm text-paper-dim">
+              Do you have a guarantor?
+            </label>
+            <div className="grid grid-cols-2 gap-3">
+              {[
+                { label: "Yes", value: true },
+                { label: "No", value: false },
+              ].map((opt) => (
+                <button
+                  key={opt.label}
+                  type="button"
+                  onClick={() => setHasGuarantor(opt.value)}
+                  className={`rounded-lg border rule px-4 py-2.5 text-sm transition-colors ${
+                    hasGuarantor === opt.value
+                      ? "border-brass bg-ink-soft text-paper"
+                      : "text-paper-dim hover:border-paper-dim"
+                  }`}
+                >
+                  {opt.label}
+                </button>
+              ))}
+            </div>
+          </div>
           <TextAreaField
             label="Anything else we should know?"
             value={additionalInfo}
@@ -224,7 +259,8 @@ export default function JoinForm() {
             !budget.trim() ||
             !goals.trim() ||
             !preferredLocation.trim() ||
-            !experienceLevel.trim()
+            !experienceLevel.trim() ||
+            hasGuarantor === null
           }
           className="w-full rounded-full bg-brass px-6 py-3 text-sm font-medium text-ink transition-colors hover:bg-brass-bright disabled:opacity-60"
         >

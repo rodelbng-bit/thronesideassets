@@ -13,8 +13,15 @@ export async function PATCH(
 ) {
   const { id } = await params;
   const data = await req.json().catch(() => ({}));
-  const { budget, goals, preferredLocation, experienceLevel, additionalInfo } =
-    data;
+  const {
+    budget,
+    goals,
+    preferredLocation,
+    experienceLevel,
+    additionalInfo,
+    companyName,
+    hasGuarantor,
+  } = data;
 
   if (
     typeof budget !== "string" ||
@@ -24,7 +31,8 @@ export async function PATCH(
     typeof preferredLocation !== "string" ||
     !preferredLocation.trim() ||
     typeof experienceLevel !== "string" ||
-    !experienceLevel.trim()
+    !experienceLevel.trim() ||
+    typeof hasGuarantor !== "boolean"
   ) {
     return NextResponse.json(
       { error: "Missing or invalid fields." },
@@ -43,6 +51,9 @@ export async function PATCH(
         typeof additionalInfo === "string"
           ? additionalInfo.trim() || null
           : null,
+      companyName:
+        typeof companyName === "string" ? companyName.trim() || null : null,
+      hasGuarantor,
       stage: "screening_completed",
       screeningCompletedAt: new Date(),
       updatedAt: new Date(),
