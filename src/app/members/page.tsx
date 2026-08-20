@@ -101,8 +101,9 @@ export default async function MembersPage() {
             </h1>
             <p className="mt-4 text-paper-dim">
               Thanks for joining — our team is reviewing your application and
-              will be in touch shortly. You&apos;ll see this week&apos;s
-              deals here as soon as you&apos;re approved.
+              will confirm whether your membership is live within 12 hours.
+              You&apos;ll see this week&apos;s deals here as soon as
+              you&apos;re approved.
             </p>
           </>
         ) : isActive && approvalStatus === "rejected" ? (

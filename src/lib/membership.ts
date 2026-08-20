@@ -10,6 +10,8 @@ type EnsureResult = {
   email: string;
   /** Set only when the account has no password yet — drives the inline "set your password" step and the fallback email. */
   resetToken?: string;
+  /** Drives the /join/success confirmation copy — "pending" must never be presented as already-live. */
+  approvalStatus: ApprovalStatus;
 };
 
 /**
@@ -97,7 +99,12 @@ export async function ensureUserForRegistration(params: {
       .where(eq(registrations.id, registrationId));
   }
 
-  return { userId, email: normalizedEmail, resetToken };
+  return {
+    userId,
+    email: normalizedEmail,
+    resetToken,
+    approvalStatus: resolvedApprovalStatus,
+  };
 }
 
 /**

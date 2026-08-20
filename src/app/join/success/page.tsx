@@ -4,6 +4,7 @@ import SiteFooter from "@/components/SiteFooter";
 import SetPasswordForm from "@/components/SetPasswordForm";
 import { stripe } from "@/lib/stripe";
 import { ensureUserForCheckoutSession } from "@/lib/membership";
+import type { ApprovalStatus } from "@/lib/schema";
 
 const GENERIC_ERROR_MESSAGE =
   "We couldn't confirm your payment just now. If you've already paid, check your email for a link to finish setting up your account.";
@@ -26,13 +27,35 @@ async function resolveCheckout(sessionId: string | undefined) {
           "This checkout session hasn't completed yet. If you've already paid, check your email for a link to finish setting up your account.",
       };
     }
-    const { email, resetToken } = await ensureUserForCheckoutSession(session);
-    return { ok: true as const, email, resetToken };
+    const { email, resetToken, approvalStatus } =
+      await ensureUserForCheckoutSession(session);
+    return { ok: true as const, email, resetToken, approvalStatus };
   } catch (err) {
     console.error(err);
     return { ok: false as const, message: GENERIC_ERROR_MESSAGE };
   }
 }
+
+const copyByApprovalStatus: Record<
+  ApprovalStatus,
+  { eyebrow: string; heading: string; body: string }
+> = {
+  pending: {
+    eyebrow: "APPLICATION SUBMITTED",
+    heading: "Application submitted.",
+    body: "Thanks for applying to Throneside Assets — your payment has gone through and your application has been received. A member of our team will review your account and confirm whether your membership is live within 12 hours.",
+  },
+  approved: {
+    eyebrow: "PAYMENT CONFIRMED",
+    heading: "You're all set.",
+    body: "Your membership is active.",
+  },
+  rejected: {
+    eyebrow: "PAYMENT RECEIVED",
+    heading: "Thanks for your payment.",
+    body: "Please get in touch with our team regarding your account status.",
+  },
+};
 
 export default async function JoinSuccessPage({
   searchParams,
@@ -46,26 +69,40 @@ export default async function JoinSuccessPage({
     return <ErrorShell message={result.message} />;
   }
 
-  const { email, resetToken } = result;
+  const { email, resetToken, approvalStatus } = result;
+  const copy = copyByApprovalStatus[approvalStatus];
 
   return (
     <>
       <SiteHeader />
       <main className="mx-auto max-w-lg px-6 py-20">
         <p className="ledger-figure text-sm text-brass-bright">
-          PAYMENT CONFIRMED
+          {copy.eyebrow}
         </p>
         <h1 className="mt-3 font-display text-4xl tracking-tight text-paper md:text-5xl">
-          {resetToken ? "Set your password." : "You're all set."}
+          {resetToken && approvalStatus !== "rejected"
+            ? "Set your password."
+            : copy.heading}
         </h1>
         <p className="mt-4 text-paper-dim">
-          {resetToken
-            ? `One last step for ${email} — choose a password to access your account.`
-            : `Your membership is active. Log in with your existing account for ${email}.`}
+          {approvalStatus === "rejected"
+            ? copy.body
+            : `${copy.body} ${
+                resetToken
+                  ? "First, choose a password to access your account."
+                  : `Log in with your existing account for ${email}.`
+              }`}
         </p>
 
         <div className="mt-10">
-          {resetToken ? (
+          {approvalStatus === "rejected" ? (
+            <Link
+              href="/contact"
+              className="inline-block rounded-full bg-brass px-6 py-3 text-sm font-medium text-ink transition-colors hover:bg-brass-bright"
+            >
+              Contact us
+            </Link>
+          ) : resetToken ? (
             <SetPasswordForm token={resetToken} />
           ) : (
             <Link
