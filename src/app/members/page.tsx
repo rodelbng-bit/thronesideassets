@@ -23,14 +23,16 @@ export default async function MembersPage() {
     .limit(1);
 
   const isActive = user?.subscriptionStatus === "active";
+  const approvalStatus = user?.approvalStatus ?? "approved";
+  const showDeals = isActive && approvalStatus === "approved";
 
-  if (isActive) {
+  if (showDeals) {
     await releaseExpiredReservations();
   }
 
   const [deals, reservations] = await Promise.all([
-    isActive ? getDeals() : Promise.resolve([]),
-    isActive ? db.select().from(dealReservations) : Promise.resolve([]),
+    showDeals ? getDeals() : Promise.resolve([]),
+    showDeals ? db.select().from(dealReservations) : Promise.resolve([]),
   ]);
   const reservationByDealId = new Map(
     reservations.map((r) => [r.dealId, r])
@@ -54,7 +56,7 @@ export default async function MembersPage() {
           <SignOutButton />
         </div>
 
-        {isActive ? (
+        {showDeals ? (
           <>
             <h1 className="mt-3 font-display text-4xl tracking-tight text-paper md:text-5xl">
               This week&apos;s deals.
@@ -91,6 +93,33 @@ export default async function MembersPage() {
                 );
               })}
             </div>
+          </>
+        ) : isActive && approvalStatus === "pending" ? (
+          <>
+            <h1 className="mt-3 font-display text-4xl tracking-tight text-paper md:text-5xl">
+              Your application is under review.
+            </h1>
+            <p className="mt-4 text-paper-dim">
+              Thanks for joining — our team is reviewing your application and
+              will be in touch shortly. You&apos;ll see this week&apos;s
+              deals here as soon as you&apos;re approved.
+            </p>
+          </>
+        ) : isActive && approvalStatus === "rejected" ? (
+          <>
+            <h1 className="mt-3 font-display text-4xl tracking-tight text-paper md:text-5xl">
+              We couldn&apos;t approve this application.
+            </h1>
+            <p className="mt-4 text-paper-dim">
+              Get in touch with our team if you&apos;d like to discuss this
+              further.
+            </p>
+            <Link
+              href="/contact"
+              className="mt-8 inline-block rounded-full bg-brass px-6 py-3 text-sm font-medium text-ink transition-colors hover:bg-brass-bright"
+            >
+              Contact us
+            </Link>
           </>
         ) : (
           <>

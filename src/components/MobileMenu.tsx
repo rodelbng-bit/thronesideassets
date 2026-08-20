@@ -50,6 +50,9 @@ export default function MobileMenu({
                 <Link href="/admin/viewing-requests" onClick={close} className={rowClass}>
                   Viewings
                 </Link>
+                <Link href="/admin/clients" onClick={close} className={rowClass}>
+                  Clients
+                </Link>
               </>
             )}
 

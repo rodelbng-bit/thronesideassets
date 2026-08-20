@@ -21,6 +21,12 @@ export const dealStatusEnum = pgEnum("deal_status", [
   "unavailable",
 ]);
 
+export const approvalStatusEnum = pgEnum("approval_status", [
+  "pending",
+  "approved",
+  "rejected",
+]);
+
 export const users = pgTable("users", {
   id: uuid("id").primaryKey().defaultRandom(),
   email: text("email").notNull().unique(),
@@ -35,6 +41,13 @@ export const users = pgTable("users", {
   // the auditable record that this account agreed to the fixed 12-month
   // term (checkbox in JoinForm) before paying.
   termsAcceptedAt: timestamp("terms_accepted_at", { withTimezone: true }),
+  // Defaults to 'approved' so adding this column to a live table never
+  // retroactively locks out an existing/renewing member — only the
+  // brand-new-signup branch of ensureUserForCheckoutSession ever writes
+  // 'pending' explicitly.
+  approvalStatus: approvalStatusEnum("approval_status")
+    .notNull()
+    .default("approved"),
   createdAt: timestamp("created_at", { withTimezone: true })
     .notNull()
     .defaultNow(),
@@ -146,3 +159,33 @@ export const viewingRequests = pgTable("viewing_requests", {
 });
 
 export type ViewingRequest = typeof viewingRequests.$inferSelect;
+
+export const registrationStageEnum = pgEnum("registration_stage", [
+  "started", // step 1 (name/email/phone) submitted
+  "checkout_started", // Stripe Checkout Session created
+  "paid", // checkout.session.completed processed
+]);
+
+// One row per funnel attempt on /join — insert-only, same convention as
+// callScreenerResponses/viewingRequests. A retry gets a fresh row rather
+// than overwriting the prior attempt, so drop-off history stays visible to
+// the admin client-management dashboard.
+export const registrations = pgTable("registrations", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  name: text("name").notNull(),
+  email: text("email").notNull(),
+  phone: text("phone").notNull(),
+  stage: registrationStageEnum("stage").notNull().default("started"),
+  interval: text("interval"), // "monthly" | "annual", set at checkout_started
+  stripeCheckoutSessionId: text("stripe_checkout_session_id"),
+  // Not a hard dependency for the funnel row's own lifecycle — set null on
+  // user delete rather than cascading the registration away.
+  userId: uuid("user_id").references(() => users.id, { onDelete: "set null" }),
+  startedAt: timestamp("started_at", { withTimezone: true })
+    .notNull()
+    .defaultNow(),
+  checkoutStartedAt: timestamp("checkout_started_at", { withTimezone: true }),
+  paidAt: timestamp("paid_at", { withTimezone: true }),
+});
+
+export type Registration = typeof registrations.$inferSelect;

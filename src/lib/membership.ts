@@ -1,7 +1,7 @@
 import { eq } from "drizzle-orm";
 import type Stripe from "stripe";
 import { db } from "./db";
-import { users } from "./schema";
+import { users, registrations } from "./schema";
 import { createPasswordResetToken } from "./tokens";
 
 type EnsureResult = {
@@ -62,6 +62,11 @@ export async function ensureUserForCheckoutSession(
         subscriptionStatus: "active",
         subscriptionPlan: "essential",
         termsAcceptedAt,
+        // New signups are held for manual admin review in /admin/clients —
+        // the `users.approvalStatus` DB default is 'approved' (so existing/
+        // renewing accounts are never touched), this is the one place that
+        // explicitly opts a brand-new account into the pending queue.
+        approvalStatus: "pending",
       })
       .returning();
     userId = created.id;
@@ -71,6 +76,16 @@ export async function ensureUserForCheckoutSession(
   const resetToken = needsPassword
     ? await createPasswordResetToken(userId)
     : undefined;
+
+  const registrationId = session.metadata?.registrationId;
+  if (registrationId) {
+    // Same whichever-fires-first idempotency as the rest of this function —
+    // called from both the Stripe webhook and /join/success's fallback.
+    await db
+      .update(registrations)
+      .set({ stage: "paid", paidAt: new Date(), userId })
+      .where(eq(registrations.id, registrationId));
+  }
 
   return { userId, email: normalizedEmail, resetToken };
 }
