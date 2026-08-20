@@ -5,16 +5,28 @@ import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
 import SignOutButton from "@/components/SignOutButton";
 import DealSummaryCard from "@/components/DealSummaryCard";
+import DealsFilterBar from "@/components/DealsFilterBar";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { users, dealReservations } from "@/lib/schema";
 import { getDeals, releaseExpiredReservations } from "@/lib/deals";
 
-export default async function MembersPage() {
+export default async function MembersPage({
+  searchParams,
+}: {
+  searchParams: Promise<{
+    sort?: string;
+    location?: string;
+    minBudget?: string;
+    maxBudget?: string;
+  }>;
+}) {
   const session = await auth();
   if (!session?.user) {
     redirect("/login");
   }
+
+  const { sort, location, minBudget, maxBudget } = await searchParams;
 
   const [user] = await db
     .select()
@@ -47,6 +59,32 @@ export default async function MembersPage() {
   const hasActiveReservationElsewhere =
     !!myReservedDeal && myReservedDeal.status === "available";
 
+  const locations = Array.from(new Set(deals.map((d) => d.location))).sort();
+  const minBudgetValue = minBudget ? Number(minBudget) : undefined;
+  const maxBudgetValue = maxBudget ? Number(maxBudget) : undefined;
+
+  let filteredDeals = deals.filter((deal) => {
+    if (location && deal.location !== location) return false;
+    if (
+      minBudgetValue !== undefined &&
+      !Number.isNaN(minBudgetValue) &&
+      deal.ratePerNight < minBudgetValue
+    )
+      return false;
+    if (
+      maxBudgetValue !== undefined &&
+      !Number.isNaN(maxBudgetValue) &&
+      deal.ratePerNight > maxBudgetValue
+    )
+      return false;
+    return true;
+  });
+
+  // getDeals() already orders hottest (newest) first — reverse for oldest first.
+  if (sort === "old") {
+    filteredDeals = [...filteredDeals].reverse();
+  }
+
   return (
     <>
       <SiteHeader />
@@ -66,33 +104,43 @@ export default async function MembersPage() {
               table for other members.
             </p>
 
-            <div className="mt-10 space-y-8">
-              {deals.map((deal) => {
-                const reservation = reservationByDealId.get(deal.id);
-                const reserveState =
-                  deal.status === "unavailable"
-                    ? "unavailable"
-                    : !reservation
-                      ? "available"
-                      : reservation.userId === session.user.id
-                        ? "reserved-by-me"
-                        : "reserved-by-other";
-
-                return (
-                  <DealSummaryCard
-                    key={deal.id}
-                    deal={deal}
-                    reserveState={reserveState}
-                    reservationLimitReached={hasActiveReservationElsewhere}
-                    reservationExpiresAt={
-                      reserveState === "reserved-by-me"
-                        ? reservation?.expiresAt
-                        : undefined
-                    }
-                  />
-                );
-              })}
+            <div className="mt-10">
+              <DealsFilterBar locations={locations} />
             </div>
+
+            {filteredDeals.length === 0 ? (
+              <div className="mt-6 rounded-lg border rule bg-ink-soft p-6 text-sm text-paper-dim">
+                No deals match these filters.
+              </div>
+            ) : (
+              <div className="mt-6 space-y-8">
+                {filteredDeals.map((deal) => {
+                  const reservation = reservationByDealId.get(deal.id);
+                  const reserveState =
+                    deal.status === "unavailable"
+                      ? "unavailable"
+                      : !reservation
+                        ? "available"
+                        : reservation.userId === session.user.id
+                          ? "reserved-by-me"
+                          : "reserved-by-other";
+
+                  return (
+                    <DealSummaryCard
+                      key={deal.id}
+                      deal={deal}
+                      reserveState={reserveState}
+                      reservationLimitReached={hasActiveReservationElsewhere}
+                      reservationExpiresAt={
+                        reserveState === "reserved-by-me"
+                          ? reservation?.expiresAt
+                          : undefined
+                      }
+                    />
+                  );
+                })}
+              </div>
+            )}
           </>
         ) : isActive && approvalStatus === "pending" ? (
           <>
