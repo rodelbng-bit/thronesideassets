@@ -106,12 +106,26 @@ export default async function ClientProfilePage({
         ? "Active Member"
         : "Rejected";
 
+  // The full journey in one place — Registered through Approved/Rejected —
+  // rather than splitting payment/review/approval across separate
+  // sections. Review begins the instant payment completes (this codebase
+  // classifies pending/approved/rejected synchronously with payment), so
+  // "Under Review" reuses paidAt rather than a separate timestamp.
   const timeline: { label: string; at: Date | string | null }[] = [
     { label: "Contact Details Completed", at: registration.startedAt },
     { label: "Screening Completed", at: registration.screeningCompletedAt },
     { label: "Plan Selected", at: registration.planSelectedAt },
     { label: "Payment Started", at: registration.checkoutStartedAt },
     { label: "Payment Completed", at: registration.paidAt },
+    { label: "Under Review", at: user ? registration.paidAt : null },
+    {
+      label: "Approved",
+      at: user?.approvalStatus === "approved" ? user.approvedAt : null,
+    },
+    {
+      label: "Rejected",
+      at: user?.approvalStatus === "rejected" ? registration.updatedAt : null,
+    },
   ].filter((step) => step.at);
 
   const contractEndDate =
