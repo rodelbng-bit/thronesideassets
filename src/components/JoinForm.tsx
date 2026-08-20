@@ -3,7 +3,7 @@
 import { useState } from "react";
 
 type Interval = "monthly" | "annual";
-type Step = "details" | "billing";
+type Step = "details" | "screening" | "billing";
 type Status = "idle" | "submitting" | "error";
 
 const options: { value: Interval; label: string; note: string }[] = [
@@ -19,6 +19,22 @@ const options: { value: Interval; label: string; note: string }[] = [
   },
 ];
 
+const BUDGET_OPTIONS = [
+  "Under £50k",
+  "£50k–£100k",
+  "£100k–£250k",
+  "£250k–£500k",
+  "£500k+",
+  "Not sure yet",
+];
+
+const EXPERIENCE_OPTIONS = [
+  "First-time investor",
+  "1–3 properties",
+  "4–10 properties",
+  "10+ properties",
+];
+
 export default function JoinForm() {
   const [step, setStep] = useState<Step>("details");
   const [registrationId, setRegistrationId] = useState<string | null>(null);
@@ -26,6 +42,12 @@ export default function JoinForm() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
+
+  const [budget, setBudget] = useState("");
+  const [goals, setGoals] = useState("");
+  const [preferredLocation, setPreferredLocation] = useState("");
+  const [experienceLevel, setExperienceLevel] = useState("");
+  const [additionalInfo, setAdditionalInfo] = useState("");
 
   const [interval, setInterval] = useState<Interval>("monthly");
   const [agreedToTerms, setAgreedToTerms] = useState(false);
@@ -48,6 +70,37 @@ export default function JoinForm() {
         throw new Error(data.error ?? "Could not save your details.");
       }
       setRegistrationId(data.id);
+      setStep("screening");
+      setStatus("idle");
+    } catch (err) {
+      setStatus("error");
+      setErrorMessage(
+        err instanceof Error ? err.message : "Something went wrong."
+      );
+    }
+  }
+
+  async function handleSubmitScreening() {
+    if (!registrationId) return;
+    setStatus("submitting");
+    setErrorMessage("");
+
+    try {
+      const res = await fetch(`/api/registrations/${registrationId}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          budget,
+          goals,
+          preferredLocation,
+          experienceLevel,
+          additionalInfo,
+        }),
+      });
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data.error ?? "Could not save your answers.");
+      }
       setStep("billing");
       setStatus("idle");
     } catch (err) {
@@ -86,42 +139,19 @@ export default function JoinForm() {
     return (
       <div className="space-y-6">
         <div className="space-y-4">
-          <div>
-            <label className="mb-1.5 block text-sm text-paper-dim">
-              Full name
-            </label>
-            <input
-              type="text"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              required
-              className="w-full rounded-lg border rule bg-ink-soft px-4 py-2.5 text-paper outline-none focus:border-brass"
-            />
-          </div>
-          <div>
-            <label className="mb-1.5 block text-sm text-paper-dim">
-              Email
-            </label>
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-              className="w-full rounded-lg border rule bg-ink-soft px-4 py-2.5 text-paper outline-none focus:border-brass"
-            />
-          </div>
-          <div>
-            <label className="mb-1.5 block text-sm text-paper-dim">
-              Phone
-            </label>
-            <input
-              type="tel"
-              value={phone}
-              onChange={(e) => setPhone(e.target.value)}
-              required
-              className="w-full rounded-lg border rule bg-ink-soft px-4 py-2.5 text-paper outline-none focus:border-brass"
-            />
-          </div>
+          <TextField label="Full name" value={name} onChange={setName} />
+          <TextField
+            label="Email"
+            type="email"
+            value={email}
+            onChange={setEmail}
+          />
+          <TextField
+            label="Phone"
+            type="tel"
+            value={phone}
+            onChange={setPhone}
+          />
         </div>
 
         {status === "error" && (
@@ -136,6 +166,65 @@ export default function JoinForm() {
             !name.trim() ||
             !email.trim() ||
             !phone.trim()
+          }
+          className="w-full rounded-full bg-brass px-6 py-3 text-sm font-medium text-ink transition-colors hover:bg-brass-bright disabled:opacity-60"
+        >
+          {status === "submitting" ? "Saving…" : "Continue"}
+        </button>
+      </div>
+    );
+  }
+
+  if (step === "screening") {
+    return (
+      <div className="space-y-6">
+        <div className="space-y-4">
+          <SelectField
+            label="Current budget"
+            value={budget}
+            onChange={setBudget}
+            options={BUDGET_OPTIONS}
+          />
+          <TextAreaField
+            label="Property / investment goals"
+            value={goals}
+            onChange={setGoals}
+            placeholder="What are you looking to achieve — cashflow, portfolio growth, a first buy-to-let?"
+          />
+          <TextField
+            label="Preferred location(s)"
+            value={preferredLocation}
+            onChange={setPreferredLocation}
+            placeholder="e.g. Manchester, North West England, open to anywhere"
+          />
+          <SelectField
+            label="Experience level"
+            value={experienceLevel}
+            onChange={setExperienceLevel}
+            options={EXPERIENCE_OPTIONS}
+          />
+          <TextAreaField
+            label="Anything else we should know?"
+            value={additionalInfo}
+            onChange={setAdditionalInfo}
+            placeholder="Optional"
+            required={false}
+          />
+        </div>
+
+        {status === "error" && (
+          <p className="text-sm text-red-400">{errorMessage}</p>
+        )}
+
+        <button
+          type="button"
+          onClick={handleSubmitScreening}
+          disabled={
+            status === "submitting" ||
+            !budget.trim() ||
+            !goals.trim() ||
+            !preferredLocation.trim() ||
+            !experienceLevel.trim()
           }
           className="w-full rounded-full bg-brass px-6 py-3 text-sm font-medium text-ink transition-colors hover:bg-brass-bright disabled:opacity-60"
         >
@@ -195,6 +284,97 @@ export default function JoinForm() {
       >
         {status === "submitting" ? "Redirecting…" : "Continue to payment"}
       </button>
+    </div>
+  );
+}
+
+function TextField({
+  label,
+  value,
+  onChange,
+  type = "text",
+  placeholder,
+  required = true,
+}: {
+  label: string;
+  value: string;
+  onChange: (value: string) => void;
+  type?: string;
+  placeholder?: string;
+  required?: boolean;
+}) {
+  return (
+    <div>
+      <label className="mb-1.5 block text-sm text-paper-dim">{label}</label>
+      <input
+        type={type}
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        placeholder={placeholder}
+        required={required}
+        className="w-full rounded-lg border rule bg-ink-soft px-4 py-2.5 text-paper outline-none focus:border-brass"
+      />
+    </div>
+  );
+}
+
+function TextAreaField({
+  label,
+  value,
+  onChange,
+  placeholder,
+  required = true,
+}: {
+  label: string;
+  value: string;
+  onChange: (value: string) => void;
+  placeholder?: string;
+  required?: boolean;
+}) {
+  return (
+    <div>
+      <label className="mb-1.5 block text-sm text-paper-dim">{label}</label>
+      <textarea
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        placeholder={placeholder}
+        required={required}
+        rows={3}
+        className="w-full rounded-lg border rule bg-ink-soft px-4 py-2.5 text-paper outline-none focus:border-brass"
+      />
+    </div>
+  );
+}
+
+function SelectField({
+  label,
+  value,
+  onChange,
+  options,
+}: {
+  label: string;
+  value: string;
+  onChange: (value: string) => void;
+  options: string[];
+}) {
+  return (
+    <div>
+      <label className="mb-1.5 block text-sm text-paper-dim">{label}</label>
+      <select
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        required
+        className="w-full rounded-lg border rule bg-ink-soft px-4 py-2.5 text-paper outline-none focus:border-brass"
+      >
+        <option value="" disabled>
+          Select…
+        </option>
+        {options.map((option) => (
+          <option key={option} value={option}>
+            {option}
+          </option>
+        ))}
+      </select>
     </div>
   );
 }

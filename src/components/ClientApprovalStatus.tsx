@@ -13,7 +13,7 @@ const badgeClass: Record<Status, string> = {
 };
 
 const label: Record<Status, string> = {
-  pending: "Pending",
+  pending: "Under Review",
   approved: "Approved",
   rejected: "Rejected",
 };

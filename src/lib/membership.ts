@@ -1,8 +1,9 @@
 import { eq } from "drizzle-orm";
 import type Stripe from "stripe";
 import { db } from "./db";
-import { users, registrations } from "./schema";
+import { users, registrations, type ApprovalStatus } from "./schema";
 import { createPasswordResetToken } from "./tokens";
+import { approvalStatusToStage } from "./registrations";
 
 type EnsureResult = {
   userId: string;
@@ -40,6 +41,7 @@ export async function ensureUserForCheckoutSession(
 
   let userId: string;
   let needsPassword: boolean;
+  let resolvedApprovalStatus: ApprovalStatus;
 
   if (existing) {
     await db
@@ -53,6 +55,9 @@ export async function ensureUserForCheckoutSession(
       .where(eq(users.id, existing.id));
     userId = existing.id;
     needsPassword = !existing.passwordHash;
+    // approvalStatus isn't touched by the update above, so the row already
+    // fetched still reflects the current value.
+    resolvedApprovalStatus = existing.approvalStatus;
   } else {
     const [created] = await db
       .insert(users)
@@ -71,6 +76,7 @@ export async function ensureUserForCheckoutSession(
       .returning();
     userId = created.id;
     needsPassword = true;
+    resolvedApprovalStatus = created.approvalStatus;
   }
 
   const resetToken = needsPassword
@@ -81,9 +87,19 @@ export async function ensureUserForCheckoutSession(
   if (registrationId) {
     // Same whichever-fires-first idempotency as the rest of this function —
     // called from both the Stripe webhook and /join/success's fallback.
+    // Jumps straight to under_review/approved/rejected rather than resting
+    // on a "payment completed" stage — this function classifies the
+    // account in the same synchronous call, so there's no real window
+    // where payment is done but review status is unknown. `paidAt` still
+    // records that payment completed.
     await db
       .update(registrations)
-      .set({ stage: "paid", paidAt: new Date(), userId })
+      .set({
+        stage: approvalStatusToStage(resolvedApprovalStatus),
+        paidAt: new Date(),
+        userId,
+        updatedAt: new Date(),
+      })
       .where(eq(registrations.id, registrationId));
   }
 

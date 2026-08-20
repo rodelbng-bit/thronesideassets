@@ -27,6 +27,8 @@ export const approvalStatusEnum = pgEnum("approval_status", [
   "rejected",
 ]);
 
+export type ApprovalStatus = (typeof approvalStatusEnum.enumValues)[number];
+
 export const users = pgTable("users", {
   id: uuid("id").primaryKey().defaultRandom(),
   email: text("email").notNull().unique(),
@@ -161,9 +163,19 @@ export const viewingRequests = pgTable("viewing_requests", {
 export type ViewingRequest = typeof viewingRequests.$inferSelect;
 
 export const registrationStageEnum = pgEnum("registration_stage", [
-  "started", // step 1 (name/email/phone) submitted
-  "checkout_started", // Stripe Checkout Session created
-  "paid", // checkout.session.completed processed
+  // legacy — no longer written by new code, kept because Postgres enums
+  // can't drop values without recreating the type
+  "started",
+  "checkout_started",
+  "paid",
+  // current funnel — one status per prospect, shown in /admin/clients
+  "contact_details_completed", // row created — same moment as "New Registration"
+  "screening_completed",
+  "plan_selected",
+  "payment_started", // Stripe Checkout Session created
+  "under_review", // paid, new account pending admin approval
+  "approved", // admin-approved, has /members access
+  "rejected", // admin-rejected
 ]);
 
 // One row per funnel attempt on /join — insert-only, same convention as
@@ -175,8 +187,17 @@ export const registrations = pgTable("registrations", {
   name: text("name").notNull(),
   email: text("email").notNull(),
   phone: text("phone").notNull(),
-  stage: registrationStageEnum("stage").notNull().default("started"),
-  interval: text("interval"), // "monthly" | "annual", set at checkout_started
+  stage: registrationStageEnum("stage")
+    .notNull()
+    .default("contact_details_completed"),
+  // Screening answers — same question set as the separate pre-call
+  // screener (src/lib/callScreener.ts), captured on /join itself instead.
+  budget: text("budget"),
+  goals: text("goals"),
+  preferredLocation: text("preferred_location"),
+  experienceLevel: text("experience_level"),
+  additionalInfo: text("additional_info"),
+  interval: text("interval"), // "monthly" | "annual", set at plan_selected
   stripeCheckoutSessionId: text("stripe_checkout_session_id"),
   // Not a hard dependency for the funnel row's own lifecycle — set null on
   // user delete rather than cascading the registration away.
@@ -184,8 +205,18 @@ export const registrations = pgTable("registrations", {
   startedAt: timestamp("started_at", { withTimezone: true })
     .notNull()
     .defaultNow(),
+  screeningCompletedAt: timestamp("screening_completed_at", {
+    withTimezone: true,
+  }),
+  planSelectedAt: timestamp("plan_selected_at", { withTimezone: true }),
   checkoutStartedAt: timestamp("checkout_started_at", { withTimezone: true }),
   paidAt: timestamp("paid_at", { withTimezone: true }),
+  // Bumped on every write to this row — drives the "abandoned" age
+  // calculation in /admin/clients (no stored "abandoned" status, just a
+  // stale-for-N-days computed label).
+  updatedAt: timestamp("updated_at", { withTimezone: true })
+    .notNull()
+    .defaultNow(),
 });
 
 export type Registration = typeof registrations.$inferSelect;

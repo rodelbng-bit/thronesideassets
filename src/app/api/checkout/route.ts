@@ -39,6 +39,22 @@ export async function POST(req: NextRequest) {
     );
   }
 
+  // Recorded before the Stripe call — a prospect who picks a plan and
+  // agrees to terms is captured even if the Stripe request itself fails.
+  try {
+    await db
+      .update(registrations)
+      .set({
+        stage: "plan_selected",
+        interval,
+        planSelectedAt: new Date(),
+        updatedAt: new Date(),
+      })
+      .where(eq(registrations.id, registration.id));
+  } catch (err) {
+    console.error("Failed to mark registration plan_selected", err);
+  }
+
   try {
     const session = await createEssentialCheckoutSession(
       interval,
@@ -54,16 +70,16 @@ export async function POST(req: NextRequest) {
       await db
         .update(registrations)
         .set({
-          stage: "checkout_started",
-          interval,
+          stage: "payment_started",
           stripeCheckoutSessionId: session.id,
           checkoutStartedAt: new Date(),
+          updatedAt: new Date(),
         })
         .where(eq(registrations.id, registration.id));
     } catch (err) {
       // Best-effort — never block a redirect that already has a live
       // Stripe session behind it over a funnel-tracking write failing.
-      console.error("Failed to mark registration checkout_started", err);
+      console.error("Failed to mark registration payment_started", err);
     }
 
     return NextResponse.json({ url: session.url });

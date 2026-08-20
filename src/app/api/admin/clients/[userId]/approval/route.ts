@@ -3,8 +3,9 @@ import { eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
-import { users } from "@/lib/schema";
+import { users, registrations } from "@/lib/schema";
 import { isAdminEmail } from "@/lib/admin";
+import { approvalStatusToStage } from "@/lib/registrations";
 
 export async function PATCH(
   req: NextRequest,
@@ -42,6 +43,13 @@ export async function PATCH(
   if (updated.length === 0) {
     return NextResponse.json({ error: "Client not found" }, { status: 404 });
   }
+
+  // A prospect can have more than one /join attempt over time — sync every
+  // registration row linked to this account, not just the most recent one.
+  await db
+    .update(registrations)
+    .set({ stage: approvalStatusToStage(status), updatedAt: new Date() })
+    .where(eq(registrations.userId, userId));
 
   revalidatePath("/admin/clients");
 
