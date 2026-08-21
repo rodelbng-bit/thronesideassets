@@ -3,7 +3,7 @@ import { db } from "@/lib/db";
 import { registrations } from "@/lib/schema";
 
 // Fires the moment someone submits step 1 of /join (name/email/phone),
-// before they've chosen a plan or reached Stripe — this is what makes a
+// before they've chosen a plan or reached GoCardless — this is what makes a
 // true pre-payment drop-off visible in /admin/clients instead of leaving
 // zero trace of the visit.
 export async function POST(req: NextRequest) {

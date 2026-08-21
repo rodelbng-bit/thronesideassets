@@ -11,12 +11,14 @@ Assets, a UK property-deal-sourcing membership business. See
 - **Membership billing + login now live in this repo** (moved off GHL):
   Postgres via Drizzle (`src/lib/db.ts`, `src/lib/schema.ts`), Auth.js
   Credentials-based sessions (`src/lib/auth.ts`, `src/lib/auth.config.ts`,
-  `middleware.ts` gates `/members/*`), Stripe Checkout + webhook
-  (`src/lib/stripe.ts`, `src/app/api/checkout`,
-  `src/app/api/webhooks/stripe`) for the Essential plan, and Resend for
-  password-reset/invite email (`src/lib/mailer.ts`). New members sign up
-  at `/join` → pay → set a password → land on `/members`. See
-  `.env.example` for the full list of required env vars.
+  `middleware.ts` gates `/members/*`), GoCardless Billing Requests +
+  webhook (`src/lib/gocardless.ts`, `src/app/api/checkout`,
+  `src/app/api/webhooks/gocardless`) for the Essential plan's Direct
+  Debit mandate + subscription, and Resend for password-reset/invite
+  email (`src/lib/mailer.ts`). New members sign up at `/join` → set up a
+  Direct Debit mandate via GoCardless's hosted flow → set a password →
+  land on `/members`. See `.env.example` for the full list of required
+  env vars.
 - **Deal listings** live in the `deals` table (`src/lib/deals.ts`,
   `getDeals`/`getDeal`), with photos hosted on Vercel Blob. Admins (see
   `ADMIN_EMAILS`, `src/lib/admin.ts`) add new listings at
@@ -59,9 +61,9 @@ npm run lint      # eslint
   testimonials) — flag what's missing and ask, rather than publishing
   placeholder content as if it were real.
 - Billing/auth is now real, user-facing infrastructure (Postgres +
-  Stripe + email) — treat schema changes, webhook logic, and password/
-  token handling with the same care as production financial code, not
-  as marketing-site copy edits.
+  GoCardless + email) — treat schema changes, webhook logic, and
+  password/token handling with the same care as production financial
+  code, not as marketing-site copy edits.
 - Keep GHL as the source of truth for CRM/pipelines/workflows only.
 
 <!-- BEGIN:nextjs-agent-rules -->

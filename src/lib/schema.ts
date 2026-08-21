@@ -34,7 +34,8 @@ export const users = pgTable("users", {
   email: text("email").notNull().unique(),
   name: text("name"),
   passwordHash: text("password_hash"),
-  stripeCustomerId: text("stripe_customer_id"),
+  gocardlessCustomerId: text("gocardless_customer_id"),
+  gocardlessMandateId: text("gocardless_mandate_id"),
   subscriptionStatus: subscriptionStatusEnum("subscription_status")
     .notNull()
     .default("none"),
@@ -45,7 +46,7 @@ export const users = pgTable("users", {
   termsAcceptedAt: timestamp("terms_accepted_at", { withTimezone: true }),
   // Defaults to 'approved' so adding this column to a live table never
   // retroactively locks out an existing/renewing member — only the
-  // brand-new-signup branch of ensureUserForCheckoutSession ever writes
+  // brand-new-signup branch of ensureUserForBillingRequest ever writes
   // 'pending' explicitly.
   approvalStatus: approvalStatusEnum("approval_status")
     .notNull()
@@ -176,7 +177,7 @@ export const registrationStageEnum = pgEnum("registration_stage", [
   "contact_details_completed", // row created — same moment as "New Registration"
   "screening_completed",
   "plan_selected",
-  "payment_started", // Stripe Checkout Session created
+  "payment_started", // GoCardless Billing Request created
   "under_review", // paid, new account pending admin approval
   "approved", // admin-approved, has /members access
   "rejected", // admin-rejected
@@ -210,7 +211,7 @@ export const registrations = pgTable("registrations", {
   // Free-text, admin-only — never rendered on any client-facing page.
   internalNotes: text("internal_notes"),
   interval: text("interval"), // "monthly" | "annual", set at plan_selected
-  stripeCheckoutSessionId: text("stripe_checkout_session_id"),
+  gocardlessBillingRequestId: text("gocardless_billing_request_id"),
   // Not a hard dependency for the funnel row's own lifecycle — set null on
   // user delete rather than cascading the registration away.
   userId: uuid("user_id").references(() => users.id, { onDelete: "set null" }),

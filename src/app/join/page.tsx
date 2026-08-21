@@ -12,8 +12,9 @@ export default function JoinPage() {
           Join in a couple of minutes.
         </h1>
         <p className="mt-4 text-paper-dim">
-          Choose how you&apos;d like to be billed, then complete payment
-          securely with Stripe. You&apos;ll set your password right after.
+          Choose how you&apos;d like to be billed, then set up a secure
+          Direct Debit with GoCardless. You&apos;ll set your password right
+          after.
         </p>
 
         <div className="mt-10">

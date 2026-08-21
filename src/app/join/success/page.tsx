@@ -2,15 +2,15 @@ import Link from "next/link";
 import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
 import SetPasswordForm from "@/components/SetPasswordForm";
-import { stripe } from "@/lib/stripe";
-import { ensureUserForCheckoutSession } from "@/lib/membership";
+import { gocardlessClient } from "@/lib/gocardless";
+import { ensureUserForBillingRequest } from "@/lib/membership";
 import type { ApprovalStatus } from "@/lib/schema";
 
 const GENERIC_ERROR_MESSAGE =
   "We couldn't confirm your payment just now. If you've already paid, check your email for a link to finish setting up your account.";
 
-async function resolveCheckout(sessionId: string | undefined) {
-  if (!sessionId) {
+async function resolveCheckout(billingRequestId: string | undefined) {
+  if (!billingRequestId) {
     return {
       ok: false as const,
       message:
@@ -19,8 +19,10 @@ async function resolveCheckout(sessionId: string | undefined) {
   }
 
   try {
-    const session = await stripe.checkout.sessions.retrieve(sessionId);
-    if (session.status !== "complete") {
+    const billingRequest = await gocardlessClient.billingRequests.find(
+      billingRequestId
+    );
+    if (billingRequest.status !== "fulfilled") {
       return {
         ok: false as const,
         message:
@@ -28,7 +30,7 @@ async function resolveCheckout(sessionId: string | undefined) {
       };
     }
     const { email, resetToken, approvalStatus } =
-      await ensureUserForCheckoutSession(session);
+      await ensureUserForBillingRequest(billingRequest);
     return { ok: true as const, email, resetToken, approvalStatus };
   } catch (err) {
     console.error(err);
@@ -60,10 +62,10 @@ const copyByApprovalStatus: Record<
 export default async function JoinSuccessPage({
   searchParams,
 }: {
-  searchParams: Promise<{ session_id?: string }>;
+  searchParams: Promise<{ billing_request_id?: string }>;
 }) {
-  const { session_id: sessionId } = await searchParams;
-  const result = await resolveCheckout(sessionId);
+  const { billing_request_id: billingRequestId } = await searchParams;
+  const result = await resolveCheckout(billingRequestId);
 
   if (!result.ok) {
     return <ErrorShell message={result.message} />;

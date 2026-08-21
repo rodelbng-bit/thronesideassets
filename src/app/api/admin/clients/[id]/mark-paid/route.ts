@@ -8,8 +8,8 @@ import { isAdminEmail } from "@/lib/admin";
 import { ensureUserForRegistration } from "@/lib/membership";
 import { sendAccountSetupEmail } from "@/lib/mailer";
 
-// For clients who paid outside Stripe (bank transfer, in person, etc.) —
-// mirrors what the Stripe webhook normally does: creates the login
+// For clients who paid outside GoCardless (bank transfer, in person, etc.) —
+// mirrors what the GoCardless webhook normally does: creates the login
 // account if one doesn't exist yet and sends the same account-setup
 // email, so they can then be reviewed/approved like anyone else.
 export async function POST(
@@ -56,7 +56,7 @@ export async function POST(
     email: registration.email,
     registrationId: registration.id,
     // Best available record of agreement for a payment that didn't go
-    // through the checkbox-gated Stripe flow — drives the contract
+    // through the checkbox-gated GoCardless flow — drives the contract
     // start/end date fields on the profile page, not a legal record.
     termsAcceptedAt: new Date(),
   });

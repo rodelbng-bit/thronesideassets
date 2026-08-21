@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { eq } from "drizzle-orm";
-import { createEssentialCheckoutSession, type BillingInterval } from "@/lib/stripe";
+import { createEssentialBillingRequestFlow, type BillingInterval } from "@/lib/gocardless";
 import { db } from "@/lib/db";
 import { registrations } from "@/lib/schema";
 
@@ -39,8 +39,8 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  // Recorded before the Stripe call — a prospect who picks a plan and
-  // agrees to terms is captured even if the Stripe request itself fails.
+  // Recorded before the GoCardless call — a prospect who picks a plan and
+  // agrees to terms is captured even if the GoCardless request itself fails.
   try {
     await db
       .update(registrations)
@@ -56,33 +56,32 @@ export async function POST(req: NextRequest) {
   }
 
   try {
-    const session = await createEssentialCheckoutSession(
-      interval,
-      req.nextUrl.origin,
-      new Date().toISOString(),
-      { id: registration.id, email: registration.email }
-    );
-    if (!session.url) {
-      throw new Error("Stripe did not return a checkout URL");
-    }
+    const { billingRequestId, authorisationUrl } =
+      await createEssentialBillingRequestFlow(
+        interval,
+        req.nextUrl.origin,
+        new Date().toISOString(),
+        { id: registration.id, email: registration.email }
+      );
 
     try {
       await db
         .update(registrations)
         .set({
           stage: "payment_started",
-          stripeCheckoutSessionId: session.id,
+          gocardlessBillingRequestId: billingRequestId,
           checkoutStartedAt: new Date(),
           updatedAt: new Date(),
         })
         .where(eq(registrations.id, registration.id));
     } catch (err) {
       // Best-effort — never block a redirect that already has a live
-      // Stripe session behind it over a funnel-tracking write failing.
+      // GoCardless billing request behind it over a funnel-tracking write
+      // failing.
       console.error("Failed to mark registration payment_started", err);
     }
 
-    return NextResponse.json({ url: session.url });
+    return NextResponse.json({ url: authorisationUrl });
   } catch (err) {
     console.error(err);
     return NextResponse.json(

@@ -47,7 +47,7 @@ export async function getOtherRegistrationsByEmail(
     .orderBy(desc(registrations.startedAt));
 }
 
-// Shared between ensureUserForCheckoutSession (payment webhook) and the
+// Shared between ensureUserForBillingRequest (payment webhook) and the
 // admin approval route — both resolve a users.approvalStatus and need the
 // linked registration row's `stage` to agree on what that maps to.
 export function approvalStatusToStage(

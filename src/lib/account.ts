@@ -12,7 +12,7 @@ export type ContractInfo = {
 };
 
 // Contract term is fixed at signup (see users.termsAcceptedAt) — not tied
-// to the Stripe billing cadence (monthly/annual), which can renew
+// to the GoCardless billing cadence (monthly/annual), which can renew
 // independently of this 12-month commitment.
 export function getContractInfo(
   termsAcceptedAt: Date | null
