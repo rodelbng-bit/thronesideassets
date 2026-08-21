@@ -20,8 +20,9 @@ function getGoCardlessClient(): GoCardlessClient {
 export const gocardlessClient: GoCardlessClient = new Proxy(
   {} as GoCardlessClient,
   {
-    get(_target, prop, receiver) {
-      return Reflect.get(getGoCardlessClient(), prop, receiver);
+    get(_target, prop) {
+      const client = getGoCardlessClient();
+      return Reflect.get(client, prop, client);
     },
   }
 );
