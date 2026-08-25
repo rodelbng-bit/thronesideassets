@@ -31,10 +31,17 @@ export async function generateRedesign(
     },
   });
 
-  // The model returns a single image URL, or an array with one entry
-  // depending on Replicate client version — normalize both.
-  const url = Array.isArray(output) ? output[0] : output;
-  if (typeof url !== "string" || !url) {
+  // The model returns a single output, or an array with one entry — and
+  // the replicate client (v1.4+) wraps file outputs in a FileOutput
+  // stream object with a .url() method rather than a plain string.
+  const item = Array.isArray(output) ? output[0] : output;
+  const url =
+    typeof item === "string"
+      ? item
+      : typeof item?.url === "function"
+        ? item.url().toString()
+        : null;
+  if (!url) {
     throw new Error("Replicate returned no image for this redesign.");
   }
   return url;
