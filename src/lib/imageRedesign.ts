@@ -6,7 +6,7 @@ import { getEnv } from "./env";
 // hash — Replicate model versions are immutable, so bump this deliberately
 // if a newer version is adopted.
 const MODEL_VERSION =
-  "adirik/interior-design:76604baddc85b1b4616e1c6475eca080da339c8875bd4d2cd0234e6de3d9814";
+  "adirik/interior-design:76604baddc85b1b4616e1c6475eca080da339c8875bd4996705440484a6eac38";
 
 let client: Replicate | undefined;
 function getClient(): Replicate {
