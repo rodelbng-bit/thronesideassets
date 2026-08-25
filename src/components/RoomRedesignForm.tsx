@@ -38,8 +38,8 @@ export default function RoomRedesignForm({
     setErrorMessage("");
 
     const form = e.currentTarget;
-    const photoInput = form.elements.namedItem("photo") as HTMLInputElement;
-    const file = photoInput.files?.[0];
+    const photoInput = form.elements.namedItem("photo") as HTMLInputElement | null;
+    const file = photoInput?.files?.[0];
 
     if (!theme.trim()) {
       setStatus("error");
