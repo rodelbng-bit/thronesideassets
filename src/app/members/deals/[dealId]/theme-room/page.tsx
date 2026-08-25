@@ -116,12 +116,12 @@ export default async function ThemeRoomPage({
             See your own room, restyled.
           </h2>
           <p className="mt-4 max-w-xl text-paper-dim">
-            Upload a photo of the actual room and we&apos;ll generate a
-            realistic redesign in any style you choose, with a shopping
-            list for what&apos;s shown.
+            Pick one of the property&apos;s own photos, or upload your own,
+            and we&apos;ll generate a realistic redesign in any style you
+            choose, with a shopping list for what&apos;s shown.
           </p>
           <div className="mt-8 max-w-2xl">
-            <RoomRedesignForm dealId={dealId} />
+            <RoomRedesignForm dealId={dealId} propertyPhotos={deal.photos} />
           </div>
         </div>
 

@@ -15,13 +15,23 @@ type ResultItem = {
 
 const THEME_SUGGESTIONS = ["Natural", "Urban", "Classy", "Abstract"];
 
-export default function RoomRedesignForm({ dealId }: { dealId: string }) {
+export default function RoomRedesignForm({
+  dealId,
+  propertyPhotos,
+}: {
+  dealId: string;
+  propertyPhotos: string[];
+}) {
   const router = useRouter();
   const [status, setStatus] = useState<Status>("idle");
   const [errorMessage, setErrorMessage] = useState("");
   const [theme, setTheme] = useState("");
   const [generatedImageUrl, setGeneratedImageUrl] = useState("");
   const [items, setItems] = useState<ResultItem[]>([]);
+  const [selectedPhoto, setSelectedPhoto] = useState<string | null>(
+    propertyPhotos[0] ?? null
+  );
+  const [useOwnPhoto, setUseOwnPhoto] = useState(propertyPhotos.length === 0);
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -31,11 +41,6 @@ export default function RoomRedesignForm({ dealId }: { dealId: string }) {
     const photoInput = form.elements.namedItem("photo") as HTMLInputElement;
     const file = photoInput.files?.[0];
 
-    if (!file) {
-      setStatus("error");
-      setErrorMessage("Add a photo of the room.");
-      return;
-    }
     if (!theme.trim()) {
       setStatus("error");
       setErrorMessage("Enter a style.");
@@ -43,17 +48,33 @@ export default function RoomRedesignForm({ dealId }: { dealId: string }) {
     }
 
     try {
-      setStatus("uploading");
-      const blob = await upload(file.name, file, {
-        access: "public",
-        handleUploadUrl: "/api/theme-room/upload",
-      });
+      let photoUrl: string;
+      if (useOwnPhoto) {
+        if (!file) {
+          setStatus("error");
+          setErrorMessage("Add a photo of the room.");
+          return;
+        }
+        setStatus("uploading");
+        const blob = await upload(file.name, file, {
+          access: "public",
+          handleUploadUrl: "/api/theme-room/upload",
+        });
+        photoUrl = blob.url;
+      } else {
+        if (!selectedPhoto) {
+          setStatus("error");
+          setErrorMessage("Pick a photo of the property.");
+          return;
+        }
+        photoUrl = selectedPhoto;
+      }
 
       setStatus("generating");
       const res = await fetch("/api/theme-room/redesign", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ dealId, theme: theme.trim(), photoUrl: blob.url }),
+        body: JSON.stringify({ dealId, theme: theme.trim(), photoUrl }),
       });
       const result = await res.json();
       if (!res.ok) {
@@ -81,13 +102,66 @@ export default function RoomRedesignForm({ dealId }: { dealId: string }) {
           <label className="text-xs uppercase tracking-wide text-paper-dim">
             Photo of the room
           </label>
-          <input
-            type="file"
-            name="photo"
-            accept="image/jpeg,image/png,image/webp"
-            required
-            className="mt-2 w-full rounded-md border rule bg-ink px-4 py-3 text-sm text-paper file:mr-4 file:rounded-full file:border-0 file:bg-brass file:px-4 file:py-2 file:text-sm file:font-medium file:text-ink"
-          />
+
+          {propertyPhotos.length > 0 && (
+            <div className="mt-2 flex flex-wrap gap-2 text-xs">
+              <button
+                type="button"
+                onClick={() => setUseOwnPhoto(false)}
+                className={
+                  !useOwnPhoto
+                    ? "rounded-full bg-brass px-3 py-1 font-medium text-ink"
+                    : "rounded-full border rule px-3 py-1 text-paper-dim transition-colors hover:text-paper"
+                }
+              >
+                Use a property photo
+              </button>
+              <button
+                type="button"
+                onClick={() => setUseOwnPhoto(true)}
+                className={
+                  useOwnPhoto
+                    ? "rounded-full bg-brass px-3 py-1 font-medium text-ink"
+                    : "rounded-full border rule px-3 py-1 text-paper-dim transition-colors hover:text-paper"
+                }
+              >
+                Upload my own photo
+              </button>
+            </div>
+          )}
+
+          {!useOwnPhoto && propertyPhotos.length > 0 ? (
+            <div className="mt-3 grid grid-cols-3 gap-2 sm:grid-cols-4">
+              {propertyPhotos.map((url) => (
+                <button
+                  key={url}
+                  type="button"
+                  onClick={() => setSelectedPhoto(url)}
+                  className={
+                    "relative aspect-square overflow-hidden rounded-md border-2 transition-colors " +
+                    (selectedPhoto === url
+                      ? "border-brass"
+                      : "border-transparent hover:border-paper-dim")
+                  }
+                >
+                  <Image
+                    src={url}
+                    alt="Property photo"
+                    fill
+                    className="object-cover"
+                  />
+                </button>
+              ))}
+            </div>
+          ) : (
+            <input
+              type="file"
+              name="photo"
+              accept="image/jpeg,image/png,image/webp"
+              required={useOwnPhoto}
+              className="mt-2 w-full rounded-md border rule bg-ink px-4 py-3 text-sm text-paper file:mr-4 file:rounded-full file:border-0 file:bg-brass file:px-4 file:py-2 file:text-sm file:font-medium file:text-ink"
+            />
+          )}
         </div>
 
         <div>
