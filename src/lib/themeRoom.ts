@@ -1,8 +1,6 @@
 import { and, desc, eq, gt } from "drizzle-orm";
 import { db } from "./db";
 import {
-  deals as dealsTable,
-  dealReservations,
   themeItems,
   itemPriceQuotes,
   themeRedesigns,
@@ -12,28 +10,6 @@ import {
 import { searchCheapestPrice } from "./pricing";
 
 const PRICE_QUOTE_TTL_MS = 24 * 60 * 60 * 1000;
-
-// A deal is "confirmed"/onboarded for a member once their reservation is
-// still on it and an admin has flipped the deal to unavailable (the same
-// rule already applied inline in members/deals/[dealId]/page.tsx) — that's
-// the gate for Theme Room access.
-export async function getConfirmedDealForUser(userId: string, dealId: string) {
-  const [deal] = await db
-    .select()
-    .from(dealsTable)
-    .where(eq(dealsTable.id, dealId))
-    .limit(1);
-  if (!deal || deal.status !== "unavailable") return null;
-
-  const [reservation] = await db
-    .select()
-    .from(dealReservations)
-    .where(eq(dealReservations.dealId, dealId))
-    .limit(1);
-  if (!reservation || reservation.userId !== userId) return null;
-
-  return deal;
-}
 
 export async function getThemeItems(theme: ThemeCategory): Promise<ThemeItem[]> {
   return db

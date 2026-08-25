@@ -88,17 +88,14 @@ export default async function MemberDealPage({
           </div>
         )}
 
-        {reserveState === "unavailable" &&
-          reservation?.userId === session.user.id && (
-            <div className="mt-6">
-              <Link
-                href={`/members/deals/${dealId}/theme-room`}
-                className="inline-flex items-center rounded-full bg-brass px-6 py-3 text-sm font-medium text-ink transition-colors hover:bg-brass-bright"
-              >
-                Open Theme Room
-              </Link>
-            </div>
-          )}
+        <div className="mt-6">
+          <Link
+            href={`/members/deals/${dealId}/theme-room`}
+            className="inline-flex items-center rounded-full bg-brass px-6 py-3 text-sm font-medium text-ink transition-colors hover:bg-brass-bright"
+          >
+            Open Theme Room
+          </Link>
+        </div>
 
         <div className="mt-6">
           <DealCard

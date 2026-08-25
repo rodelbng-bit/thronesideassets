@@ -3,12 +3,9 @@ import { eq } from "drizzle-orm";
 import { put } from "@vercel/blob";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
-import { themeRedesigns, themeEnum, type ThemeCategory } from "@/lib/schema";
-import {
-  getConfirmedDealForUser,
-  getThemeItems,
-  getCheapestPrice,
-} from "@/lib/themeRoom";
+import { users, themeRedesigns, themeEnum, type ThemeCategory } from "@/lib/schema";
+import { getDeal } from "@/lib/deals";
+import { getThemeItems, getCheapestPrice } from "@/lib/themeRoom";
 import { generateRedesign } from "@/lib/imageRedesign";
 import { searchCheapestPrice } from "@/lib/pricing";
 import { getFallbackItemQueries } from "@/lib/itemSuggestions";
@@ -24,6 +21,19 @@ export async function POST(req: NextRequest) {
   const session = await auth();
   if (!session?.user) {
     return NextResponse.json({ error: "Not signed in" }, { status: 401 });
+  }
+
+  const [user] = await db
+    .select()
+    .from(users)
+    .where(eq(users.id, session.user.id))
+    .limit(1);
+
+  if (user?.subscriptionStatus !== "active") {
+    return NextResponse.json(
+      { error: "Active membership required." },
+      { status: 403 }
+    );
   }
 
   const data = await req.json();
@@ -43,12 +53,9 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  const deal = await getConfirmedDealForUser(session.user.id, dealId);
+  const deal = await getDeal(dealId);
   if (!deal) {
-    return NextResponse.json(
-      { error: "No confirmed deal found for this account." },
-      { status: 403 }
-    );
+    return NextResponse.json({ error: "Deal not found." }, { status: 404 });
   }
 
   const [redesign] = await db

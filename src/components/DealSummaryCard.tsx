@@ -91,6 +91,12 @@ export default function DealSummaryCard({
               >
                 Access Property
               </Link>
+              <Link
+                href={`/members/deals/${deal.id}/theme-room`}
+                className="inline-flex w-fit items-center rounded-full border rule px-6 py-3 text-sm font-medium text-paper-dim transition-colors hover:text-paper"
+              >
+                Theme Room
+              </Link>
               {(reserveState === "available" ||
                 reserveState === "reserved-by-me") && (
                 <ReserveButton

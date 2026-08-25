@@ -11,8 +11,8 @@ import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { users } from "@/lib/schema";
 import type { ThemeCategory } from "@/lib/schema";
+import { getDeal } from "@/lib/deals";
 import {
-  getConfirmedDealForUser,
   getThemeItems,
   getCheapestPrice,
   getRedesignsForDeal,
@@ -43,7 +43,7 @@ export default async function ThemeRoomPage({
   }
 
   const { dealId } = await params;
-  const deal = await getConfirmedDealForUser(session.user.id, dealId);
+  const deal = await getDeal(dealId);
   if (!deal) {
     notFound();
   }
