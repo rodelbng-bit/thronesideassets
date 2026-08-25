@@ -121,7 +121,15 @@ export default async function ThemeRoomPage({
             choose, with a shopping list for what&apos;s shown.
           </p>
           <div className="mt-8 max-w-2xl">
-            <RoomRedesignForm dealId={dealId} propertyPhotos={deal.photos} />
+            <RoomRedesignForm
+              dealId={dealId}
+              propertyPhotos={deal.photos}
+              catalogItems={items.map((item) => ({
+                id: item.id,
+                name: item.name,
+                imageUrl: item.imageUrl,
+              }))}
+            />
           </div>
         </div>
 

@@ -13,14 +13,22 @@ type ResultItem = {
   price: { vendorName: string; priceMinor: number; url: string } | null;
 };
 
+type CatalogItem = {
+  id: string;
+  name: string;
+  imageUrl: string;
+};
+
 const THEME_SUGGESTIONS = ["Natural", "Urban", "Classy", "Abstract"];
 
 export default function RoomRedesignForm({
   dealId,
   propertyPhotos,
+  catalogItems,
 }: {
   dealId: string;
   propertyPhotos: string[];
+  catalogItems: CatalogItem[];
 }) {
   const router = useRouter();
   const [status, setStatus] = useState<Status>("idle");
@@ -32,6 +40,13 @@ export default function RoomRedesignForm({
     propertyPhotos[0] ?? null
   );
   const [useOwnPhoto, setUseOwnPhoto] = useState(propertyPhotos.length === 0);
+  const [selectedItemIds, setSelectedItemIds] = useState<string[]>([]);
+
+  function toggleItem(id: string) {
+    setSelectedItemIds((prev) =>
+      prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id]
+    );
+  }
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -74,7 +89,12 @@ export default function RoomRedesignForm({
       const res = await fetch("/api/theme-room/redesign", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ dealId, theme: theme.trim(), photoUrl }),
+        body: JSON.stringify({
+          dealId,
+          theme: theme.trim(),
+          photoUrl,
+          itemIds: selectedItemIds,
+        }),
       });
       const result = await res.json();
       if (!res.ok) {
@@ -163,6 +183,52 @@ export default function RoomRedesignForm({
             />
           )}
         </div>
+
+        {catalogItems.length > 0 && (
+          <div>
+            <label className="text-xs uppercase tracking-wide text-paper-dim">
+              Include specific items (optional)
+            </label>
+            <p className="mt-2 text-xs text-paper-dim">
+              We&apos;ll steer the redesign toward these pieces&apos; style,
+              color, and material — the AI can&apos;t drop in the exact
+              product photos, but this gets it much closer than a style name
+              alone.
+            </p>
+            <div className="mt-3 grid grid-cols-3 gap-2 sm:grid-cols-4">
+              {catalogItems.map((item) => {
+                const selected = selectedItemIds.includes(item.id);
+                return (
+                  <button
+                    key={item.id}
+                    type="button"
+                    onClick={() => toggleItem(item.id)}
+                    className={
+                      "relative aspect-square overflow-hidden rounded-md border-2 transition-colors " +
+                      (selected
+                        ? "border-brass"
+                        : "border-transparent hover:border-paper-dim")
+                    }
+                  >
+                    <Image
+                      src={item.imageUrl}
+                      alt={item.name}
+                      fill
+                      className="object-cover"
+                    />
+                    {selected && (
+                      <span className="absolute inset-0 flex items-end bg-ink/50 p-1.5">
+                        <span className="text-[10px] font-medium text-paper">
+                          {item.name}
+                        </span>
+                      </span>
+                    )}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        )}
 
         <div>
           <label className="text-xs uppercase tracking-wide text-paper-dim">

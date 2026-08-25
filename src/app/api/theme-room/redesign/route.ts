@@ -5,7 +5,11 @@ import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { users, themeRedesigns, themeEnum, type ThemeCategory } from "@/lib/schema";
 import { getDeal } from "@/lib/deals";
-import { getThemeItems, getCheapestPrice } from "@/lib/themeRoom";
+import {
+  getThemeItems,
+  getThemeItemsByIds,
+  getCheapestPrice,
+} from "@/lib/themeRoom";
 import { generateRedesign } from "@/lib/imageRedesign";
 import { searchCheapestPrice } from "@/lib/pricing";
 import { getFallbackItemQueries } from "@/lib/itemSuggestions";
@@ -37,7 +41,7 @@ export async function POST(req: NextRequest) {
   }
 
   const data = await req.json();
-  const { dealId, theme, photoUrl } = data;
+  const { dealId, theme, photoUrl, itemIds } = data;
 
   if (
     typeof dealId !== "string" ||
@@ -45,7 +49,9 @@ export async function POST(req: NextRequest) {
     typeof theme !== "string" ||
     !theme.trim() ||
     typeof photoUrl !== "string" ||
-    !photoUrl.trim()
+    !photoUrl.trim() ||
+    (itemIds !== undefined &&
+      (!Array.isArray(itemIds) || itemIds.some((id) => typeof id !== "string")))
   ) {
     return NextResponse.json(
       { error: "Missing or invalid fields." },
@@ -57,6 +63,10 @@ export async function POST(req: NextRequest) {
   if (!deal) {
     return NextResponse.json({ error: "Deal not found." }, { status: 404 });
   }
+
+  const selectedItems = await getThemeItemsByIds(
+    Array.isArray(itemIds) ? itemIds : []
+  );
 
   const [redesign] = await db
     .insert(themeRedesigns)
@@ -70,7 +80,14 @@ export async function POST(req: NextRequest) {
     .returning();
 
   try {
-    const rawGeneratedUrl = await generateRedesign(photoUrl.trim(), theme.trim());
+    const rawGeneratedUrl = await generateRedesign(
+      photoUrl.trim(),
+      theme.trim(),
+      selectedItems.map((item) => ({
+        name: item.name,
+        description: item.searchKeywords,
+      }))
+    );
 
     // Replicate's output URL isn't guaranteed to stay live indefinitely —
     // re-host it in Blob storage alongside the rest of this site's images.
@@ -89,23 +106,32 @@ export async function POST(req: NextRequest) {
       .where(eq(themeRedesigns.id, redesign.id));
 
     const normalizedTheme = theme.trim().toLowerCase();
-    const items = CANONICAL_THEMES.has(normalizedTheme as ThemeCategory)
-      ? await Promise.all(
-          (await getThemeItems(normalizedTheme as ThemeCategory)).map(
-            async (item) => ({
+    const items =
+      selectedItems.length > 0
+        ? await Promise.all(
+            selectedItems.map(async (item) => ({
               name: item.name,
               imageUrl: item.imageUrl,
               price: await getCheapestPrice(item, deal.location),
-            })
+            }))
           )
-        )
-      : await Promise.all(
-          (await getFallbackItemQueries(theme.trim())).map(async (query) => ({
-            name: query,
-            imageUrl: null,
-            price: await searchCheapestPrice(query, deal.location),
-          }))
-        );
+        : CANONICAL_THEMES.has(normalizedTheme as ThemeCategory)
+          ? await Promise.all(
+              (await getThemeItems(normalizedTheme as ThemeCategory)).map(
+                async (item) => ({
+                  name: item.name,
+                  imageUrl: item.imageUrl,
+                  price: await getCheapestPrice(item, deal.location),
+                })
+              )
+            )
+          : await Promise.all(
+              (await getFallbackItemQueries(theme.trim())).map(async (query) => ({
+                name: query,
+                imageUrl: null,
+                price: await searchCheapestPrice(query, deal.location),
+              }))
+            );
 
     return NextResponse.json({
       redesign: { id: redesign.id, generatedImageUrl: blob.url },

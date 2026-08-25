@@ -1,4 +1,4 @@
-import { and, desc, eq, gt } from "drizzle-orm";
+import { and, desc, eq, gt, inArray } from "drizzle-orm";
 import { db } from "./db";
 import {
   themeItems,
@@ -17,6 +17,14 @@ export async function getThemeItems(theme: ThemeCategory): Promise<ThemeItem[]> 
     .from(themeItems)
     .where(and(eq(themeItems.theme, theme), eq(themeItems.active, true)))
     .orderBy(desc(themeItems.createdAt));
+}
+
+export async function getThemeItemsByIds(ids: string[]): Promise<ThemeItem[]> {
+  if (ids.length === 0) return [];
+  return db
+    .select()
+    .from(themeItems)
+    .where(and(inArray(themeItems.id, ids), eq(themeItems.active, true)));
 }
 
 export type CheapestPrice = {
