@@ -233,3 +233,78 @@ export const registrations = pgTable("registrations", {
 });
 
 export type Registration = typeof registrations.$inferSelect;
+
+export const themeEnum = pgEnum("theme_category", [
+  "natural",
+  "urban",
+  "classy",
+  "abstract",
+]);
+
+export type ThemeCategory = (typeof themeEnum.enumValues)[number];
+
+// Admin-curated per theme category — the reference catalog the style
+// browser and the redesign item-list fallback both draw from.
+export const themeItems = pgTable("theme_items", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  theme: themeEnum("theme").notNull(),
+  name: text("name").notNull(),
+  category: text("category").notNull(),
+  imageUrl: text("image_url").notNull(),
+  // Query sent to the shopping-price API — kept separate from `name` so an
+  // admin can tune search relevance without changing the display name.
+  searchKeywords: text("search_keywords").notNull(),
+  active: boolean("active").notNull().default(true),
+  createdAt: timestamp("created_at", { withTimezone: true })
+    .notNull()
+    .defaultNow(),
+});
+
+export type ThemeItem = typeof themeItems.$inferSelect;
+
+// Cached shopping-API lookup per item + rough location, TTL'd on read
+// (see getCheapestPrice in lib/themeRoom.ts) so every page view doesn't
+// spend an API call.
+export const itemPriceQuotes = pgTable("item_price_quotes", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  themeItemId: uuid("theme_item_id")
+    .notNull()
+    .references(() => themeItems.id, { onDelete: "cascade" }),
+  locationKey: text("location_key").notNull(),
+  vendorName: text("vendor_name").notNull(),
+  priceMinor: integer("price_minor").notNull(),
+  url: text("url").notNull(),
+  fetchedAt: timestamp("fetched_at", { withTimezone: true })
+    .notNull()
+    .defaultNow(),
+});
+
+export type ItemPriceQuote = typeof itemPriceQuotes.$inferSelect;
+
+export const themeRedesignStatusEnum = pgEnum("theme_redesign_status", [
+  "pending",
+  "complete",
+  "failed",
+]);
+
+// One row per photo-to-redesign generation. dealId is text (not a FK),
+// same reasoning as dealReservations/viewingRequests — the record should
+// stay put even if the listing is later removed.
+export const themeRedesigns = pgTable("theme_redesigns", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  userId: uuid("user_id")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
+  dealId: text("deal_id").notNull(),
+  // Free text, not themeEnum — the redesign flow accepts "or any other"
+  // style, unlike the fixed Step 1 style browser.
+  theme: text("theme").notNull(),
+  originalPhotoUrl: text("original_photo_url").notNull(),
+  generatedImageUrl: text("generated_image_url"),
+  status: themeRedesignStatusEnum("status").notNull().default("pending"),
+  createdAt: timestamp("created_at", { withTimezone: true })
+    .notNull()
+    .defaultNow(),
+});
+
+export type ThemeRedesign = typeof themeRedesigns.$inferSelect;

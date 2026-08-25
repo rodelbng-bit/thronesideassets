@@ -25,6 +25,16 @@ Assets, a UK property-deal-sourcing membership business. See
   `/admin/deals/new` (`src/components/NewDealForm.tsx`, which uploads
   photos client-side via `@vercel/blob/client` then posts to
   `/api/admin/deals`).
+- **Theme Room** (`src/lib/themeRoom.ts`) — interior-styling tool gated to
+  a member's *confirmed* deal (reservation still on it, `deals.status ===
+  "unavailable"` — see `getConfirmedDealForUser`). Catalog items
+  (`themeItems`) are admin-curated at `/admin/theme-room`; cheapest live
+  price per item comes from SerpApi (`src/lib/pricing.ts`), cached in
+  `itemPriceQuotes` with a 24h TTL. Photo-to-redesign
+  (`themeRedesigns`) calls Replicate (`src/lib/imageRedesign.ts`) and
+  re-hosts the result in Blob storage; a free-text theme outside the 4
+  curated categories falls back to an Anthropic-generated item list
+  (`src/lib/itemSuggestions.ts`, no-ops without `ANTHROPIC_API_KEY`).
 - **GoHighLevel (GHL)** stays the system of record for CRM, pipelines,
   workflows, and the "book a call" flow (Register buttons →
   `thronesideassets.app.clientclub.net` calendar widget). It is no

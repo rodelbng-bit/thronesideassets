@@ -10,6 +10,12 @@ locally with **Claude Code**.
 - **Membership + login** now live here instead of GHL: clients pay via
   GoCardless Direct Debit at `/join`, get a native email/password account
   (Postgres + Auth.js), and see their weekly deals at `/members`.
+- **Theme Room** — once a member's reservation on a deal is confirmed
+  (admin marks it Unavailable), they get an interior-styling tool at
+  `/members/deals/[dealId]/theme-room`: browse curated furniture/decor by
+  style with live cheapest-price lookups (SerpApi), or upload a room photo
+  for an AI-generated redesign (Replicate) with a matching shopping list.
+  Admins curate the item catalog at `/admin/theme-room`.
 - **GoHighLevel**, still in use for:
   - CRM, pipelines, and workflows (reservation status flips, pipeline
     notifications, chat widget)
@@ -52,6 +58,13 @@ Open http://localhost:3000.
   account-setup emails.
 - `SITE_URL` — the site's public base URL, used to build links in
   emails.
+- `SERPAPI_API_KEY` — serpapi.com/manage-api-key. Powers Theme Room's
+  cheapest-price lookups (Google Shopping engine).
+- `REPLICATE_API_TOKEN` — replicate.com/account/api-tokens. Powers Theme
+  Room's photo-to-redesign image generation.
+- `ANTHROPIC_API_KEY` — optional. Only used as a fallback in Theme Room to
+  suggest shoppable items when a member types a redesign style outside the
+  4 curated categories.
 
 Never commit `.env.local` or paste real secret values into chat.
 
