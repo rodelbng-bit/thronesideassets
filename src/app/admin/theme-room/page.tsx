@@ -1,10 +1,9 @@
 import { redirect } from "next/navigation";
-import Image from "next/image";
 import { eq } from "drizzle-orm";
 import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
 import NewThemeItemForm from "@/components/NewThemeItemForm";
-import ThemeItemActiveToggle from "@/components/ThemeItemActiveToggle";
+import ThemeItemAdminCard from "@/components/ThemeItemAdminCard";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { users, themeItems, themeEnum } from "@/lib/schema";
@@ -63,36 +62,16 @@ export default async function AdminThemeRoomPage() {
               ) : (
                 <div className="mt-4 grid grid-cols-2 gap-4 md:grid-cols-3">
                   {itemsByTheme.get(theme)!.map((item) => (
-                    <div
+                    <ThemeItemAdminCard
                       key={item.id}
-                      className="rounded-lg border rule bg-ink-soft p-3"
-                    >
-                      <div className="relative aspect-square overflow-hidden rounded-md">
-                        <Image
-                          src={item.imageUrl}
-                          alt={item.name}
-                          fill
-                          className="object-cover"
-                        />
-                      </div>
-                      <p className="mt-2 text-sm text-paper">{item.name}</p>
-                      <p className="text-xs text-paper-dim">{item.category}</p>
-                      <div className="mt-2 flex items-center justify-between">
-                        <span
-                          className={
-                            item.active
-                              ? "text-xs text-brass-bright"
-                              : "text-xs text-paper-dim"
-                          }
-                        >
-                          {item.active ? "Active" : "Inactive"}
-                        </span>
-                        <ThemeItemActiveToggle
-                          itemId={item.id}
-                          initialActive={item.active}
-                        />
-                      </div>
-                    </div>
+                      itemId={item.id}
+                      theme={item.theme}
+                      name={item.name}
+                      category={item.category}
+                      imageUrl={item.imageUrl}
+                      searchKeywords={item.searchKeywords}
+                      active={item.active}
+                    />
                   ))}
                 </div>
               )}
