@@ -151,14 +151,14 @@ export default function RoomRedesignForm({
           )}
 
           {!useOwnPhoto && propertyPhotos.length > 0 ? (
-            <div className="mt-3 grid grid-cols-3 gap-2 sm:grid-cols-4">
+            <div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-3">
               {propertyPhotos.map((url) => (
                 <button
                   key={url}
                   type="button"
                   onClick={() => setSelectedPhoto(url)}
                   className={
-                    "relative aspect-square overflow-hidden rounded-md border-2 transition-colors " +
+                    "relative aspect-4/3 overflow-hidden rounded-md border-2 transition-colors " +
                     (selectedPhoto === url
                       ? "border-brass"
                       : "border-transparent hover:border-paper-dim")
@@ -168,6 +168,7 @@ export default function RoomRedesignForm({
                     src={url}
                     alt="Property photo"
                     fill
+                    sizes="(min-width: 640px) 33vw, 50vw"
                     className="object-cover"
                   />
                 </button>
