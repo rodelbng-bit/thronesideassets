@@ -36,10 +36,15 @@ export default function RoomRedesignForm({
   const [theme, setTheme] = useState("");
   const [generatedImageUrl, setGeneratedImageUrl] = useState("");
   const [items, setItems] = useState<ResultItem[]>([]);
-  const [selectedPhoto, setSelectedPhoto] = useState<string | null>(
-    propertyPhotos[0] ?? null
-  );
+  const [photoIndex, setPhotoIndex] = useState(0);
   const [useOwnPhoto, setUseOwnPhoto] = useState(propertyPhotos.length === 0);
+
+  function prevPhoto() {
+    setPhotoIndex((i) => (i - 1 + propertyPhotos.length) % propertyPhotos.length);
+  }
+  function nextPhoto() {
+    setPhotoIndex((i) => (i + 1) % propertyPhotos.length);
+  }
   const [selectedItemIds, setSelectedItemIds] = useState<string[]>([]);
 
   function toggleItem(id: string) {
@@ -77,12 +82,13 @@ export default function RoomRedesignForm({
         });
         photoUrl = blob.url;
       } else {
-        if (!selectedPhoto) {
+        const photo = propertyPhotos[photoIndex];
+        if (!photo) {
           setStatus("error");
           setErrorMessage("Pick a photo of the property.");
           return;
         }
-        photoUrl = selectedPhoto;
+        photoUrl = photo;
       }
 
       setStatus("generating");
@@ -151,28 +157,56 @@ export default function RoomRedesignForm({
           )}
 
           {!useOwnPhoto && propertyPhotos.length > 0 ? (
-            <div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-3">
-              {propertyPhotos.map((url) => (
-                <button
-                  key={url}
-                  type="button"
-                  onClick={() => setSelectedPhoto(url)}
-                  className={
-                    "relative aspect-4/3 overflow-hidden rounded-md border-2 transition-colors " +
-                    (selectedPhoto === url
-                      ? "border-brass"
-                      : "border-transparent hover:border-paper-dim")
-                  }
-                >
-                  <Image
-                    src={url}
-                    alt="Property photo"
-                    fill
-                    sizes="(min-width: 640px) 33vw, 50vw"
-                    className="object-cover"
-                  />
-                </button>
-              ))}
+            <div className="mt-3">
+              <div className="relative aspect-4/3 w-full overflow-hidden rounded-md border-2 border-brass">
+                <Image
+                  src={propertyPhotos[photoIndex]}
+                  alt={`Property photo ${photoIndex + 1} of ${propertyPhotos.length}`}
+                  fill
+                  sizes="(min-width: 640px) 600px, 100vw"
+                  className="object-cover"
+                />
+
+                {propertyPhotos.length > 1 && (
+                  <>
+                    <button
+                      type="button"
+                      onClick={prevPhoto}
+                      aria-label="Previous photo"
+                      className="absolute left-2 top-1/2 -translate-y-1/2 rounded-full bg-ink/70 p-2 text-paper backdrop-blur transition-colors hover:bg-ink"
+                    >
+                      ‹
+                    </button>
+                    <button
+                      type="button"
+                      onClick={nextPhoto}
+                      aria-label="Next photo"
+                      className="absolute right-2 top-1/2 -translate-y-1/2 rounded-full bg-ink/70 p-2 text-paper backdrop-blur transition-colors hover:bg-ink"
+                    >
+                      ›
+                    </button>
+                    <span className="ledger-figure absolute right-2 top-2 rounded-full bg-ink/70 px-2 py-1 text-xs text-paper backdrop-blur">
+                      {photoIndex + 1} / {propertyPhotos.length}
+                    </span>
+                  </>
+                )}
+              </div>
+
+              {propertyPhotos.length > 1 && (
+                <div className="mt-3 flex justify-center gap-2">
+                  {propertyPhotos.map((photo, i) => (
+                    <button
+                      key={photo}
+                      type="button"
+                      onClick={() => setPhotoIndex(i)}
+                      aria-label={`Go to photo ${i + 1}`}
+                      className={`h-1.5 w-1.5 rounded-full transition-colors ${
+                        i === photoIndex ? "bg-brass-bright" : "bg-paper-dim/40"
+                      }`}
+                    />
+                  ))}
+                </div>
+              )}
             </div>
           ) : (
             <input
