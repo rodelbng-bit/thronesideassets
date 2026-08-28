@@ -24,17 +24,40 @@ export type PromptItem = {
   description: string;
 };
 
+// Terms that push the model away from altering the room's structure — the
+// user wants a restyle, not a different room.
+const NEGATIVE_PROMPT =
+  "different room layout, changed architecture, moved walls, added walls, " +
+  "removed walls, changed window position, changed door position, new windows, " +
+  "new doors, different perspective, different camera angle, different room shape, " +
+  "distorted proportions, warped walls, structural changes, extra rooms, " +
+  "lowres, watermark, banner, logo, contactinfo, text, deformed, blurry, blur, " +
+  "out of focus, out of frame, surreal, extra, ugly, upholstered walls, " +
+  "fabric walls, plush walls, mirror, mirrored";
+
+// How much the img2img pass is allowed to deviate from the source. The
+// default (0.8) redraws enough of the frame to shift the room's geometry;
+// 0.6 keeps the layout, windows, and perspective recognisably the same
+// while still fully restyling surfaces and furniture.
+const PROMPT_STRENGTH = 0.6;
+
 function buildPrompt(themePrompt: string, items: PromptItem[]): string {
+  const preserve =
+    "Keep the exact same room layout, wall and window positions, doorways, " +
+    "ceiling, floor plan, proportions, and camera angle as the original photo. " +
+    "Only restyle the furniture, wall colour and finish, decorations, rugs, " +
+    "lighting fixtures, and wall art.";
+
   if (items.length === 0) {
-    return `${themePrompt} interior design style`;
+    return `${themePrompt} interior design style. ${preserve}`;
   }
   const itemList = items
     .map((item) => `${item.name} (${item.description})`)
     .join("; ");
   return (
-    `${themePrompt} interior design style. Furnish the room with pieces ` +
-    `matching these as closely as possible in style, color, and material: ` +
-    `${itemList}.`
+    `${themePrompt} interior design style. ${preserve} Furnish the room with ` +
+    `pieces matching these as closely as possible in style, color, and ` +
+    `material: ${itemList}.`
   );
 }
 
@@ -54,6 +77,8 @@ export async function generateRedesign(
     input: {
       image: photoUrl,
       prompt: buildPrompt(themePrompt, items),
+      negative_prompt: NEGATIVE_PROMPT,
+      prompt_strength: PROMPT_STRENGTH,
     },
   });
 

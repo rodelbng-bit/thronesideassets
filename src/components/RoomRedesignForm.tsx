@@ -16,7 +16,6 @@ type ResultItem = {
 type CatalogItem = {
   id: string;
   name: string;
-  imageUrl: string;
 };
 
 const THEME_SUGGESTIONS = ["Natural", "Urban", "Classy", "Abstract"];
@@ -230,7 +229,7 @@ export default function RoomRedesignForm({
               product photos, but this gets it much closer than a style name
               alone.
             </p>
-            <div className="mt-3 grid grid-cols-3 gap-2 sm:grid-cols-4">
+            <div className="mt-3 flex flex-wrap gap-2">
               {catalogItems.map((item) => {
                 const selected = selectedItemIds.includes(item.id);
                 return (
@@ -239,25 +238,12 @@ export default function RoomRedesignForm({
                     type="button"
                     onClick={() => toggleItem(item.id)}
                     className={
-                      "relative aspect-square overflow-hidden rounded-md border-2 transition-colors " +
-                      (selected
-                        ? "border-brass"
-                        : "border-transparent hover:border-paper-dim")
+                      selected
+                        ? "rounded-full bg-brass px-3 py-1 text-xs font-medium text-ink"
+                        : "rounded-full border rule px-3 py-1 text-xs text-paper-dim transition-colors hover:text-paper"
                     }
                   >
-                    <Image
-                      src={item.imageUrl}
-                      alt={item.name}
-                      fill
-                      className="object-cover"
-                    />
-                    {selected && (
-                      <span className="absolute inset-0 flex items-end bg-ink/50 p-1.5">
-                        <span className="text-[10px] font-medium text-paper">
-                          {item.name}
-                        </span>
-                      </span>
-                    )}
+                    {item.name}
                   </button>
                 );
               })}

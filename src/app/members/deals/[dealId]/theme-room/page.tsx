@@ -7,6 +7,7 @@ import SiteFooter from "@/components/SiteFooter";
 import ThemeSelector from "@/components/ThemeSelector";
 import ThemeItemCard from "@/components/ThemeItemCard";
 import RoomRedesignForm from "@/components/RoomRedesignForm";
+import DealGallery from "@/components/DealGallery";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { users } from "@/lib/schema";
@@ -87,6 +88,12 @@ export default async function ThemeRoomPage({
           property out, priced at the cheapest live listing we can find.
         </p>
 
+        {deal.photos.length > 0 && (
+          <div className="mt-10">
+            <DealGallery photos={deal.photos} alt={deal.title} />
+          </div>
+        )}
+
         <div className="mt-10">
           <ThemeSelector active={theme} />
         </div>
@@ -98,12 +105,7 @@ export default async function ThemeRoomPage({
         ) : (
           <div className="mt-6 grid grid-cols-2 gap-4 md:grid-cols-3">
             {itemsWithPrices.map(({ item, price }) => (
-              <ThemeItemCard
-                key={item.id}
-                name={item.name}
-                imageUrl={item.imageUrl}
-                price={price}
-              />
+              <ThemeItemCard key={item.id} name={item.name} price={price} />
             ))}
           </div>
         )}
@@ -127,7 +129,6 @@ export default async function ThemeRoomPage({
               catalogItems={items.map((item) => ({
                 id: item.id,
                 name: item.name,
-                imageUrl: item.imageUrl,
               }))}
             />
           </div>

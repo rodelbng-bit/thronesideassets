@@ -1,27 +1,12 @@
-import Image from "next/image";
-
 export default function ThemeItemCard({
   name,
-  imageUrl,
   price,
 }: {
   name: string;
-  imageUrl: string | null;
   price: { vendorName: string; priceMinor: number; url: string } | null;
 }) {
   return (
-    <div className="overflow-hidden rounded-lg border rule bg-ink-soft">
-      {imageUrl && (
-        <div className="relative aspect-square w-full">
-          <Image
-            src={imageUrl}
-            alt={name}
-            fill
-            sizes="(min-width: 1024px) 25vw, 50vw"
-            className="object-cover"
-          />
-        </div>
-      )}
+    <div className="rounded-lg border rule bg-ink-soft">
       <div className="p-4">
         <p className="text-sm text-paper">{name}</p>
         {price ? (
