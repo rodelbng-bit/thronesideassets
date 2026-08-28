@@ -2,7 +2,7 @@ import Link from "next/link";
 import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
 import SetPasswordForm from "@/components/SetPasswordForm";
-import { gocardlessClient } from "@/lib/gocardless";
+import { gocardlessClient, describeGoCardlessError } from "@/lib/gocardless";
 import { ensureUserForBillingRequest } from "@/lib/membership";
 import type { ApprovalStatus } from "@/lib/schema";
 
@@ -33,7 +33,10 @@ async function resolveCheckout(billingRequestId: string | undefined) {
       await ensureUserForBillingRequest(billingRequest);
     return { ok: true as const, email, resetToken, approvalStatus };
   } catch (err) {
-    console.error(err);
+    console.error("Join success: could not resolve checkout", {
+      billingRequestId,
+      ...describeGoCardlessError(err),
+    });
     return { ok: false as const, message: GENERIC_ERROR_MESSAGE };
   }
 }

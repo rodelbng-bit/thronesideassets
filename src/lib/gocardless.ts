@@ -27,6 +27,29 @@ export const gocardlessClient: GoCardlessClient = new Proxy(
   }
 );
 
+// GoCardless's client throws ApiError subclasses (see
+// gocardless-nodejs/errors) that carry the fields their support team asks
+// for — most importantly `requestId`. A bare `console.error(err)` drops
+// most of these, so normalise them into one loggable object.
+export function describeGoCardlessError(err: unknown): Record<string, unknown> {
+  if (!err || typeof err !== "object") {
+    return { message: String(err) };
+  }
+  const e = err as Record<string, unknown>;
+  return {
+    name: e.name,
+    message: e.message,
+    errorType: e.errorType,
+    code: e.code,
+    requestId: e.requestId,
+    documentationUrl: e.documentationUrl,
+    errors: e.errors,
+    statusCode:
+      (e.response as { statusCode?: unknown } | undefined)?.statusCode ??
+      e.statusCode,
+  };
+}
+
 export type BillingInterval = "monthly" | "annual";
 
 // GoCardless has no Price-ID concept — amounts are passed directly on the

@@ -1,6 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { eq } from "drizzle-orm";
-import { createEssentialBillingRequestFlow, type BillingInterval } from "@/lib/gocardless";
+import {
+  createEssentialBillingRequestFlow,
+  describeGoCardlessError,
+  type BillingInterval,
+} from "@/lib/gocardless";
 import { db } from "@/lib/db";
 import { registrations } from "@/lib/schema";
 
@@ -83,9 +87,18 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ url: authorisationUrl });
   } catch (err) {
-    console.error(err);
+    const detail = describeGoCardlessError(err);
+    console.error("Checkout: GoCardless billing request flow failed", {
+      registrationId: registration.id,
+      interval,
+      ...detail,
+    });
     return NextResponse.json(
-      { error: "Could not start checkout" },
+      {
+        error: "Could not start checkout",
+        // Safe to surface — lets the member quote it to support.
+        reference: detail.requestId ?? null,
+      },
       { status: 502 }
     );
   }

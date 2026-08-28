@@ -152,7 +152,10 @@ export default function JoinForm() {
       });
       const data = await res.json();
       if (!res.ok || !data.url) {
-        throw new Error(data.error ?? "Could not start checkout.");
+        const base = data.error ?? "Could not start checkout.";
+        throw new Error(
+          data.reference ? `${base} (reference: ${data.reference})` : base
+        );
       }
       window.location.href = data.url;
     } catch (err) {
