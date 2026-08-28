@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import { redirect, notFound } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
@@ -6,6 +7,9 @@ import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
 import ThemeSelector from "@/components/ThemeSelector";
 import ThemeItemCard from "@/components/ThemeItemCard";
+import ThemeItemPrice, {
+  ThemeItemPriceSkeleton,
+} from "@/components/ThemeItemPrice";
 import RoomRedesignForm from "@/components/RoomRedesignForm";
 import DealGallery from "@/components/DealGallery";
 import { auth } from "@/lib/auth";
@@ -13,11 +17,7 @@ import { db } from "@/lib/db";
 import { users } from "@/lib/schema";
 import type { ThemeCategory } from "@/lib/schema";
 import { getDeal } from "@/lib/deals";
-import {
-  getThemeItems,
-  getCheapestPrice,
-  getRedesignsForDeal,
-} from "@/lib/themeRoom";
+import { getThemeItems, getRedesignsForDeal } from "@/lib/themeRoom";
 
 const CANONICAL_THEMES: ThemeCategory[] = ["natural", "urban", "classy", "abstract"];
 
@@ -44,11 +44,6 @@ export default async function ThemeRoomPage({
   }
 
   const { dealId } = await params;
-  const deal = await getDeal(dealId);
-  if (!deal) {
-    notFound();
-  }
-
   const { theme: themeParam } = await searchParams;
   const theme: ThemeCategory = CANONICAL_THEMES.includes(
     themeParam as ThemeCategory
@@ -56,15 +51,17 @@ export default async function ThemeRoomPage({
     ? (themeParam as ThemeCategory)
     : "natural";
 
-  const items = await getThemeItems(theme);
-  const itemsWithPrices = await Promise.all(
-    items.map(async (item) => ({
-      item,
-      price: await getCheapestPrice(item, deal.location),
-    }))
-  );
+  // All three are quick indexed queries — run them together rather than
+  // in series. The slow part (per-item live pricing) is streamed below.
+  const [deal, items, pastRedesigns] = await Promise.all([
+    getDeal(dealId),
+    getThemeItems(theme),
+    getRedesignsForDeal(session.user.id, dealId),
+  ]);
 
-  const pastRedesigns = await getRedesignsForDeal(session.user.id, dealId);
+  if (!deal) {
+    notFound();
+  }
 
   return (
     <>
@@ -98,14 +95,22 @@ export default async function ThemeRoomPage({
           <ThemeSelector active={theme} />
         </div>
 
-        {itemsWithPrices.length === 0 ? (
+        {items.length === 0 ? (
           <div className="mt-6 rounded-lg border rule bg-ink-soft p-6 text-sm text-paper-dim">
             No items curated for this style yet.
           </div>
         ) : (
           <div className="mt-6 grid grid-cols-2 gap-4 md:grid-cols-3">
-            {itemsWithPrices.map(({ item, price }) => (
-              <ThemeItemCard key={item.id} name={item.name} price={price} />
+            {items.map((item) => (
+              <ThemeItemCard
+                key={item.id}
+                name={item.name}
+                priceSlot={
+                  <Suspense fallback={<ThemeItemPriceSkeleton />}>
+                    <ThemeItemPrice item={item} location={deal.location} />
+                  </Suspense>
+                }
+              />
             ))}
           </div>
         )}
