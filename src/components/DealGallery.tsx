@@ -7,9 +7,12 @@ import Image from "next/image";
 export default function DealGallery({
   photos,
   alt,
+  aspectClassName = "aspect-video",
 }: {
   photos: string[];
   alt: string;
+  /** Tailwind aspect-ratio class for the inline (non-lightbox) frame. */
+  aspectClassName?: string;
 }) {
   const [index, setIndex] = useState(0);
   const [lightboxOpen, setLightboxOpen] = useState(false);
@@ -23,7 +26,9 @@ export default function DealGallery({
 
   return (
     <div>
-      <div className="relative aspect-video w-full overflow-hidden rounded-lg border rule">
+      <div
+        className={`relative ${aspectClassName} w-full overflow-hidden rounded-lg border rule`}
+      >
         <button
           type="button"
           onClick={() => setLightboxOpen(true)}

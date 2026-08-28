@@ -1,7 +1,7 @@
 import Link from "next/link";
-import Image from "next/image";
 import type { Deal, ReserveState } from "@/lib/deals";
 import { freshnessFromDate } from "@/lib/deals";
+import DealGallery from "./DealGallery";
 import ReserveButton from "./ReserveButton";
 import DealThermometer from "./DealThermometer";
 
@@ -42,15 +42,11 @@ export default function DealSummaryCard({
 
   return (
     <div className="grid grid-cols-1 gap-6 rounded-lg border rule bg-ink-soft p-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,2fr)]">
-      <div className="relative aspect-4/3 w-full overflow-hidden rounded-lg border rule">
-        <Image
-          src={deal.photos[0]}
-          alt={deal.title}
-          fill
-          sizes="(min-width: 1024px) 25vw, 100vw"
-          className="object-cover"
-        />
-      </div>
+      <DealGallery
+        photos={deal.photos}
+        alt={deal.title}
+        aspectClassName="aspect-4/3"
+      />
 
       <div className="flex flex-col">
         <div className="flex items-start justify-between gap-4">
