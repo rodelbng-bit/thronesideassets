@@ -78,7 +78,6 @@ export async function POST(req: NextRequest) {
       deal.location
     );
 
-    const style = getThemeStyle(theme.trim());
     const rawGeneratedUrl = await generateRedesign(
       photoUrl.trim(),
       theme.trim(),
@@ -86,8 +85,7 @@ export async function POST(req: NextRequest) {
         name: item.name,
         description: item.description,
       })),
-      style?.stylePrompt ?? "",
-      style?.referenceImage ?? ""
+      getThemeStyle(theme.trim())?.stylePrompt ?? ""
     );
 
     // Replicate's output URL isn't guaranteed to stay live indefinitely —

@@ -12,13 +12,6 @@ export type ThemeStyle = {
    */
   stylePrompt: string;
   /**
-   * The single image the redesign model matches the room to — the visual
-   * target for the look. Pick a clean, well-lit, representative interior
-   * (ideally a similar room type). Any host allowed by next.config
-   * images.remotePatterns.
-   */
-  referenceImage: string;
-  /**
    * Reference images of the look, shown as a gallery when the theme is
    * picked. Any host allowed by next.config images.remotePatterns
    * (images.unsplash.com or *.public.blob.vercel-storage.com). Swap these
@@ -39,7 +32,6 @@ export const THEME_STYLES: Record<ThemeCategory, ThemeStyle> = {
       "rugs, unglazed stoneware; an earthy palette of oatmeal, clay, sage " +
       "and warm white; abundant leafy potted plants; woven pendant shades; " +
       "soft diffused daylight; rounded organic shapes",
-    referenceImage: UNSPLASH("1772797583328-f83bc3f94f80"),
     exampleImages: [
       UNSPLASH("1772797583328-f83bc3f94f80"),
       UNSPLASH("1747336754870-ca7b10cc75f5"),
@@ -54,7 +46,6 @@ export const THEME_STYLES: Record<ThemeCategory, ThemeStyle> = {
       "wood, tan and cognac leather; a charcoal and slate palette with rust " +
       "accents; low-slung modular seating; Edison-bulb and track lighting; " +
       "exposed, raw finishes; large monochrome graphic art",
-    referenceImage: UNSPLASH("1776090188612-a2dab458ce14"),
     exampleImages: [
       UNSPLASH("1776090188612-a2dab458ce14"),
       UNSPLASH("1783990349147-906f62b882c1"),
@@ -69,7 +60,6 @@ export const THEME_STYLES: Record<ThemeCategory, ThemeStyle> = {
       "brass, marble and stone; velvet and boucle upholstery; deep jewel " +
       "tones of emerald, navy and oxblood against cream; tailored sofas; a " +
       "statement chandelier and picture lights; gilt-framed art; layered rugs",
-    referenceImage: UNSPLASH("1700226034367-2fb120f48dfa"),
     exampleImages: [
       UNSPLASH("1700226034367-2fb120f48dfa"),
       UNSPLASH("1648881806148-e5c51179c826"),
@@ -84,7 +74,6 @@ export const THEME_STYLES: Record<ThemeCategory, ThemeStyle> = {
       "blocking in cobalt, ochre and coral; high-gloss and lacquer finishes; " +
       "large abstract and graphic canvases; playful geometric rugs; a " +
       "statement modern light fitting; a mix of matte and reflective surfaces",
-    referenceImage: UNSPLASH("1631510083755-11ecb5172d81"),
     exampleImages: [
       UNSPLASH("1631510083755-11ecb5172d81"),
       UNSPLASH("1618221381711-42ca8ab6e908"),
