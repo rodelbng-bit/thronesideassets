@@ -10,6 +10,7 @@ import {
 } from "./schema";
 import { searchCheapestPrice } from "./pricing";
 import { suggestThemeItemQueries } from "./itemSuggestions";
+import { getThemeStyle } from "./themeStyles";
 
 const PRICE_QUOTE_TTL_MS = 24 * 60 * 60 * 1000;
 
@@ -124,11 +125,16 @@ export async function gatherThemeShoppingList(
   const seen = new Set(curatedItems.map((i) => i.name.toLowerCase()));
   const remaining = Math.max(0, MAX_SHOPPING_LIST - curatedItems.length);
 
+  // Steer the suggestions with the theme's full style brief when there is
+  // one, so a padded-out list still matches the look.
+  const styleDescriptor =
+    getThemeStyle(theme)?.stylePrompt ?? `${theme} interior style`;
+
   const suggestedItems: ShoppingListItem[] =
     remaining === 0
       ? []
       : await Promise.all(
-          (await suggestThemeItemQueries(`${theme} interior style`))
+          (await suggestThemeItemQueries(styleDescriptor))
             .filter((q) => !seen.has(q.toLowerCase()))
             .slice(0, remaining)
             .map(async (query) => ({

@@ -8,6 +8,7 @@ import { getDeal } from "@/lib/deals";
 import { gatherThemeShoppingList } from "@/lib/themeRoom";
 import { generateRedesign } from "@/lib/imageRedesign";
 import { locateItemsInImage } from "@/lib/imageItemLocator";
+import { getThemeStyle } from "@/lib/themeStyles";
 
 // The image edit takes ~10-20s, price lookups and a vision call to locate
 // items add more — give the serverless function room to wait for it all
@@ -83,7 +84,8 @@ export async function POST(req: NextRequest) {
       shoppingList.map((item) => ({
         name: item.name,
         description: item.description,
-      }))
+      })),
+      getThemeStyle(theme.trim())?.stylePrompt ?? ""
     );
 
     // Replicate's output URL isn't guaranteed to stay live indefinitely —

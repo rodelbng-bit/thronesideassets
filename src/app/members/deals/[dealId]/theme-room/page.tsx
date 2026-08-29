@@ -5,6 +5,7 @@ import { eq } from "drizzle-orm";
 import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
 import ThemeSelector from "@/components/ThemeSelector";
+import ThemeLookGallery from "@/components/ThemeLookGallery";
 import RoomRedesignForm from "@/components/RoomRedesignForm";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
@@ -79,6 +80,7 @@ export default async function ThemeRoomPage({
 
         <div className="mt-10">
           <ThemeSelector active={theme} />
+          <ThemeLookGallery theme={theme} />
         </div>
 
         <div className="mt-8 max-w-2xl">

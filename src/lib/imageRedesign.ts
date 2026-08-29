@@ -23,17 +23,25 @@ export type PromptItem = {
   description: string;
 };
 
-function buildPrompt(themePrompt: string, items: PromptItem[]): string {
+function buildPrompt(
+  themePrompt: string,
+  items: PromptItem[],
+  styleBrief: string
+): string {
   const pieces =
     items.length > 0
       ? items.slice(0, 8).map((item) => item.name).join(", ")
       : "the bed, sofa, chairs, tables, rug, cushions, lamps and wall art";
 
+  const brief = styleBrief
+    ? ` The ${themePrompt} look means: ${styleBrief}.`
+    : "";
+
   return (
     `Replace the furniture and decoration in this room with ${themePrompt}-style ` +
     `pieces — swap ${pieces} for versions that fit a ${themePrompt} interior, ` +
     `repaint the walls in a colour that suits the ${themePrompt} look, and change ` +
-    `the wall art, plants and small decor to match. ` +
+    `the wall art, plants and small decor to match.${brief} ` +
     `Keep everything else identical: the exact same room shape and size, the same ` +
     `walls, windows, doors and doorways in the same places, the same floor, the ` +
     `same ceiling, and the same camera angle, viewpoint and framing as the ` +
@@ -45,15 +53,17 @@ function buildPrompt(themePrompt: string, items: PromptItem[]): string {
 // Runs the redesign model to completion server-side (Replicate's `run`
 // polls internally) and returns the generated image URL. Callers should
 // set `maxDuration` on their route handler. `items`, when given, names the
-// specific pieces to swap in so the edit targets them by name.
+// specific pieces to swap in; `styleBrief` (see lib/themeStyles) adds the
+// theme's materials / palette / lighting so results stay on-brand.
 export async function generateRedesign(
   photoUrl: string,
   themePrompt: string,
-  items: PromptItem[] = []
+  items: PromptItem[] = [],
+  styleBrief = ""
 ): Promise<string> {
   const output = await getClient().run(MODEL, {
     input: {
-      prompt: buildPrompt(themePrompt, items),
+      prompt: buildPrompt(themePrompt, items, styleBrief),
       input_image: photoUrl,
       aspect_ratio: "match_input_image",
       output_format: "png",
