@@ -10,11 +10,11 @@ import { generateRedesign } from "@/lib/imageRedesign";
 import { locateItemsInImage } from "@/lib/imageItemLocator";
 import { getThemeStyle } from "@/lib/themeStyles";
 
-// The image edit takes ~10-20s, price lookups and a vision call to locate
-// items add more — give the serverless function room to wait for it all
+// Segmentation + inpainting + price lookups + a vision call to locate
+// items — give the serverless function room to wait for it all
 // synchronously rather than building out a job queue for a first version
 // of this feature.
-export const maxDuration = 90;
+export const maxDuration = 120;
 
 export async function POST(req: NextRequest) {
   const session = await auth();
