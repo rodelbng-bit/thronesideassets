@@ -3,23 +3,17 @@ import { eq } from "drizzle-orm";
 import { put } from "@vercel/blob";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
-import { users, themeRedesigns, themeEnum, type ThemeCategory } from "@/lib/schema";
+import { users, themeRedesigns } from "@/lib/schema";
 import { getDeal } from "@/lib/deals";
-import {
-  getThemeItems,
-  getThemeItemsByIds,
-  getCheapestPrice,
-} from "@/lib/themeRoom";
+import { gatherThemeShoppingList } from "@/lib/themeRoom";
 import { generateRedesign } from "@/lib/imageRedesign";
-import { searchCheapestPrice } from "@/lib/pricing";
-import { getFallbackItemQueries } from "@/lib/itemSuggestions";
+import { locateItemsInImage } from "@/lib/imageItemLocator";
 
-// Replicate's interior-design run typically takes 10-30s — give the
-// serverless function room to wait for it synchronously rather than
-// building out a job queue for a first version of this feature.
-export const maxDuration = 60;
-
-const CANONICAL_THEMES = new Set(themeEnum.enumValues);
+// Replicate's interior-design run typically takes 10-30s, then a vision
+// call to locate items adds a few more — give the serverless function
+// room to wait for it all synchronously rather than building out a job
+// queue for a first version of this feature.
+export const maxDuration = 90;
 
 export async function POST(req: NextRequest) {
   const session = await auth();
@@ -41,7 +35,7 @@ export async function POST(req: NextRequest) {
   }
 
   const data = await req.json();
-  const { dealId, theme, photoUrl, itemIds } = data;
+  const { dealId, theme, photoUrl } = data;
 
   if (
     typeof dealId !== "string" ||
@@ -49,9 +43,7 @@ export async function POST(req: NextRequest) {
     typeof theme !== "string" ||
     !theme.trim() ||
     typeof photoUrl !== "string" ||
-    !photoUrl.trim() ||
-    (itemIds !== undefined &&
-      (!Array.isArray(itemIds) || itemIds.some((id) => typeof id !== "string")))
+    !photoUrl.trim()
   ) {
     return NextResponse.json(
       { error: "Missing or invalid fields." },
@@ -63,10 +55,6 @@ export async function POST(req: NextRequest) {
   if (!deal) {
     return NextResponse.json({ error: "Deal not found." }, { status: 404 });
   }
-
-  const selectedItems = await getThemeItemsByIds(
-    Array.isArray(itemIds) ? itemIds : []
-  );
 
   const [redesign] = await db
     .insert(themeRedesigns)
@@ -80,12 +68,21 @@ export async function POST(req: NextRequest) {
     .returning();
 
   try {
+    // The items to shop for this theme, priced against the deal's location.
+    // These also steer the render — the model can't drop in the exact
+    // product photos, but the descriptions nudge the imagined furniture
+    // toward them.
+    const shoppingList = await gatherThemeShoppingList(
+      theme.trim(),
+      deal.location
+    );
+
     const rawGeneratedUrl = await generateRedesign(
       photoUrl.trim(),
       theme.trim(),
-      selectedItems.map((item) => ({
+      shoppingList.map((item) => ({
         name: item.name,
-        description: item.searchKeywords,
+        description: item.description,
       }))
     );
 
@@ -105,33 +102,19 @@ export async function POST(req: NextRequest) {
       .set({ status: "complete", generatedImageUrl: blob.url })
       .where(eq(themeRedesigns.id, redesign.id));
 
-    const normalizedTheme = theme.trim().toLowerCase();
-    const items =
-      selectedItems.length > 0
-        ? await Promise.all(
-            selectedItems.map(async (item) => ({
-              name: item.name,
-              imageUrl: item.imageUrl,
-              price: await getCheapestPrice(item, deal.location),
-            }))
-          )
-        : CANONICAL_THEMES.has(normalizedTheme as ThemeCategory)
-          ? await Promise.all(
-              (await getThemeItems(normalizedTheme as ThemeCategory)).map(
-                async (item) => ({
-                  name: item.name,
-                  imageUrl: item.imageUrl,
-                  price: await getCheapestPrice(item, deal.location),
-                })
-              )
-            )
-          : await Promise.all(
-              (await getFallbackItemQueries(theme.trim())).map(async (query) => ({
-                name: query,
-                imageUrl: null,
-                price: await searchCheapestPrice(query, deal.location),
-              }))
-            );
+    // Ask a vision model roughly where each item landed in the render so the
+    // client can pin a clickable "where to buy" marker on it. Best-effort —
+    // an empty result just means no markers, the list below still renders.
+    const points = await locateItemsInImage(
+      blob.url,
+      shoppingList.map((item) => item.name)
+    );
+    const items = shoppingList.map((item) => ({
+      name: item.name,
+      imageUrl: item.imageUrl,
+      price: item.price,
+      point: points[item.name] ?? null,
+    }));
 
     return NextResponse.json({
       redesign: { id: redesign.id, generatedImageUrl: blob.url },

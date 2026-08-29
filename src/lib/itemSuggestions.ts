@@ -1,14 +1,14 @@
 import { getEnv } from "./env";
 
-// Used only when a member's free-text redesign theme doesn't match one of
-// the four curated categories (see lib/themeRoom.ts getThemeItems) — asks
-// Claude for a short list of generic furniture/decor search queries that
-// fit the style, which the caller then runs through the same
-// searchCheapestPrice pipeline as the curated catalog. Returns [] on any
-// failure so the redesign flow still succeeds with just the generated
-// image and no item list.
-export async function getFallbackItemQueries(
-  themePrompt: string
+// Asks Claude for a list of generic UK furniture/decor shopping search
+// queries that fit a given interior style. Used to pad out the redesign's
+// shopping list beyond whatever's been curated in the admin catalog, so
+// even a thin theme still produces a full set of clickable items. Returns
+// [] on any failure so the redesign flow still succeeds with just the
+// curated items (or none).
+export async function suggestThemeItemQueries(
+  theme: string,
+  count = 8
 ): Promise<string[]> {
   let apiKey: string;
   try {
@@ -26,12 +26,18 @@ export async function getFallbackItemQueries(
         "anthropic-version": "2023-06-01",
       },
       body: JSON.stringify({
-        model: "claude-haiku-4-5-20251001",
-        max_tokens: 300,
+        model: "claude-haiku-4-5",
+        max_tokens: 400,
         messages: [
           {
             role: "user",
-            content: `List 5 short UK furniture/decor shopping search queries (e.g. "rattan pendant light") for a room redesigned in this style: "${themePrompt}". Reply with ONLY the 5 queries, one per line, no numbering or extra text.`,
+            content:
+              `List ${count} short UK furniture/decor shopping search queries ` +
+              `(e.g. "rattan pendant light", "linen scatter cushion", "oak ` +
+              `coffee table") for a living room styled in this way: ` +
+              `"${theme}". Cover a range — seating, tables, lighting, wall art, ` +
+              `cushions, rugs, and other decoration. Reply with ONLY the ` +
+              `${count} queries, one per line, no numbering or extra text.`,
           },
         ],
       }),
@@ -46,7 +52,7 @@ export async function getFallbackItemQueries(
       .split("\n")
       .map((line: string) => line.replace(/^[-*\d.\s]+/, "").trim())
       .filter(Boolean)
-      .slice(0, 5);
+      .slice(0, count);
   } catch {
     return [];
   }

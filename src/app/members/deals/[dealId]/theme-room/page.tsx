@@ -120,21 +120,18 @@ export default async function ThemeRoomPage({
             PHOTO REDESIGN
           </p>
           <h2 className="mt-3 font-display text-3xl text-paper">
-            See your own room, restyled.
+            See the room in this style.
           </h2>
           <p className="mt-4 max-w-xl text-paper-dim">
-            Pick one of the property&apos;s own photos, or upload your own,
-            and we&apos;ll generate a realistic redesign in any style you
-            choose, with a shopping list for what&apos;s shown.
+            Pick one of the property&apos;s photos (or upload your own) and
+            we&apos;ll restyle it in the {theme} look, then mark every piece
+            in the result with a link to buy it from a UK retailer.
           </p>
           <div className="mt-8 max-w-2xl">
             <RoomRedesignForm
               dealId={dealId}
               propertyPhotos={deal.photos}
-              catalogItems={items.map((item) => ({
-                id: item.id,
-                name: item.name,
-              }))}
+              theme={theme}
             />
           </div>
         </div>

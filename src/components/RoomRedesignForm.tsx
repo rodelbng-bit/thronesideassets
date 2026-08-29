@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import Image from "next/image";
 import { upload } from "@vercel/blob/client";
+import ThemeRedesignHotspots from "./ThemeRedesignHotspots";
 
 type Status = "idle" | "uploading" | "generating" | "error" | "done";
 
@@ -11,45 +12,49 @@ type ResultItem = {
   name: string;
   imageUrl: string | null;
   price: { vendorName: string; priceMinor: number; url: string } | null;
+  // Where the item sits in the generated image (fractional), when a vision
+  // pass could locate it — drives the hover/tap "where to buy" markers.
+  point?: { x: number; y: number } | null;
 };
-
-type CatalogItem = {
-  id: string;
-  name: string;
-};
-
-const THEME_SUGGESTIONS = ["Natural", "Urban", "Classy", "Abstract"];
 
 export default function RoomRedesignForm({
   dealId,
   propertyPhotos,
-  catalogItems,
+  theme,
 }: {
   dealId: string;
   propertyPhotos: string[];
-  catalogItems: CatalogItem[];
+  /** The theme selected in the tabs above — drives the whole redesign. */
+  theme: string;
 }) {
   const router = useRouter();
   const [status, setStatus] = useState<Status>("idle");
   const [errorMessage, setErrorMessage] = useState("");
-  const [theme, setTheme] = useState("");
   const [generatedImageUrl, setGeneratedImageUrl] = useState("");
   const [items, setItems] = useState<ResultItem[]>([]);
   const [photoIndex, setPhotoIndex] = useState(0);
   const [useOwnPhoto, setUseOwnPhoto] = useState(propertyPhotos.length === 0);
+
+  const themeLabel = theme.charAt(0).toUpperCase() + theme.slice(1);
+
+  // The result belongs to whichever theme was active when it was generated —
+  // clear it when the member switches tabs so a stale render isn't left
+  // sitting under a different style. This is the React-recommended "adjust
+  // state during render on prop change" pattern (no effect needed).
+  const [renderedTheme, setRenderedTheme] = useState(theme);
+  if (theme !== renderedTheme) {
+    setRenderedTheme(theme);
+    setStatus("idle");
+    setErrorMessage("");
+    setGeneratedImageUrl("");
+    setItems([]);
+  }
 
   function prevPhoto() {
     setPhotoIndex((i) => (i - 1 + propertyPhotos.length) % propertyPhotos.length);
   }
   function nextPhoto() {
     setPhotoIndex((i) => (i + 1) % propertyPhotos.length);
-  }
-  const [selectedItemIds, setSelectedItemIds] = useState<string[]>([]);
-
-  function toggleItem(id: string) {
-    setSelectedItemIds((prev) =>
-      prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id]
-    );
   }
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
@@ -59,12 +64,6 @@ export default function RoomRedesignForm({
     const form = e.currentTarget;
     const photoInput = form.elements.namedItem("photo") as HTMLInputElement | null;
     const file = photoInput?.files?.[0];
-
-    if (!theme.trim()) {
-      setStatus("error");
-      setErrorMessage("Enter a style.");
-      return;
-    }
 
     try {
       let photoUrl: string;
@@ -94,12 +93,7 @@ export default function RoomRedesignForm({
       const res = await fetch("/api/theme-room/redesign", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          dealId,
-          theme: theme.trim(),
-          photoUrl,
-          itemIds: selectedItemIds,
-        }),
+        body: JSON.stringify({ dealId, theme, photoUrl }),
       });
       const result = await res.json();
       if (!res.ok) {
@@ -218,64 +212,12 @@ export default function RoomRedesignForm({
           )}
         </div>
 
-        {catalogItems.length > 0 && (
-          <div>
-            <label className="text-xs uppercase tracking-wide text-paper-dim">
-              Include specific items (optional)
-            </label>
-            <p className="mt-2 text-xs text-paper-dim">
-              We&apos;ll steer the redesign toward these pieces&apos; style,
-              color, and material — the AI can&apos;t drop in the exact
-              product photos, but this gets it much closer than a style name
-              alone.
-            </p>
-            <div className="mt-3 flex flex-wrap gap-2">
-              {catalogItems.map((item) => {
-                const selected = selectedItemIds.includes(item.id);
-                return (
-                  <button
-                    key={item.id}
-                    type="button"
-                    onClick={() => toggleItem(item.id)}
-                    className={
-                      selected
-                        ? "rounded-full bg-brass px-3 py-1 text-xs font-medium text-ink"
-                        : "rounded-full border rule px-3 py-1 text-xs text-paper-dim transition-colors hover:text-paper"
-                    }
-                  >
-                    {item.name}
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-        )}
-
-        <div>
-          <label className="text-xs uppercase tracking-wide text-paper-dim">
-            Style
-          </label>
-          <input
-            type="text"
-            value={theme}
-            onChange={(e) => setTheme(e.target.value)}
-            required
-            placeholder="Natural, Urban, Classy, Abstract, or anything else"
-            className="mt-2 w-full rounded-md border rule bg-ink px-4 py-3 text-sm text-paper placeholder:text-paper-dim/60 focus:border-brass focus:outline-none"
-          />
-          <div className="mt-2 flex flex-wrap gap-2">
-            {THEME_SUGGESTIONS.map((suggestion) => (
-              <button
-                key={suggestion}
-                type="button"
-                onClick={() => setTheme(suggestion)}
-                className="rounded-full border rule px-3 py-1 text-xs text-paper-dim transition-colors hover:text-paper"
-              >
-                {suggestion}
-              </button>
-            ))}
-          </div>
-        </div>
+        <p className="text-xs text-paper-dim">
+          We&apos;ll restyle this room in the{" "}
+          <span className="text-paper">{themeLabel}</span> look, source the
+          furniture, lighting, wall art, cushions and decor for it from UK
+          retailers, and mark each piece on the result with a link to buy it.
+        </p>
 
         {status === "error" && (
           <p className="text-sm text-red-400">{errorMessage}</p>
@@ -290,21 +232,22 @@ export default function RoomRedesignForm({
             ? "Uploading…"
             : status === "generating"
               ? "Generating your redesign…"
-              : "Generate redesign"}
+              : `Redesign in ${themeLabel}`}
         </button>
       </form>
 
       {status === "done" && generatedImageUrl && (
         <div className="mt-10">
           <p className="ledger-figure text-sm text-brass-bright">RESULT</p>
-          <div className="relative mt-3 aspect-4/3 w-full max-w-2xl overflow-hidden rounded-lg border rule">
-            <Image
-              src={generatedImageUrl}
-              alt="Redesigned room"
-              fill
-              className="object-cover"
-            />
-          </div>
+          <ThemeRedesignHotspots imageUrl={generatedImageUrl} items={items} />
+
+          {items.some((item) => item.point) && (
+            <p className="mt-3 text-xs text-paper-dim">
+              Hover or tap the{" "}
+              <span className="ledger-figure text-brass-bright">◆</span> markers
+              on the image to see where to buy each piece.
+            </p>
+          )}
 
           {items.length > 0 && (
             <>

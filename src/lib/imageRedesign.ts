@@ -51,13 +51,18 @@ function buildPrompt(themePrompt: string, items: PromptItem[]): string {
   if (items.length === 0) {
     return `${themePrompt} interior design style. ${preserve}`;
   }
+  // The model's text encoder only takes in a short prompt before truncating,
+  // so keep the furniture list tight — the first handful of pieces steer the
+  // render; the full shopping list still comes back to the client.
   const itemList = items
-    .map((item) => `${item.name} (${item.description})`)
-    .join("; ");
+    .slice(0, 6)
+    .map((item) =>
+      items.length > 4 ? item.name : `${item.name} (${item.description})`
+    )
+    .join(", ");
   return (
-    `${themePrompt} interior design style. ${preserve} Furnish the room with ` +
-    `pieces matching these as closely as possible in style, color, and ` +
-    `material: ${itemList}.`
+    `${themePrompt} interior design style. ${preserve} Furnish it with pieces ` +
+    `like: ${itemList}.`
   );
 }
 
