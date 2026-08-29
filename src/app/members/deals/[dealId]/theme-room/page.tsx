@@ -96,23 +96,50 @@ export default async function ThemeRoomPage({
             <h2 className="font-display text-2xl text-paper">
               Past redesigns.
             </h2>
-            <div className="mt-6 grid grid-cols-2 gap-4 md:grid-cols-3">
+            <div className="mt-6 space-y-6">
               {pastRedesigns.map((redesign) => (
                 <div
                   key={redesign.id}
-                  className="overflow-hidden rounded-lg border rule bg-ink-soft"
+                  className="rounded-lg border rule bg-ink-soft p-4"
                 >
-                  {redesign.generatedImageUrl && (
-                    <div className="relative aspect-4/3 w-full">
-                      <Image
-                        src={redesign.generatedImageUrl}
-                        alt={`${redesign.theme} redesign`}
-                        fill
-                        className="object-cover"
-                      />
-                    </div>
-                  )}
-                  <p className="p-3 text-xs text-paper-dim">{redesign.theme}</p>
+                  <div className="grid grid-cols-2 gap-3">
+                    <figure>
+                      <figcaption className="mb-2 text-[11px] uppercase tracking-wide text-paper-dim">
+                        Original
+                      </figcaption>
+                      <div className="relative aspect-4/3 w-full overflow-hidden rounded-md border rule">
+                        <Image
+                          src={redesign.originalPhotoUrl}
+                          alt="Original room"
+                          fill
+                          sizes="(min-width: 768px) 45vw, 50vw"
+                          className="object-cover"
+                        />
+                      </div>
+                    </figure>
+                    <figure>
+                      <figcaption className="mb-2 text-[11px] uppercase tracking-wide text-brass-bright">
+                        {redesign.theme} redesign
+                      </figcaption>
+                      {redesign.generatedImageUrl ? (
+                        <div className="relative aspect-4/3 w-full overflow-hidden rounded-md border rule">
+                          <Image
+                            src={redesign.generatedImageUrl}
+                            alt={`${redesign.theme} redesign`}
+                            fill
+                            sizes="(min-width: 768px) 45vw, 50vw"
+                            className="object-cover"
+                          />
+                        </div>
+                      ) : (
+                        <div className="flex aspect-4/3 w-full items-center justify-center rounded-md border rule text-xs text-paper-dim">
+                          {redesign.status === "failed"
+                            ? "Generation failed"
+                            : "Still generating…"}
+                        </div>
+                      )}
+                    </figure>
+                  </div>
                 </div>
               ))}
             </div>
