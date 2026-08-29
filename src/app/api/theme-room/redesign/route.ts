@@ -9,10 +9,10 @@ import { gatherThemeShoppingList } from "@/lib/themeRoom";
 import { generateRedesign } from "@/lib/imageRedesign";
 import { locateItemsInImage } from "@/lib/imageItemLocator";
 
-// Replicate's interior-design run typically takes 10-30s, then a vision
-// call to locate items adds a few more — give the serverless function
-// room to wait for it all synchronously rather than building out a job
-// queue for a first version of this feature.
+// The image edit takes ~10-20s, price lookups and a vision call to locate
+// items add more — give the serverless function room to wait for it all
+// synchronously rather than building out a job queue for a first version
+// of this feature.
 export const maxDuration = 90;
 
 export async function POST(req: NextRequest) {

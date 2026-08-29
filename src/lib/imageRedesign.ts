@@ -1,12 +1,11 @@
 import Replicate from "replicate";
 import { getEnv } from "./env";
 
-// adirik/interior-design: img2img model that redesigns a room photo into a
-// given style while roughly preserving the original layout. Pinned version
-// hash — Replicate model versions are immutable, so bump this deliberately
-// if a newer version is adopted.
-const MODEL_VERSION =
-  "adirik/interior-design:76604baddc85b1b4616e1c6475eca080da339c8875bd4996705440484a6eac38";
+// black-forest-labs/flux-kontext-pro: instruction-based image editing that
+// changes only what it's told to and leaves the rest of the frame intact —
+// the right tool for "swap the furniture, keep the room". Official Replicate
+// model, addressed by name (no pinned version hash).
+const MODEL = "black-forest-labs/flux-kontext-pro";
 
 let client: Replicate | undefined;
 function getClient(): Replicate {
@@ -24,72 +23,48 @@ export type PromptItem = {
   description: string;
 };
 
-// Terms that push the model away from altering the room's structure — the
-// user wants a restyle, not a different room.
-const NEGATIVE_PROMPT =
-  "different room layout, changed architecture, moved walls, added walls, " +
-  "removed walls, changed window position, changed door position, new windows, " +
-  "new doors, different perspective, different camera angle, different room shape, " +
-  "distorted proportions, warped walls, structural changes, extra rooms, " +
-  "lowres, watermark, banner, logo, contactinfo, text, deformed, blurry, blur, " +
-  "out of focus, out of frame, surreal, extra, ugly, upholstered walls, " +
-  "fabric walls, plush walls, mirror, mirrored";
-
-// How much the img2img pass is allowed to deviate from the source. The
-// default (0.8) redraws enough of the frame to shift the room's geometry;
-// 0.6 keeps the layout, windows, and perspective recognisably the same
-// while still fully restyling surfaces and furniture.
-const PROMPT_STRENGTH = 0.6;
-
 function buildPrompt(themePrompt: string, items: PromptItem[]): string {
-  const preserve =
-    "Keep the exact same room layout, wall and window positions, doorways, " +
-    "ceiling, floor plan, proportions, and camera angle as the original photo. " +
-    "Only restyle the furniture, wall colour and finish, decorations, rugs, " +
-    "lighting fixtures, and wall art.";
+  const pieces =
+    items.length > 0
+      ? items.slice(0, 8).map((item) => item.name).join(", ")
+      : "the bed, sofa, chairs, tables, rug, cushions, lamps and wall art";
 
-  if (items.length === 0) {
-    return `${themePrompt} interior design style. ${preserve}`;
-  }
-  // The model's text encoder only takes in a short prompt before truncating,
-  // so keep the furniture list tight — the first handful of pieces steer the
-  // render; the full shopping list still comes back to the client.
-  const itemList = items
-    .slice(0, 6)
-    .map((item) =>
-      items.length > 4 ? item.name : `${item.name} (${item.description})`
-    )
-    .join(", ");
   return (
-    `${themePrompt} interior design style. ${preserve} Furnish it with pieces ` +
-    `like: ${itemList}.`
+    `Replace the furniture and decoration in this room with ${themePrompt}-style ` +
+    `pieces — swap ${pieces} for versions that fit a ${themePrompt} interior, ` +
+    `repaint the walls in a colour that suits the ${themePrompt} look, and change ` +
+    `the wall art, plants and small decor to match. ` +
+    `Keep everything else identical: the exact same room shape and size, the same ` +
+    `walls, windows, doors and doorways in the same places, the same floor, the ` +
+    `same ceiling, and the same camera angle, viewpoint and framing as the ` +
+    `original photo. Do not add, remove or move any walls, windows or doors. Do ` +
+    `not change the room's architecture, proportions or perspective.`
   );
 }
 
 // Runs the redesign model to completion server-side (Replicate's `run`
 // polls internally) and returns the generated image URL. Callers should
-// set `maxDuration` on their route handler — a run typically takes
-// 10–30s. `items`, when given, steers the generation toward specific
-// catalog pieces via their text description — the model only takes one
-// image + a prompt, so this can't literally insert the product photos,
-// just nudge the imagined furniture to resemble them.
+// set `maxDuration` on their route handler. `items`, when given, names the
+// specific pieces to swap in so the edit targets them by name.
 export async function generateRedesign(
   photoUrl: string,
   themePrompt: string,
   items: PromptItem[] = []
 ): Promise<string> {
-  const output = await getClient().run(MODEL_VERSION, {
+  const output = await getClient().run(MODEL, {
     input: {
-      image: photoUrl,
       prompt: buildPrompt(themePrompt, items),
-      negative_prompt: NEGATIVE_PROMPT,
-      prompt_strength: PROMPT_STRENGTH,
+      input_image: photoUrl,
+      aspect_ratio: "match_input_image",
+      output_format: "png",
+      // Max permitted value when an input image is supplied.
+      safety_tolerance: 2,
     },
   });
 
-  // The model returns a single output, or an array with one entry — and
-  // the replicate client (v1.4+) wraps file outputs in a FileOutput
-  // stream object with a .url() method rather than a plain string.
+  // The model returns a single image URL — the replicate client (v1.4+)
+  // wraps file outputs in a FileOutput object with a .url() method rather
+  // than a plain string.
   const item = Array.isArray(output) ? output[0] : output;
   const url =
     typeof item === "string"
