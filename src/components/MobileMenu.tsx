@@ -62,7 +62,7 @@ export default function MobileMenu({
             {isLoggedIn ? (
               <>
                 <Link href="/members" onClick={close} className={rowClass}>
-                  Members
+                  {isAdmin ? "Admin" : "Client"}
                 </Link>
                 <Link href="/members/account" onClick={close} className={rowClass}>
                   My account

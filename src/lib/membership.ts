@@ -73,11 +73,11 @@ export async function ensureUserForRegistration(params: {
         subscriptionStatus: "active",
         subscriptionPlan: "essential",
         termsAcceptedAt,
-        // New signups are held for manual admin review in /admin/clients —
-        // the `users.approvalStatus` DB default is 'approved' (so existing/
-        // renewing accounts are never touched), this is the one place that
-        // explicitly opts a brand-new account into the pending queue.
-        approvalStatus: "pending",
+        // Auto-approved on signup — a successful GoCardless payment is
+        // itself the gate, no manual review step. approvedAt doubles as
+        // the "membership activation date" shown in /admin/clients.
+        approvalStatus: "approved",
+        approvedAt: new Date(),
       })
       .returning();
     userId = created.id;

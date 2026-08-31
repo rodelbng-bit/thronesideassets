@@ -84,7 +84,7 @@ export default async function SiteHeader() {
                   href="/members"
                   className="text-sm text-paper-dim transition-colors hover:text-paper"
                 >
-                  Members
+                  {isAdmin ? "Admin" : "Client"}
                 </Link>
                 <Link
                   href="/members/account"
