@@ -105,7 +105,8 @@ export type ShoppingListItem = {
 // against `location` via the same SerpApi pipeline.
 export async function gatherThemeShoppingList(
   theme: string,
-  location: string
+  location: string,
+  roomLabel?: string
 ): Promise<ShoppingListItem[]> {
   const normalized = theme.trim().toLowerCase();
 
@@ -126,9 +127,13 @@ export async function gatherThemeShoppingList(
   const remaining = Math.max(0, MAX_SHOPPING_LIST - curatedItems.length);
 
   // Steer the suggestions with the theme's full style brief when there is
-  // one, so a padded-out list still matches the look.
+  // one, so a padded-out list still matches the look — and with the room
+  // type, so a bedroom list suggests a bed/nightstands rather than a dining
+  // table.
+  const roomContext = roomLabel ? ` for a ${roomLabel.toLowerCase()}` : "";
   const styleDescriptor =
-    getThemeStyle(theme)?.stylePrompt ?? `${theme} interior style`;
+    (getThemeStyle(theme)?.stylePrompt ?? `${theme} interior style`) +
+    roomContext;
 
   const suggestedItems: ShoppingListItem[] =
     remaining === 0

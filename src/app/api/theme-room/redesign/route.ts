@@ -9,6 +9,7 @@ import { gatherThemeShoppingList } from "@/lib/themeRoom";
 import { generateRedesign } from "@/lib/imageRedesign";
 import { locateItemsInImage } from "@/lib/imageItemLocator";
 import { getThemeStyle } from "@/lib/themeStyles";
+import { getRoomTypeLabel } from "@/lib/roomTypes";
 
 // Segmentation + inpainting + price lookups + a vision call to locate
 // items — give the serverless function room to wait for it all
@@ -36,13 +37,15 @@ export async function POST(req: NextRequest) {
   }
 
   const data = await req.json();
-  const { dealId, theme, photoUrl } = data;
+  const { dealId, theme, roomType, photoUrl } = data;
 
   if (
     typeof dealId !== "string" ||
     !dealId.trim() ||
     typeof theme !== "string" ||
     !theme.trim() ||
+    typeof roomType !== "string" ||
+    !roomType.trim() ||
     typeof photoUrl !== "string" ||
     !photoUrl.trim()
   ) {
@@ -51,6 +54,8 @@ export async function POST(req: NextRequest) {
       { status: 400 }
     );
   }
+
+  const roomLabel = getRoomTypeLabel(roomType.trim()).toLowerCase();
 
   const deal = await getDeal(dealId);
   if (!deal) {
@@ -75,7 +80,8 @@ export async function POST(req: NextRequest) {
     // toward them.
     const shoppingList = await gatherThemeShoppingList(
       theme.trim(),
-      deal.location
+      deal.location,
+      roomLabel
     );
 
     const rawGeneratedUrl = await generateRedesign(
@@ -85,7 +91,8 @@ export async function POST(req: NextRequest) {
         name: item.name,
         description: item.description,
       })),
-      getThemeStyle(theme.trim())?.stylePrompt ?? ""
+      getThemeStyle(theme.trim())?.stylePrompt ?? "",
+      roomLabel
     );
 
     // Replicate's output URL isn't guaranteed to stay live indefinitely —

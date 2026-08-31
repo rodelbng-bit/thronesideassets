@@ -21,11 +21,14 @@ export default function RoomRedesignForm({
   dealId,
   propertyPhotos,
   theme,
+  roomType,
 }: {
   dealId: string;
   propertyPhotos: string[];
   /** The theme selected in the tabs above — drives the whole redesign. */
   theme: string;
+  /** The room type selected above — steers the shopping list and prompt. */
+  roomType: string;
 }) {
   const router = useRouter();
   const [status, setStatus] = useState<Status>("idle");
@@ -37,13 +40,16 @@ export default function RoomRedesignForm({
 
   const themeLabel = theme.charAt(0).toUpperCase() + theme.slice(1);
 
-  // The result belongs to whichever theme was active when it was generated —
-  // clear it when the member switches tabs so a stale render isn't left
-  // sitting under a different style. This is the React-recommended "adjust
-  // state during render on prop change" pattern (no effect needed).
+  // The result belongs to whichever theme/room was active when it was
+  // generated — clear it when the member switches tabs so a stale render
+  // isn't left sitting under a different style or room. This is the
+  // React-recommended "adjust state during render on prop change" pattern
+  // (no effect needed).
   const [renderedTheme, setRenderedTheme] = useState(theme);
-  if (theme !== renderedTheme) {
+  const [renderedRoomType, setRenderedRoomType] = useState(roomType);
+  if (theme !== renderedTheme || roomType !== renderedRoomType) {
     setRenderedTheme(theme);
+    setRenderedRoomType(roomType);
     setStatus("idle");
     setErrorMessage("");
     setGeneratedImageUrl("");
@@ -93,7 +99,7 @@ export default function RoomRedesignForm({
       const res = await fetch("/api/theme-room/redesign", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ dealId, theme, photoUrl }),
+        body: JSON.stringify({ dealId, theme, roomType, photoUrl }),
       });
       const result = await res.json();
       if (!res.ok) {

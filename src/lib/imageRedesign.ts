@@ -90,11 +90,12 @@ async function buildFurnitureMask(photoUrl: string): Promise<string | null> {
 function inpaintPrompt(
   themePrompt: string,
   items: PromptItem[],
-  styleBrief: string
+  styleBrief: string,
+  roomLabel: string
 ): string {
   const brief = styleBrief ? ` ${styleBrief}.` : "";
   return (
-    `Furnish this room in a ${themePrompt} interior style: ${piecesList(items)}, ` +
+    `Furnish this ${roomLabel} in a ${themePrompt} interior style: ${piecesList(items)}, ` +
     `plus matching rugs, cushions, wall art, plants, lamps and decorative ` +
     `pieces.${brief} Photorealistic, with lighting, shadows and perspective ` +
     `that match the rest of the room.`
@@ -104,19 +105,20 @@ function inpaintPrompt(
 function editPrompt(
   themePrompt: string,
   items: PromptItem[],
-  styleBrief: string
+  styleBrief: string,
+  roomLabel: string
 ): string {
   const brief = styleBrief ? ` ${themePrompt} style means: ${styleBrief}.` : "";
   return (
-    `Keep this room's architecture and structure completely unchanged: the ` +
-    `walls and their positions, the windows, the doors and doorways, the ` +
-    `floor, the ceiling, the room's shape and size, and the exact camera ` +
-    `angle, position and framing must all stay identical. It must obviously ` +
-    `be the same room. Change only the movable furnishings: replace ` +
-    `${piecesList(items)} with ${themePrompt}-style pieces, and restyle the ` +
-    `rugs, cushions, wall art, plants, lamps and decorations to match.${brief} ` +
-    `Do not add, remove or move any walls, windows or doors. Do not change ` +
-    `the layout, the proportions or the perspective.`
+    `Keep this ${roomLabel}'s architecture and structure completely ` +
+    `unchanged: the walls and their positions, the windows, the doors and ` +
+    `doorways, the floor, the ceiling, the room's shape and size, and the ` +
+    `exact camera angle, position and framing must all stay identical. It ` +
+    `must obviously be the same room. Change only the movable furnishings: ` +
+    `replace ${piecesList(items)} with ${themePrompt}-style pieces, and ` +
+    `restyle the rugs, cushions, wall art, plants, lamps and decorations to ` +
+    `match.${brief} Do not add, remove or move any walls, windows or doors. ` +
+    `Do not change the layout, the proportions or the perspective.`
   );
 }
 
@@ -126,7 +128,8 @@ export async function generateRedesign(
   photoUrl: string,
   themePrompt: string,
   items: PromptItem[] = [],
-  styleBrief = ""
+  styleBrief = "",
+  roomLabel = "room"
 ): Promise<string> {
   const mask = await buildFurnitureMask(photoUrl);
 
@@ -136,7 +139,7 @@ export async function generateRedesign(
         input: {
           image: photoUrl,
           mask,
-          prompt: inpaintPrompt(themePrompt, items, styleBrief),
+          prompt: inpaintPrompt(themePrompt, items, styleBrief, roomLabel),
           output_format: "png",
           safety_tolerance: 2,
         },
@@ -149,7 +152,7 @@ export async function generateRedesign(
 
   const output = await getClient().run(EDIT_MODEL, {
     input: {
-      prompt: editPrompt(themePrompt, items, styleBrief),
+      prompt: editPrompt(themePrompt, items, styleBrief, roomLabel),
       input_image: photoUrl,
       aspect_ratio: "match_input_image",
       output_format: "png",
