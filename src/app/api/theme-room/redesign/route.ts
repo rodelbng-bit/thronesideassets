@@ -10,6 +10,7 @@ import { generateRedesign } from "@/lib/imageRedesign";
 import { locateItemsInImage } from "@/lib/imageItemLocator";
 import { getThemeStyle } from "@/lib/themeStyles";
 import { getRoomTypeLabel } from "@/lib/roomTypes";
+import { describeReferenceLook } from "@/lib/referenceLook";
 
 // Segmentation + inpainting + price lookups + a vision call to locate
 // items — give the serverless function room to wait for it all
@@ -37,7 +38,7 @@ export async function POST(req: NextRequest) {
   }
 
   const data = await req.json();
-  const { dealId, theme, roomType, photoUrl } = data;
+  const { dealId, theme, roomType, referenceImageUrl, photoUrl } = data;
 
   if (
     typeof dealId !== "string" ||
@@ -46,6 +47,8 @@ export async function POST(req: NextRequest) {
     !theme.trim() ||
     typeof roomType !== "string" ||
     !roomType.trim() ||
+    typeof referenceImageUrl !== "string" ||
+    !referenceImageUrl.trim() ||
     typeof photoUrl !== "string" ||
     !photoUrl.trim()
   ) {
@@ -84,6 +87,20 @@ export async function POST(req: NextRequest) {
       roomLabel
     );
 
+    // The member's picked reference photo (out of the 3 shown for this
+    // style + room) — a vision pass describes its specific look so the
+    // generation leans toward that exact photo, not just the style on
+    // average. Best-effort: falls back to the base style brief alone.
+    const referenceLookDescription = await describeReferenceLook(
+      referenceImageUrl.trim()
+    );
+    const styleBrief = [
+      getThemeStyle(theme.trim())?.stylePrompt ?? "",
+      referenceLookDescription,
+    ]
+      .filter(Boolean)
+      .join(" ");
+
     const rawGeneratedUrl = await generateRedesign(
       photoUrl.trim(),
       theme.trim(),
@@ -91,7 +108,7 @@ export async function POST(req: NextRequest) {
         name: item.name,
         description: item.description,
       })),
-      getThemeStyle(theme.trim())?.stylePrompt ?? "",
+      styleBrief,
       roomLabel
     );
 

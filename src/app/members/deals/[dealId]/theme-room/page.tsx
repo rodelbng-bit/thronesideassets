@@ -15,6 +15,7 @@ import type { ThemeCategory } from "@/lib/schema";
 import { getDeal } from "@/lib/deals";
 import { getRedesignsForDeal } from "@/lib/themeRoom";
 import { ROOM_TYPES, type RoomType } from "@/lib/roomTypes";
+import { THEME_STYLES } from "@/lib/themeStyles";
 
 const CANONICAL_THEMES: ThemeCategory[] = ["natural", "urban", "classy", "abstract"];
 
@@ -23,7 +24,7 @@ export default async function ThemeRoomPage({
   searchParams,
 }: {
   params: Promise<{ dealId: string }>;
-  searchParams: Promise<{ theme?: string; room?: string }>;
+  searchParams: Promise<{ theme?: string; room?: string; look?: string }>;
 }) {
   const session = await auth();
   if (!session?.user) {
@@ -41,7 +42,8 @@ export default async function ThemeRoomPage({
   }
 
   const { dealId } = await params;
-  const { theme: themeParam, room: roomParam } = await searchParams;
+  const { theme: themeParam, room: roomParam, look: lookParam } =
+    await searchParams;
   const theme: ThemeCategory = CANONICAL_THEMES.includes(
     themeParam as ThemeCategory
   )
@@ -50,6 +52,14 @@ export default async function ThemeRoomPage({
   const room: RoomType = ROOM_TYPES.includes(roomParam as RoomType)
     ? (roomParam as RoomType)
     : "living-room";
+
+  const lookImages = THEME_STYLES[theme]?.exampleImagesByRoom[room] ?? [];
+  const parsedLook = lookParam ? Number.parseInt(lookParam, 10) : 0;
+  const lookIndex =
+    Number.isInteger(parsedLook) && parsedLook >= 0 && parsedLook < lookImages.length
+      ? parsedLook
+      : 0;
+  const referenceImageUrl = lookImages[lookIndex];
 
   const [deal, pastRedesigns] = await Promise.all([
     getDeal(dealId),
@@ -78,9 +88,10 @@ export default async function ThemeRoomPage({
           Restyle this room.
         </h1>
         <p className="mt-4 max-w-xl text-paper-dim">
-          Pick a look and a room type, then one of the property&apos;s
-          photos — we&apos;ll restyle it in that style and mark every piece
-          in the result with a link to buy it from a UK retailer.
+          Pick a look, a room type and your favourite of the 3 reference
+          designs, then one of the property&apos;s photos — we&apos;ll
+          restyle it toward that design and mark every piece in the result
+          with a link to buy it from a UK retailer.
         </p>
 
         <div className="mt-10">
@@ -99,7 +110,7 @@ export default async function ThemeRoomPage({
           <div className="mt-2">
             <RoomTypeSelector active={room} />
           </div>
-          <ThemeLookGallery theme={theme} room={room} />
+          <ThemeLookGallery theme={theme} room={room} activeLook={lookIndex} />
         </div>
 
         <div className="mt-8 max-w-2xl">
@@ -108,6 +119,7 @@ export default async function ThemeRoomPage({
             propertyPhotos={deal.photos}
             theme={theme}
             roomType={room}
+            referenceImageUrl={referenceImageUrl ?? ""}
           />
         </div>
 

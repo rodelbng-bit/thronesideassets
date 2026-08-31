@@ -1,17 +1,21 @@
-import Image from "next/image";
 import type { ThemeCategory } from "@/lib/schema";
 import type { RoomType } from "@/lib/roomTypes";
 import { THEME_STYLES } from "@/lib/themeStyles";
+import ReferenceLookPicker from "./ReferenceLookPicker";
 
-// Shown under the theme selector: a one-line description of the look plus a
-// few reference images of that look in the chosen room type, so the member
-// knows what they're picking before spending a generation on it.
+// Shown under the theme selector: a one-line description of the look plus
+// the 3 reference images of that look in the chosen room type — the member
+// picks one as their preferred design before generating (see
+// ReferenceLookPicker), so they know what they're picking and steer the
+// result toward it.
 export default function ThemeLookGallery({
   theme,
   room,
+  activeLook,
 }: {
   theme: ThemeCategory;
   room: RoomType;
+  activeLook: number;
 }) {
   const style = THEME_STYLES[theme];
   if (!style) return null;
@@ -23,22 +27,11 @@ export default function ThemeLookGallery({
       <p className="text-sm text-paper-dim">{style.blurb}</p>
 
       {exampleImages.length > 0 && (
-        <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3">
-          {exampleImages.map((src, i) => (
-            <div
-              key={src}
-              className="relative aspect-4/3 overflow-hidden rounded-lg border rule"
-            >
-              <Image
-                src={src}
-                alt={`${style.label} interior look ${i + 1}`}
-                fill
-                sizes="(min-width: 640px) 30vw, 50vw"
-                className="object-cover"
-              />
-            </div>
-          ))}
-        </div>
+        <ReferenceLookPicker
+          images={exampleImages}
+          active={activeLook}
+          label={style.label}
+        />
       )}
     </div>
   );
