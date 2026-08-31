@@ -78,26 +78,26 @@ export default async function ThemeRoomPage({
           Restyle this room.
         </h1>
         <p className="mt-4 max-w-xl text-paper-dim">
-          Pick a room type and a look, then one of the property&apos;s
+          Pick a look and a room type, then one of the property&apos;s
           photos — we&apos;ll restyle it in that style and mark every piece
           in the result with a link to buy it from a UK retailer.
         </p>
 
         <div className="mt-10">
           <p className="text-xs uppercase tracking-wide text-paper-dim">
-            Room type
+            Look
           </p>
           <div className="mt-2">
-            <RoomTypeSelector active={room} />
+            <ThemeSelector active={theme} />
           </div>
         </div>
 
         <div className="mt-8">
           <p className="text-xs uppercase tracking-wide text-paper-dim">
-            Look
+            Room type
           </p>
           <div className="mt-2">
-            <ThemeSelector active={theme} />
+            <RoomTypeSelector active={room} />
           </div>
           <ThemeLookGallery theme={theme} room={room} />
         </div>
