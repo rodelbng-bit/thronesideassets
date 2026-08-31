@@ -70,12 +70,6 @@ export default async function SiteHeader() {
                 >
                   Clients
                 </Link>
-                <Link
-                  href="/admin/theme-room"
-                  className="rounded-full border rule px-4 py-1.5 text-xs text-paper-dim transition-colors hover:text-paper"
-                >
-                  Theme Room
-                </Link>
               </>
             )}
             {isLoggedIn ? (
