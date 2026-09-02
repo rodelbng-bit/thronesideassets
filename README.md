@@ -62,7 +62,10 @@ Open http://localhost:3000.
   cheapest-price lookups (Google Shopping engine).
 - `REPLICATE_API_TOKEN` — replicate.com/account/api-tokens. Powers Theme
   Room's photo-to-redesign image generation.
-- `ANTHROPIC_API_KEY` — optional. Only used as a fallback in Theme Room to
+- `ANTHROPIC_API_KEY` — optional but recommended. Powers the site-wide
+  chat widget (`/api/chat`) that answers visitor questions from
+  `src/lib/siteFacts.ts`; without it the widget just replies with a
+  "book a call" fallback. Also used as a fallback in Theme Room to
   suggest shoppable items when a member types a redesign style outside the
   4 curated categories.
 

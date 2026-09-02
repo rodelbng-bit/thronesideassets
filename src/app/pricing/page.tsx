@@ -1,37 +1,7 @@
 import Link from "next/link";
 import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
-
-const plans = [
-  {
-    name: "Essential",
-    price: "£497/month",
-    term: "12-month contract, billed monthly",
-    priceNote: "Or £4,970 upfront — the full 12-month term paid in one payment (save £994)",
-    features: [
-      "Unlimited deal alerts (FCFS)",
-      "Full deal packs with P&L",
-      "R2SA news & hot area feeds",
-      "Referral to vetted management & cleaners",
-      "Member community access",
-      "No 1:1 support",
-    ],
-  },
-  {
-    name: "Growth Package",
-    price: "£797/month",
-    term: "12-month contract, billed monthly",
-    priceNote: "Or £7,970 upfront — the full 12-month term paid in one payment (save £1,594)",
-    features: [
-      "Everything in Essential",
-      "Priority deal alerts (before Essential tier)",
-      "Monthly 1:1 strategy call",
-      "Deal negotiation guidance",
-      "Investor resources & templates",
-    ],
-    comingSoon: true,
-  },
-];
+import { plans } from "@/lib/siteFacts";
 
 export default function PricingPage() {
   return (
