@@ -44,6 +44,15 @@ export const users = pgTable("users", {
   // the auditable record that this account agreed to the fixed 12-month
   // term (checkbox in JoinForm) before paying.
   termsAcceptedAt: timestamp("terms_accepted_at", { withTimezone: true }),
+  // Tracks actual legal consent to the /terms page content, separate from
+  // termsAcceptedAt above (which is the contract-start date and must never
+  // be overwritten by a re-consent). Null means "never seen the current
+  // Terms" — compared against CURRENT_TERMS_VERSION (see lib/siteFacts.ts)
+  // to decide whether TermsGate blocks /members for this account.
+  termsVersionAccepted: text("terms_version_accepted"),
+  termsVersionAcceptedAt: timestamp("terms_version_accepted_at", {
+    withTimezone: true,
+  }),
   // Defaults to 'approved' so adding this column to a live table never
   // retroactively locks out an existing/renewing member — only the
   // brand-new-signup branch of ensureUserForBillingRequest ever writes

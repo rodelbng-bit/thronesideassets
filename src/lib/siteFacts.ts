@@ -25,6 +25,63 @@ export const faqs = [
   },
 ];
 
+// Bump whenever termsSections/termsIntro below materially change — every
+// member whose users.termsVersionAccepted doesn't match this gets the
+// TermsGate pop-up on their next /members visit until they re-agree.
+export const CURRENT_TERMS_VERSION = "2026-09-03";
+
+export const termsIntro =
+  "These Terms & Conditions (\"Terms\") govern access to and use of the " +
+  "Throneside membership platform and deal-sourcing service " +
+  "(\"Throneside\", \"we\", \"us\", \"our\") by any individual or entity " +
+  "who subscribes as a member (\"Client\", \"Member\", \"you\"). By " +
+  "submitting payment details, completing the application process, or " +
+  "accessing any deal on the Throneside platform, you confirm that you " +
+  "have read, understood, and agree to be bound by these Terms in full.";
+
+export const termsSections = [
+  {
+    heading: "1. Nature of Our Service",
+    paragraphs: [
+      "Throneside operates a property deal-sourcing membership service across the United Kingdom, with expansion into further territories planned. Our role is strictly limited to the following:",
+    ],
+    bullets: [
+      "Identifying, qualifying, and packaging company-let property opportunities sourced from landlords and letting agencies.",
+      "Publishing those opportunities to Members via the Throneside platform.",
+      "Facilitating an introduction between the Member and the property opportunity.",
+    ],
+    trailingParagraphs: [
+      "Throneside acts solely as an introducer and connector between Members and property opportunities. We are not a letting agent acting on behalf of any landlord, we are not a party to any tenancy, lease, or company-let agreement entered into by a Member, and we do not operate, manage, or have any involvement in the serviced accommodation business run by any Member. Our function ends once a suitable introduction has been made and the relevant deal information has been provided.",
+    ],
+  },
+  {
+    heading: "2. No Liability for Landlords or Third Parties",
+    paragraphs: [
+      "Throneside carries out reasonable due diligence when sourcing and qualifying deals, but we do not guarantee, warrant, or accept responsibility for the conduct, solvency, representations, property condition, or performance of any landlord, letting agent, or other third party introduced to a Member. Any agreement a Member enters into with a landlord or letting agent is a matter strictly between those parties.",
+      "To the fullest extent permitted by law, Throneside accepts no liability whatsoever for:",
+    ],
+    bullets: [
+      "Any breach of contract, misrepresentation, or negligence by a landlord or letting agent.",
+      "The condition, safety, compliance, or legal status of any property introduced.",
+      "Any financial loss, dispute, or legal claim arising between a Member and a landlord or letting agent.",
+    ],
+  },
+  {
+    heading: "3. No Liability for Member Conduct or Property Damage",
+    paragraphs: [
+      "Once an introduction has been made, all dealings with the property — including its use, management, and operation as a serviced accommodation — are the sole responsibility of the Member. Throneside accepts no liability, and shall have no legal exposure of any kind, for:",
+    ],
+    bullets: [
+      "Any damage caused to a landlord's property by the Member, their guests, contractors, or agents.",
+      "Any breach by the Member of the terms of their tenancy, company-let, or management agreement with the landlord.",
+      "Any claim, dispute, legal action, or financial demand brought by a landlord against a Member in connection with the condition, use, or mistreatment of the property.",
+    ],
+    trailingParagraphs: [
+      "The Member agrees to indemnify and hold Throneside harmless against any losses, costs, claims, or reputational harm arising from the Member's actions, omissions, or conduct in relation to any property introduced through the platform.",
+    ],
+  },
+];
+
 export const plans = [
   {
     name: "Essential",

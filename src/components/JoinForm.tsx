@@ -331,7 +331,17 @@ export default function JoinForm() {
         <span>
           I agree to a fixed 12-month membership term. Billing is{" "}
           {interval === "monthly" ? "monthly" : "annual"} for the full term,
-          and the membership cannot be cancelled early.
+          and the membership cannot be cancelled early. I have read and
+          agree to the{" "}
+          <a
+            href="/terms"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-brass-bright underline hover:text-paper"
+          >
+            Terms & Conditions
+          </a>
+          .
         </span>
       </label>
 

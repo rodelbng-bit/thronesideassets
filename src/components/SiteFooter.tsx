@@ -6,6 +6,7 @@ const company = [
   { label: "Pricing", href: "/pricing" },
   { label: "FAQ", href: "/faq" },
   { label: "Contact Us", href: "/contact" },
+  { label: "Terms & Conditions", href: "/terms" },
 ];
 
 const social = [

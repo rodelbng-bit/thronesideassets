@@ -5,6 +5,7 @@ import { db } from "./db";
 import { users, registrations, type ApprovalStatus } from "./schema";
 import { createPasswordResetToken } from "./tokens";
 import { approvalStatusToStage } from "./registrations";
+import { CURRENT_TERMS_VERSION } from "./siteFacts";
 
 type EnsureResult = {
   userId: string;
@@ -28,12 +29,20 @@ export async function ensureUserForRegistration(params: {
   gocardlessCustomerId?: string;
   gocardlessMandateId?: string;
   termsAcceptedAt?: Date;
+  /**
+   * Pass CURRENT_TERMS_VERSION only when this call represents the account
+   * actually agreeing to the /terms page content just now (the JoinForm
+   * checkbox flow) — not for paths like the admin "mark paid" action where
+   * no one has seen that page yet.
+   */
+  termsVersion?: string;
 }): Promise<EnsureResult> {
   const {
     registrationId,
     gocardlessCustomerId: customerId,
     gocardlessMandateId: mandateId,
     termsAcceptedAt,
+    termsVersion,
   } = params;
   const normalizedEmail = params.email.toLowerCase();
 
@@ -56,6 +65,11 @@ export async function ensureUserForRegistration(params: {
         subscriptionStatus: "active",
         subscriptionPlan: "essential",
         termsAcceptedAt: termsAcceptedAt ?? existing.termsAcceptedAt,
+        termsVersionAccepted:
+          termsVersion ?? existing.termsVersionAccepted,
+        termsVersionAcceptedAt: termsVersion
+          ? new Date()
+          : existing.termsVersionAcceptedAt,
       })
       .where(eq(users.id, existing.id));
     userId = existing.id;
@@ -73,6 +87,8 @@ export async function ensureUserForRegistration(params: {
         subscriptionStatus: "active",
         subscriptionPlan: "essential",
         termsAcceptedAt,
+        termsVersionAccepted: termsVersion,
+        termsVersionAcceptedAt: termsVersion ? new Date() : undefined,
         // Auto-approved on signup — a successful GoCardless payment is
         // itself the gate, no manual review step. approvedAt doubles as
         // the "membership activation date" shown in /admin/clients.
@@ -140,6 +156,12 @@ export async function ensureUserForBillingRequest(
     gocardlessMandateId: mandateId,
     termsAcceptedAt: billingRequest.metadata?.termsAcceptedAt
       ? new Date(billingRequest.metadata.termsAcceptedAt)
+      : undefined,
+    // JoinForm's billing-step checkbox links to /terms and is required
+    // before checkout starts, so a fulfilled billing request is real
+    // consent to the current Terms.
+    termsVersion: billingRequest.metadata?.termsAcceptedAt
+      ? CURRENT_TERMS_VERSION
       : undefined,
   });
 }
