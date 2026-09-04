@@ -1,8 +1,14 @@
-import { eq } from "drizzle-orm";
+import { eq, inArray } from "drizzle-orm";
 import type { BillingRequest } from "gocardless-nodejs";
 import { gocardlessClient } from "./gocardless";
 import { db } from "./db";
-import { users, registrations, type ApprovalStatus } from "./schema";
+import {
+  users,
+  registrations,
+  deals,
+  dealReservations,
+  type ApprovalStatus,
+} from "./schema";
 import { createPasswordResetToken } from "./tokens";
 import { approvalStatusToStage } from "./registrations";
 import { CURRENT_TERMS_VERSION } from "./siteFacts";
@@ -163,6 +169,72 @@ export async function ensureUserForBillingRequest(
     termsVersion: billingRequest.metadata?.termsAcceptedAt
       ? CURRENT_TERMS_VERSION
       : undefined,
+  });
+}
+
+export type DeleteUserResult = {
+  /** deals.id values flipped back to "available" because the account held them. */
+  freedDealIds: string[];
+};
+
+/**
+ * Permanently removes a user account and everything the schema cascades
+ * from it — password + reset tokens, deal reservations, viewing requests,
+ * theme redesigns. Registration funnel rows are kept but unlinked
+ * (registrations.userId → null) so drop-off history survives the delete.
+ *
+ * Refuses an account with an active subscription: the GoCardless mandate
+ * has to be cancelled first, otherwise Direct Debit keeps collecting for
+ * an account no one can see. Self / admin-email checks are the caller's
+ * responsibility (see /api/admin/users/[id]).
+ *
+ * Any deal the account was still holding "Unavailable" (a confirmed
+ * reservation) is set back to "available" — the reservation row that
+ * recorded who it was confirmed for is about to be cascade-deleted, so
+ * leaving the listing hidden would strand it. dealReservations.dealId is
+ * text, not a FK, so deals are matched in app code (same as lib/deals.ts).
+ */
+export async function deleteUserAccount(
+  userId: string
+): Promise<DeleteUserResult> {
+  return db.transaction(async (tx) => {
+    const [user] = await tx
+      .select()
+      .from(users)
+      .where(eq(users.id, userId))
+      .limit(1);
+    if (!user) {
+      throw new Error("User not found");
+    }
+    if (user.subscriptionStatus === "active") {
+      throw new Error(
+        "This account has an active subscription — cancel the GoCardless mandate before deleting."
+      );
+    }
+
+    const heldReservations = await tx
+      .select({ dealId: dealReservations.dealId })
+      .from(dealReservations)
+      .where(eq(dealReservations.userId, userId));
+    const heldDealIds = new Set(heldReservations.map((r) => r.dealId));
+
+    await tx.delete(users).where(eq(users.id, userId));
+
+    let freedDealIds: string[] = [];
+    if (heldDealIds.size > 0) {
+      const allDeals = await tx.select().from(deals);
+      freedDealIds = allDeals
+        .filter((d) => heldDealIds.has(d.id) && d.status === "unavailable")
+        .map((d) => d.id);
+      if (freedDealIds.length > 0) {
+        await tx
+          .update(deals)
+          .set({ status: "available" })
+          .where(inArray(deals.id, freedDealIds));
+      }
+    }
+
+    return { freedDealIds };
   });
 }
 
