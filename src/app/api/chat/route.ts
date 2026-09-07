@@ -3,7 +3,7 @@ import { getEnv } from "@/lib/env";
 import { faqs, plans } from "@/lib/siteFacts";
 
 const FALLBACK_REPLY =
-  "Sorry, I can't answer that right now — check our FAQ page, or book a call and we'll answer directly.";
+  "Sorry, I can't answer that right now — check our FAQ page, or leave your details below and the team will follow up.";
 
 const MAX_TURNS = 12; // messages, i.e. 6 back-and-forths
 const MAX_MESSAGE_LENGTH = 1000;
@@ -11,9 +11,7 @@ const MAX_MESSAGE_LENGTH = 1000;
 type ChatMessage = { role: "user" | "assistant"; content: string };
 
 function buildSystemPrompt(): string {
-  const faqText = faqs
-    .map((f) => `Q: ${f.q}\nA: ${f.a}`)
-    .join("\n\n");
+  const faqText = faqs.map((f) => `Q: ${f.q}\nA: ${f.a}`).join("\n\n");
   const planText = plans
     .map((p) => {
       const bits = [
@@ -41,9 +39,9 @@ RULES
 returns, or anything not written here.
 - If asked something you don't have facts for (account-specific questions, \
 availability of specific deals, legal/tax/financial advice, anything not \
-covered above), say you don't have that detail and point them to the \
-Contact page ("/contact") to book a call, or "/faq" for more common \
-questions.
+covered above), say you don't have that detail and invite them to leave \
+their name and email so the team can follow up, or to visit the Contact \
+page ("/contact") to book a call.
 - Never give financial, legal, or tax advice — direct those questions to \
 booking a call.
 - Keep answers short (2-4 sentences), plain, and professional — no emoji, \
@@ -71,6 +69,15 @@ function sanitizeMessages(input: unknown): ChatMessage[] | null {
   return cleaned.slice(-MAX_TURNS);
 }
 
+function textResponse(text: string) {
+  return new Response(text, {
+    headers: {
+      "Content-Type": "text/plain; charset=utf-8",
+      "Cache-Control": "no-store",
+    },
+  });
+}
+
 export async function POST(req: NextRequest) {
   const body = await req.json().catch(() => null);
   const messages = sanitizeMessages(body?.messages);
@@ -83,11 +90,12 @@ export async function POST(req: NextRequest) {
   try {
     apiKey = getEnv("ANTHROPIC_API_KEY");
   } catch {
-    return NextResponse.json({ reply: FALLBACK_REPLY });
+    return textResponse(FALLBACK_REPLY);
   }
 
+  let upstream: Response;
   try {
-    const res = await fetch("https://api.anthropic.com/v1/messages", {
+    upstream = await fetch("https://api.anthropic.com/v1/messages", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -96,23 +104,78 @@ export async function POST(req: NextRequest) {
       },
       body: JSON.stringify({
         model: "claude-haiku-4-5",
-        max_tokens: 400,
+        max_tokens: 500,
+        stream: true,
         system: buildSystemPrompt(),
         messages,
       }),
     });
-
-    if (!res.ok) {
-      console.error("Chat API: Anthropic request failed", res.status);
-      return NextResponse.json({ reply: FALLBACK_REPLY });
-    }
-
-    const data = await res.json();
-    const text: string | undefined = data?.content?.[0]?.text;
-
-    return NextResponse.json({ reply: text?.trim() || FALLBACK_REPLY });
   } catch (err) {
     console.error("Chat API: request errored", err);
-    return NextResponse.json({ reply: FALLBACK_REPLY });
+    return textResponse(FALLBACK_REPLY);
   }
+
+  if (!upstream.ok || !upstream.body) {
+    console.error("Chat API: Anthropic request failed", upstream.status);
+    return textResponse(FALLBACK_REPLY);
+  }
+
+  // Re-stream Anthropic's SSE as plain text deltas the browser can append
+  // straight into the message bubble.
+  const stream = new ReadableStream<Uint8Array>({
+    async start(controller) {
+      const reader = upstream.body!.getReader();
+      const decoder = new TextDecoder();
+      const encoder = new TextEncoder();
+      let buffer = "";
+      let emitted = false;
+
+      try {
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+          buffer += decoder.decode(value, { stream: true });
+
+          const events = buffer.split("\n\n");
+          buffer = events.pop() ?? "";
+
+          for (const evt of events) {
+            const dataLine = evt
+              .split("\n")
+              .find((l) => l.startsWith("data:"));
+            if (!dataLine) continue;
+            const json = dataLine.slice(5).trim();
+            if (!json || json === "[DONE]") continue;
+            try {
+              const parsed = JSON.parse(json);
+              if (
+                parsed.type === "content_block_delta" &&
+                parsed.delta?.type === "text_delta" &&
+                typeof parsed.delta.text === "string" &&
+                parsed.delta.text
+              ) {
+                emitted = true;
+                controller.enqueue(encoder.encode(parsed.delta.text));
+              }
+            } catch {
+              // ping / keep-alive lines — ignore
+            }
+          }
+        }
+        if (!emitted) controller.enqueue(encoder.encode(FALLBACK_REPLY));
+      } catch (err) {
+        console.error("Chat API: stream errored", err);
+        if (!emitted) controller.enqueue(encoder.encode(FALLBACK_REPLY));
+      } finally {
+        controller.close();
+      }
+    },
+  });
+
+  return new Response(stream, {
+    headers: {
+      "Content-Type": "text/plain; charset=utf-8",
+      "Cache-Control": "no-store",
+    },
+  });
 }
