@@ -33,13 +33,14 @@ export default function AdminDealWorkspace() {
             Add the listing.
           </h2>
           <p className="mt-2 text-sm text-paper-dim">
-            Rate and utilities are carried over from the analysis above —
+            Rate, rent and utilities are carried over from the analysis above —
             adjust them here if needed.
           </p>
           <div className="mt-6">
             <NewDealForm
               initialRatePerNight={nightlyRate}
               initialUtilityCostPerMonth={monthlyBills}
+              initialMonthlyRent={monthlyRent}
             />
           </div>
         </div>

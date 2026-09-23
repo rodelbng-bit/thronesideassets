@@ -31,6 +31,8 @@ export async function POST(req: NextRequest) {
     photos,
     ratePerNight,
     utilityCostPerMonth,
+    monthlyRent,
+    deposit,
     guarantorRequired,
   } = data;
 
@@ -48,6 +50,9 @@ export async function POST(req: NextRequest) {
     ratePerNight <= 0 ||
     !Number.isFinite(utilityCostPerMonth) ||
     utilityCostPerMonth < 0 ||
+    !Number.isFinite(monthlyRent) ||
+    monthlyRent <= 0 ||
+    (deposit !== null && (!Number.isFinite(deposit) || deposit < 0)) ||
     typeof guarantorRequired !== "boolean"
   ) {
     return NextResponse.json(
@@ -65,6 +70,8 @@ export async function POST(req: NextRequest) {
       photos,
       ratePerNight: Math.round(ratePerNight),
       utilityCostPerMonth: Math.round(utilityCostPerMonth),
+      monthlyRent: Math.round(monthlyRent),
+      deposit: deposit === null ? null : Math.round(deposit),
       guarantorRequired,
     })
     .returning();

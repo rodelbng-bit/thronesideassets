@@ -9,11 +9,13 @@ type Status = "idle" | "uploading" | "submitting" | "error" | "done";
 type Props = {
   initialRatePerNight?: number;
   initialUtilityCostPerMonth?: number;
+  initialMonthlyRent?: number;
 };
 
 export default function NewDealForm({
   initialRatePerNight,
   initialUtilityCostPerMonth,
+  initialMonthlyRent,
 }: Props) {
   const router = useRouter();
   const [status, setStatus] = useState<Status>("idle");
@@ -60,6 +62,9 @@ export default function NewDealForm({
           description: data.get("description"),
           ratePerNight: Number(data.get("ratePerNight")),
           utilityCostPerMonth: Number(data.get("utilityCostPerMonth")),
+          monthlyRent: Number(data.get("monthlyRent")),
+          // Blank or 0 means no deposit.
+          deposit: Number(data.get("deposit")) || null,
           guarantorRequired: data.get("guarantorRequired") === "yes",
           photos: photoUrls,
         }),
@@ -150,6 +155,33 @@ export default function NewDealForm({
             step={1}
             defaultValue={initialUtilityCostPerMonth || undefined}
             className="mt-2 w-full rounded-md border rule bg-ink px-4 py-3 text-sm text-paper focus:border-brass focus:outline-none"
+          />
+        </div>
+        <div>
+          <label className="text-xs uppercase tracking-wide text-paper-dim">
+            Monthly rent (£)
+          </label>
+          <input
+            type="number"
+            name="monthlyRent"
+            required
+            min={1}
+            step={1}
+            defaultValue={initialMonthlyRent || undefined}
+            className="mt-2 w-full rounded-md border rule bg-ink px-4 py-3 text-sm text-paper focus:border-brass focus:outline-none"
+          />
+        </div>
+        <div>
+          <label className="text-xs uppercase tracking-wide text-paper-dim">
+            Deposit (£, if applicable)
+          </label>
+          <input
+            type="number"
+            name="deposit"
+            min={0}
+            step={1}
+            placeholder="Leave blank if none"
+            className="mt-2 w-full rounded-md border rule bg-ink px-4 py-3 text-sm text-paper placeholder:text-paper-dim/60 focus:border-brass focus:outline-none"
           />
         </div>
       </div>

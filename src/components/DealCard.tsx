@@ -82,6 +82,29 @@ export default function DealCard({
                       £{deal.utilityCostPerMonth}/mo
                     </dd>
                   </div>
+                  {/* Older listings predate rent/deposit — hide both rather than show "None". */}
+                  {deal.monthlyRent !== null && (
+                    <>
+                      <div>
+                        <dt className="text-xs uppercase tracking-wide text-paper-dim">
+                          Monthly rent
+                        </dt>
+                        <dd className="ledger-figure mt-1 text-paper">
+                          £{deal.monthlyRent.toLocaleString("en-GB")}/mo
+                        </dd>
+                      </div>
+                      <div>
+                        <dt className="text-xs uppercase tracking-wide text-paper-dim">
+                          Deposit
+                        </dt>
+                        <dd className="ledger-figure mt-1 text-paper">
+                          {deal.deposit
+                            ? `£${deal.deposit.toLocaleString("en-GB")}`
+                            : "None"}
+                        </dd>
+                      </div>
+                    </>
+                  )}
                 </dl>
 
                 <div className="mt-5">

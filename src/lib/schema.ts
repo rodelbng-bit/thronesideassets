@@ -96,6 +96,11 @@ export const deals = pgTable("deals", {
   photos: text("photos").array().notNull(),
   ratePerNight: integer("rate_per_night").notNull(),
   utilityCostPerMonth: integer("utility_cost_per_month").notNull(),
+  // Nullable: listings added before these fields existed have no value.
+  // New listings always set monthlyRent; deposit stays null when there
+  // isn't one.
+  monthlyRent: integer("monthly_rent"),
+  deposit: integer("deposit"),
   guarantorRequired: boolean("guarantor_required").notNull().default(false),
   status: dealStatusEnum("status").notNull().default("available"),
   dateAdded: timestamp("date_added", { withTimezone: true })
