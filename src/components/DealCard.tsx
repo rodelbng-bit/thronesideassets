@@ -109,7 +109,8 @@ export default function DealCard({
 
                 <div className="mt-5">
                   <p className="text-xs uppercase tracking-wide text-paper-dim">
-                    Potential earnings (net of utilities)
+                    Potential earnings (net of{" "}
+                    {deal.monthlyRent !== null ? "rent & utilities" : "utilities"})
                   </p>
                   <div className="mt-2 grid grid-cols-3 gap-px overflow-hidden rounded-md border rule">
                     {earnings.map(({ occupancy, net }) => (

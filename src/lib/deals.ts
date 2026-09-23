@@ -100,7 +100,8 @@ export function estimateMonthlyEarnings(deal: Deal) {
     const gross = deal.ratePerNight * DAYS_PER_MONTH * occupancy;
     return {
       occupancy,
-      net: Math.round(gross - deal.utilityCostPerMonth),
+      // Older listings have no rent on record — those stay net of utilities only.
+      net: Math.round(gross - deal.utilityCostPerMonth - (deal.monthlyRent ?? 0)),
     };
   });
 }
