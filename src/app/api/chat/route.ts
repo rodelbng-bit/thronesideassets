@@ -1,9 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getEnv } from "@/lib/env";
 import { faqs, plans } from "@/lib/siteFacts";
-
-const FALLBACK_REPLY =
-  "Sorry, I can't answer that right now — check our FAQ page, or leave your details below and the team will follow up.";
+import { answerFromFaq } from "@/lib/faqMatcher";
 
 const MAX_TURNS = 12; // messages, i.e. 6 back-and-forths
 const MAX_MESSAGE_LENGTH = 1000;
@@ -86,11 +84,15 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Invalid message" }, { status: 400 });
   }
 
+  // Used whenever the AI answer isn't available (no key, no credits,
+  // upstream error) — a verbatim FAQ answer instead of a dead end.
+  const faqReply = answerFromFaq(messages[messages.length - 1].content);
+
   let apiKey: string;
   try {
     apiKey = getEnv("ANTHROPIC_API_KEY");
   } catch {
-    return textResponse(FALLBACK_REPLY);
+    return textResponse(faqReply);
   }
 
   let upstream: Response;
@@ -112,12 +114,12 @@ export async function POST(req: NextRequest) {
     });
   } catch (err) {
     console.error("Chat API: request errored", err);
-    return textResponse(FALLBACK_REPLY);
+    return textResponse(faqReply);
   }
 
   if (!upstream.ok || !upstream.body) {
     console.error("Chat API: Anthropic request failed", upstream.status);
-    return textResponse(FALLBACK_REPLY);
+    return textResponse(faqReply);
   }
 
   // Re-stream Anthropic's SSE as plain text deltas the browser can append
@@ -162,10 +164,10 @@ export async function POST(req: NextRequest) {
             }
           }
         }
-        if (!emitted) controller.enqueue(encoder.encode(FALLBACK_REPLY));
+        if (!emitted) controller.enqueue(encoder.encode(faqReply));
       } catch (err) {
         console.error("Chat API: stream errored", err);
-        if (!emitted) controller.enqueue(encoder.encode(FALLBACK_REPLY));
+        if (!emitted) controller.enqueue(encoder.encode(faqReply));
       } finally {
         controller.close();
       }
