@@ -1,6 +1,5 @@
 // Single source of truth for real business facts shown on the FAQ and
-// Pricing pages — also used to ground the chat widget's answers so it
-// never has to invent pricing, terms, or policy.
+// Pricing pages.
 
 export const faqs = [
   {
