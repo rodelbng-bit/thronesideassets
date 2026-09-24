@@ -2,10 +2,8 @@ import { redirect } from "next/navigation";
 import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
 import DealCard from "@/components/DealCard";
-import NewsSection from "@/components/NewsSection";
 import { auth } from "@/lib/auth";
 import { getDeals } from "@/lib/deals";
-import { getR2SANews } from "@/lib/news";
 
 export default async function DealsPage() {
   const session = await auth();
@@ -13,7 +11,7 @@ export default async function DealsPage() {
     redirect("/members");
   }
 
-  const [deals, news] = await Promise.all([getDeals(), getR2SANews()]);
+  const deals = await getDeals();
 
   return (
     <>
@@ -27,8 +25,6 @@ export default async function DealsPage() {
           A preview of the kind of deals members get — join to see rates,
           earnings, and reserve.
         </p>
-
-        <NewsSection items={news} />
 
         <div className="mt-16 space-y-8">
           {deals.map((deal) => (

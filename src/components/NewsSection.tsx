@@ -23,7 +23,7 @@ export default function NewsSection({ items }: { items: NewsItem[] }) {
         <div className="h-0 flex-1 border-t rule" />
       </div>
       <p className="mt-3 max-w-xl text-sm text-paper-dim">
-        Rent-to-serviced-accommodation headlines from around the UK.
+        Serviced accommodation and short-term let headlines from around the UK.
       </p>
 
       <ul className="mt-6 divide-y rule">

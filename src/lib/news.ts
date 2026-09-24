@@ -3,7 +3,7 @@ import { XMLParser } from "fast-xml-parser";
 const FEED_URL =
   "https://news.google.com/rss/search?q=" +
   encodeURIComponent(
-    '("rent to serviced accommodation" OR "R2SA" OR "rent-to-serviced-accommodation" OR "rent to SA") UK'
+    '("serviced accommodation" OR "short-term lets" OR "rent to rent" OR "R2SA") UK when:90d'
   ) +
   "&hl=en-GB&gl=GB&ceid=GB:en";
 
@@ -59,6 +59,13 @@ export async function getR2SANews(): Promise<NewsItem[]> {
     const parser = new XMLParser({ ignoreAttributes: true });
     const parsed = parser.parse(xml);
     const items = asArray<RawItem>(parsed?.rss?.channel?.item);
+
+    // Google News orders search results by relevance; show newest first.
+    const time = (item: RawItem) => {
+      const t = item.pubDate ? Date.parse(item.pubDate) : NaN;
+      return Number.isNaN(t) ? 0 : t;
+    };
+    items.sort((a, b) => time(b) - time(a));
 
     return items.slice(0, MAX_ITEMS).map((item) => {
       const source = sourceName(item.source);
