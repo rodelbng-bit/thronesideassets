@@ -6,12 +6,10 @@ import SiteFooter from "@/components/SiteFooter";
 import SignOutButton from "@/components/SignOutButton";
 import DealSummaryCard from "@/components/DealSummaryCard";
 import DealsFilterBar from "@/components/DealsFilterBar";
-import NewsSection from "@/components/NewsSection";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { users, dealReservations } from "@/lib/schema";
 import { getDeals, releaseExpiredReservations } from "@/lib/deals";
-import { getR2SANews } from "@/lib/news";
 
 export default async function MembersPage({
   searchParams,
@@ -44,10 +42,9 @@ export default async function MembersPage({
     await releaseExpiredReservations();
   }
 
-  const [deals, reservations, news] = await Promise.all([
+  const [deals, reservations] = await Promise.all([
     showDeals ? getDeals() : Promise.resolve([]),
     showDeals ? db.select().from(dealReservations) : Promise.resolve([]),
-    showDeals ? getR2SANews() : Promise.resolve([]),
   ]);
   const reservationByDealId = new Map(
     reservations.map((r) => [r.dealId, r])
@@ -106,8 +103,6 @@ export default async function MembersPage({
               First come, first served — reserve a deal to take it off the
               table for other members.
             </p>
-
-            <NewsSection items={news} />
 
             <div className="mt-10">
               <DealsFilterBar locations={locations} />

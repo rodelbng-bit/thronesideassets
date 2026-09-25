@@ -20,9 +20,9 @@ const process = [
 ];
 
 const facts = [
-  { label: "Landlord network, UK-wide", value: "100s–1,000s" },
+  { label: "Landlord network, UK-wide", value: "Up to 500" },
   { label: "New deals delivered", value: "Weekly" },
-  { label: "Cities covered", value: "UK-wide" },
+  { label: "Cities covered", value: "Manchester & Leeds" },
 ];
 
 export default function AboutPage() {

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import type { ReserveState } from "@/lib/deals";
 
@@ -29,15 +29,17 @@ export default function ReserveButton({
 }) {
   const router = useRouter();
   const [state, setState] = useState<ReserveState>(initialState);
+  const [prevInitialState, setPrevInitialState] = useState(initialState);
   const [status, setStatus] = useState<Status>("idle");
   const [errorMessage, setErrorMessage] = useState("");
 
   // initialState only reflects the latest server data on re-renders (e.g.
   // after router.refresh() from an admin availability toggle), not on
-  // mount — this keeps the displayed state in sync with it.
-  useEffect(() => {
+  // mount — resync during render when it changes, rather than in an effect.
+  if (initialState !== prevInitialState) {
+    setPrevInitialState(initialState);
     setState(initialState);
-  }, [initialState]);
+  }
 
   async function handleReserve() {
     setStatus("submitting");
@@ -51,6 +53,7 @@ export default function ReserveButton({
 
       if (res.status === 409 && data.reason === "already-reserved") {
         setState("reserved-by-other");
+        setStatus("idle");
         return;
       }
       if (!res.ok) {
@@ -58,14 +61,13 @@ export default function ReserveButton({
       }
 
       setState("reserved-by-me");
+      setStatus("idle");
       router.refresh();
     } catch (err) {
       setStatus("error");
       setErrorMessage(
         err instanceof Error ? err.message : "Something went wrong."
       );
-    } finally {
-      setStatus("idle");
     }
   }
 
@@ -83,14 +85,13 @@ export default function ReserveButton({
       }
 
       setState("available");
+      setStatus("idle");
       router.refresh();
     } catch (err) {
       setStatus("error");
       setErrorMessage(
         err instanceof Error ? err.message : "Something went wrong."
       );
-    } finally {
-      setStatus("idle");
     }
   }
 
