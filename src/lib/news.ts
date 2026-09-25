@@ -46,7 +46,7 @@ export async function getR2SANews(): Promise<NewsItem[]> {
   let xml: string;
   try {
     const res = await fetch(FEED_URL, {
-      next: { revalidate: 3600 },
+      next: { revalidate: 86400 }, // 24 hours
       headers: { "User-Agent": "Mozilla/5.0 (ThronesideAssets news widget)" },
     });
     if (!res.ok) return [];
