@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Fraunces, Work_Sans, IBM_Plex_Mono } from "next/font/google";
 import Providers from "@/components/Providers";
+import MetaPixel from "@/components/MetaPixel";
 import "./globals.css";
 
 const fraunces = Fraunces({
@@ -34,6 +35,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     >
       <body className="min-h-full flex flex-col bg-ink text-paper">
         <Providers>{children}</Providers>
+        <MetaPixel />
       </body>
     </html>
   );

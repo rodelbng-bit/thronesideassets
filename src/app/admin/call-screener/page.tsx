@@ -36,8 +36,9 @@ export default async function CallScreenerAdminPage() {
         </h1>
         <p className="mt-4 max-w-xl text-paper-dim">
           Submitted before each visitor reaches the booking calendar on{" "}
-          <span className="ledger-figure text-paper">/contact</span>. Newest
-          first.
+          <span className="ledger-figure text-paper">/contact</span> and the{" "}
+          <span className="ledger-figure text-paper">/start</span> ad funnel.
+          Newest first.
         </p>
 
         {responses.length === 0 ? (
@@ -92,6 +93,23 @@ export default async function CallScreenerAdminPage() {
                       {r.goals}
                     </dd>
                   </div>
+                  {(r.funnel || r.utmCampaign || r.utmSource) && (
+                    <div className="sm:col-span-2">
+                      <dt className="text-xs uppercase tracking-wide text-paper-dim">
+                        Ad source
+                      </dt>
+                      <dd className="ledger-figure mt-1 text-paper">
+                        {[
+                          r.funnel,
+                          r.utmSource,
+                          r.utmCampaign,
+                          r.utmContent,
+                        ]
+                          .filter(Boolean)
+                          .join(" · ")}
+                      </dd>
+                    </div>
+                  )}
                   {r.additionalInfo && (
                     <div className="sm:col-span-2">
                       <dt className="text-xs uppercase tracking-wide text-paper-dim">

@@ -1,6 +1,13 @@
 "use client";
 
 import { useEffect, useId, useState } from "react";
+import type { Attribution } from "@/lib/attribution";
+import {
+  buildFbc,
+  getFbp,
+  hasTrackingConsent,
+  trackMetaEvent,
+} from "@/lib/metaPixel";
 
 type Step = "screener" | "submitting" | "calendar" | "error";
 
@@ -30,7 +37,14 @@ type ContactDetails = {
   phone: string;
 };
 
-export default function CallScreenerFlow() {
+export default function CallScreenerFlow({
+  attribution,
+  submitLabel = "Continue to calendar",
+}: {
+  /** Ad-campaign params from the landing page URL, saved with the response. */
+  attribution?: Attribution;
+  submitLabel?: string;
+} = {}) {
   const [step, setStep] = useState<Step>("screener");
   const [errorMessage, setErrorMessage] = useState("");
   const [contact, setContact] = useState<ContactDetails | null>(null);
@@ -42,12 +56,27 @@ export default function CallScreenerFlow() {
 
     const form = e.currentTarget;
     const data = Object.fromEntries(new FormData(form).entries());
+    // Shared by the browser Pixel event and the server's Conversions API
+    // copy so Meta counts the lead once.
+    const eventId = crypto.randomUUID();
+    const consent = hasTrackingConsent();
 
     try {
       const res = await fetch("/api/call-screener", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
+        body: JSON.stringify({
+          ...data,
+          attribution,
+          meta: consent
+            ? {
+                consent: true,
+                eventId,
+                fbp: getFbp(),
+                fbc: buildFbc(attribution?.fbclid),
+              }
+            : undefined,
+        }),
       });
 
       if (!res.ok) {
@@ -61,6 +90,7 @@ export default function CallScreenerFlow() {
         email: String(data.email ?? ""),
         phone: String(data.phone ?? ""),
       });
+      trackMetaEvent("Lead", { content_name: attribution?.funnel ?? "contact" }, eventId);
       setStep("calendar");
     } catch (err) {
       setStep("error");
@@ -128,7 +158,7 @@ export default function CallScreenerFlow() {
         disabled={step === "submitting"}
         className="rounded-full bg-brass px-6 py-3 text-sm font-medium text-ink transition-colors hover:bg-brass-bright disabled:opacity-60"
       >
-        {step === "submitting" ? "Submitting…" : "Continue to calendar"}
+        {step === "submitting" ? "Submitting…" : submitLabel}
       </button>
     </form>
   );

@@ -149,6 +149,15 @@ export const callScreenerResponses = pgTable("call_screener_responses", {
   preferredLocation: text("preferred_location").notNull(),
   experienceLevel: text("experience_level").notNull(),
   additionalInfo: text("additional_info"),
+  // Ad attribution — set when the visitor arrived on /start from a
+  // campaign link. All nullable: /contact submissions leave them empty.
+  funnel: text("funnel"),
+  utmSource: text("utm_source"),
+  utmMedium: text("utm_medium"),
+  utmCampaign: text("utm_campaign"),
+  utmContent: text("utm_content"),
+  utmTerm: text("utm_term"),
+  fbclid: text("fbclid"),
   createdAt: timestamp("created_at", { withTimezone: true })
     .notNull()
     .defaultNow(),
