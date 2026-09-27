@@ -77,3 +77,71 @@ body {
   outline: 2px solid var(--brass-bright);
   outline-offset: 3px;
 }
+
+/* ── Ad funnel (/start) theme ─────────────────────────────────────────
+   Black / white / gold variant of the ledger palette, scoped to the
+   funnel pages via FunnelShell so the rest of the site is unchanged. */
+.funnel-theme {
+  --ink: #050505;
+  --ink-soft: #0e0e0e;
+  --paper: #ffffff;
+  --paper-dim: #a1a1a1;
+  --brass: #d4af37;
+  --brass-bright: #f0cf6b;
+  --rule: rgba(255, 255, 255, 0.09);
+  --rule-strong: rgba(255, 255, 255, 0.18);
+  --gold-gradient: linear-gradient(100deg, #f7e3a1 0%, #d4af37 45%, #a67c1f 100%);
+
+  display: flex;
+  min-height: 100vh;
+  flex-direction: column;
+  background: var(--ink);
+  color: var(--paper);
+}
+
+.font-funnel {
+  font-family: var(--font-funnel), ui-sans-serif, system-ui, sans-serif;
+}
+
+.text-gold {
+  background: var(--gold-gradient);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.bg-gold {
+  background: var(--gold-gradient);
+}
+
+/* Faint grid that fades out from the top of the hero. */
+.funnel-grid {
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+  background-size: 56px 56px;
+  mask-image: radial-gradient(ellipse 70% 60% at 50% 0%, #000 30%, transparent 75%);
+}
+
+/* 1px gold gradient border on a dark card. */
+.gold-ring {
+  border: 1px solid transparent;
+  background:
+    linear-gradient(var(--ink-soft), var(--ink-soft)) padding-box,
+    linear-gradient(140deg, rgba(240, 207, 107, 0.7), rgba(255, 255, 255, 0.08) 40%, rgba(212, 175, 55, 0.5)) border-box;
+}
+
+@keyframes funnel-rise {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.funnel-rise {
+  animation: funnel-rise 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}

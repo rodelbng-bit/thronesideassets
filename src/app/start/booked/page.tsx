@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import {
+  Eyebrow,
   FunnelFooter,
+  FunnelShell,
   FunnelHeader,
   FunnelVideo,
   PlaceholderSlot,
@@ -19,16 +21,14 @@ export const metadata: Metadata = {
 
 export default function BookedPage() {
   return (
-    <>
+    <FunnelShell>
       <FunnelHeader />
       <TrackMetaEvent event="Schedule" />
 
       <main className="mx-auto w-full max-w-3xl px-6 py-16 md:py-20">
-        <p className="ledger-figure text-sm text-brass-bright">
-          BOOKING CONFIRMED
-        </p>
-        <h1 className="mt-3 font-display text-4xl tracking-tight text-paper md:text-5xl">
-          You&apos;re booked in.
+        <Eyebrow>Booking confirmed</Eyebrow>
+        <h1 className="font-funnel mt-6 text-5xl font-bold tracking-[-0.035em] text-paper md:text-6xl">
+          You&apos;re <span className="text-gold">booked in.</span>
         </h1>
         <p className="mt-4 max-w-xl text-paper-dim">
           Thanks for booking. Watch the short video below before we speak.
@@ -39,7 +39,7 @@ export default function BookedPage() {
         </div>
 
         <section className="mt-14">
-          <h2 className="font-display text-2xl text-paper">
+          <h2 className="font-funnel text-2xl font-semibold tracking-tight text-paper">
             Before the call
           </h2>
           {callPrepChecklist.length === 0 ? (
@@ -74,6 +74,6 @@ export default function BookedPage() {
       </main>
 
       <FunnelFooter />
-    </>
+    </FunnelShell>
   );
 }
