@@ -16,7 +16,7 @@ import { faqs } from "@/lib/siteFacts";
 export const metadata: Metadata = {
   title: "Find Airbnb Property Opportunities",
   description:
-    "Find profitable Airbnb property opportunities in the UK. Answer a few quick questions and book a call with our team.",
+    "Find Properties. Run the Numbers. Build Your Profit. We source high-potential rental properties and analyse the numbers — book a call with our team.",
   robots: { index: false, follow: false },
 };
 
