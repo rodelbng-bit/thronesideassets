@@ -25,7 +25,7 @@ export default function BookedPage() {
 
       <main className="mx-auto w-full max-w-3xl px-6 py-16 md:py-20">
         <p className="ledger-figure text-sm text-brass-bright">
-          STEP 2 OF 2 — COMPLETE
+          BOOKING CONFIRMED
         </p>
         <h1 className="mt-3 font-display text-4xl tracking-tight text-paper md:text-5xl">
           You&apos;re booked in.

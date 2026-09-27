@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import CallScreenerFlow from "@/components/CallScreenerFlow";
+import { BookingCalendar } from "@/components/CallScreenerFlow";
 import {
   FunnelFooter,
   FunnelHeader,
@@ -139,21 +139,17 @@ export default async function StartPage({
         <section id="qualify" className="scroll-mt-6 border-b rule">
           <div className="mx-auto max-w-2xl px-6 py-16">
             <p className="ledger-figure text-sm text-brass-bright">
-              STEP 1 OF 2
+              BOOK YOUR CALL
             </p>
             <h2 className="mt-3 font-display text-3xl tracking-tight text-paper md:text-4xl">
               Book your call.
             </h2>
             <p className="mt-4 text-paper-dim">
-              A few quick questions about what you&apos;re looking for — then
-              pick a time to talk through Airbnb opportunities with our UK
-              team.
+              Pick a time to talk through Airbnb property opportunities with
+              our UK team.
             </p>
             <div className="mt-10">
-              <CallScreenerFlow
-                attribution={attribution}
-                submitLabel="Continue to step 2: book your call"
-              />
+              <BookingCalendar prefill={utmParams(params)} />
             </div>
           </div>
         </section>
@@ -181,4 +177,14 @@ export default async function StartPage({
       <FunnelFooter />
     </>
   );
+}
+
+// Hand the ad's UTM tags to the GHL booking widget so the booking keeps
+// its campaign attribution in GHL.
+function utmParams(params: { [key: string]: string | string[] | undefined }) {
+  const out: Record<string, string> = {};
+  for (const [key, value] of Object.entries(params)) {
+    if (key.startsWith("utm_") && typeof value === "string") out[key] = value;
+  }
+  return out;
 }

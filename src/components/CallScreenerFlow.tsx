@@ -164,7 +164,16 @@ export default function CallScreenerFlow({
   );
 }
 
-function BookingCalendar({ contact }: { contact: ContactDetails }) {
+// Also used on its own by /start, where the CTA goes straight to booking.
+// Without a contact, the widget asks for their details itself; any
+// prefill params (e.g. UTMs) are passed through to it.
+export function BookingCalendar({
+  contact,
+  prefill,
+}: {
+  contact?: ContactDetails;
+  prefill?: Record<string, string>;
+}) {
   const iframeId = useId().replace(/:/g, "");
 
   useEffect(() => {
@@ -176,18 +185,23 @@ function BookingCalendar({ contact }: { contact: ContactDetails }) {
   }, []);
 
   const params = new URLSearchParams({
-    firstName: contact.firstName,
-    lastName: contact.lastName,
-    email: contact.email,
-    phone: contact.phone,
+    ...prefill,
+    ...(contact && {
+      firstName: contact.firstName,
+      lastName: contact.lastName,
+      email: contact.email,
+      phone: contact.phone,
+    }),
   });
 
   return (
     <div>
-      <p className="text-sm text-paper-dim">
-        Thanks, {contact.firstName}. Pick a time that works for you below.
-      </p>
-      <div className="mt-6 overflow-hidden rounded-lg border rule">
+      {contact && (
+        <p className="mb-6 text-sm text-paper-dim">
+          Thanks, {contact.firstName}. Pick a time that works for you below.
+        </p>
+      )}
+      <div className="overflow-hidden rounded-lg border rule">
         <iframe
           src={`${CALENDAR_URL}?${params.toString()}`}
           id={iframeId}
