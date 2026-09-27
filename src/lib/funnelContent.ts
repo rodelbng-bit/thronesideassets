@@ -27,9 +27,9 @@ export type FunnelAngle = {
 export const funnelAngles: Record<string, FunnelAngle> = {
   default: {
     eyebrow: "FOR AIRBNB INVESTORS",
-    headline: "Find profitable Airbnb property opportunities in the UK.",
+    headline: "Find Properties. Run the Numbers.",
     subhead:
-      "We source UK properties for short-term let investors and run the numbers on every one — nightly rate, rent, and running costs — so you only see the ones that stack up. Book a call and we'll help you find yours.",
+      "Build Your Profit. We source high-potential rental properties and analyse the numbers, helping you find opportunities designed to cover costs and generate positive cash flow.",
   },
   // TODO: add one entry per ad angle once the video hooks are scripted, e.g.
   // "off-market": { eyebrow: "...", headline: "...", subhead: "..." },
