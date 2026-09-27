@@ -14,9 +14,9 @@ import { faqs } from "@/lib/siteFacts";
 // Ad landing page — not linked from the site nav and kept out of search,
 // so its traffic (and conversion rate) is purely paid/social.
 export const metadata: Metadata = {
-  title: "Book a Call",
+  title: "Find Airbnb Property Opportunities",
   description:
-    "Vetted UK property deals, delivered every week. Answer a few quick questions and book a call with our team.",
+    "Find profitable Airbnb property opportunities in the UK. Answer a few quick questions and book a call with our team.",
   robots: { index: false, follow: false },
 };
 
@@ -75,7 +75,7 @@ export default async function StartPage({
               href="#qualify"
               className="mt-10 inline-block rounded-full bg-brass px-8 py-4 text-base font-medium text-ink transition-colors hover:bg-brass-bright"
             >
-              See if you qualify →
+              Find property opportunities →
             </a>
           </div>
         </section>
@@ -142,11 +142,12 @@ export default async function StartPage({
               STEP 1 OF 2
             </p>
             <h2 className="mt-3 font-display text-3xl tracking-tight text-paper md:text-4xl">
-              See if you qualify.
+              Book your call.
             </h2>
             <p className="mt-4 text-paper-dim">
-              A few quick questions so we can prepare — then pick a time for
-              your call with our UK team.
+              A few quick questions about what you&apos;re looking for — then
+              pick a time to talk through Airbnb opportunities with our UK
+              team.
             </p>
             <div className="mt-10">
               <CallScreenerFlow

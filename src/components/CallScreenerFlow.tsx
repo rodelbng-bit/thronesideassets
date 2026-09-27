@@ -126,7 +126,7 @@ export default function CallScreenerFlow({
         label="Property / investment goals"
         name="goals"
         required
-        placeholder="What are you looking to achieve — cashflow, portfolio growth, a first buy-to-let?"
+        placeholder="What are you looking to achieve — Airbnb cashflow, your first short-term let, growing a portfolio?"
       />
 
       <Field

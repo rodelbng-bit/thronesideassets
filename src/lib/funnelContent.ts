@@ -23,13 +23,13 @@ export type FunnelAngle = {
 // Ad-angle headlines, chosen with /start?v=<key>. Match each ad's hook to
 // its landing-page headline — e.g. an ad about off-market deals links to
 // /start?v=off-market&utm_campaign=... . Unknown keys fall back to
-// "default", which reuses the home page's existing hero copy.
+// "default", the Airbnb-investor angle.
 export const funnelAngles: Record<string, FunnelAngle> = {
   default: {
-    eyebrow: "WEEKLY DEAL SHEET",
-    headline: "Vetted property deals, delivered every week.",
+    eyebrow: "FOR AIRBNB INVESTORS",
+    headline: "Find profitable Airbnb property opportunities in the UK.",
     subhead:
-      "We source, analyse, and deliver off-market investment opportunities across the UK. You review the numbers and decide — no searching required.",
+      "We source UK properties for short-term let investors and run the numbers on every one — nightly rate, rent, and running costs — so you only see the ones that stack up. Book a call and we'll help you find yours.",
   },
   // TODO: add one entry per ad angle once the video hooks are scripted, e.g.
   // "off-market": { eyebrow: "...", headline: "...", subhead: "..." },
@@ -43,7 +43,7 @@ export function getFunnelAngle(key: string | undefined): FunnelAngle & { key: st
 export const landingVideo: FunnelVideo = {
   url: null, // TODO
   brief:
-    "1–3 min: who you are, what a company-let / R2R / SA deal looks like, how sourcing works, and why book a call.",
+    "1–3 min: who you are, what a profitable Airbnb / serviced accommodation deal looks like, how we find and analyse them, and why book a call.",
 };
 
 export const bookedVideo: FunnelVideo = {
