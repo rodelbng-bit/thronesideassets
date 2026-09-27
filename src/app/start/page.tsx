@@ -75,7 +75,7 @@ export default async function StartPage({
               href="#qualify"
               className="mt-10 inline-block rounded-full bg-brass px-8 py-4 text-base font-medium text-ink transition-colors hover:bg-brass-bright"
             >
-              Find property opportunities →
+              Work with us →
             </a>
           </div>
         </section>
