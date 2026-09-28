@@ -53,6 +53,12 @@ export default async function SiteHeader() {
                   Upload deal
                 </Link>
                 <Link
+                  href="/admin/applications"
+                  className="rounded-full border rule px-4 py-1.5 text-xs text-paper-dim transition-colors hover:text-paper"
+                >
+                  Applications
+                </Link>
+                <Link
                   href="/admin/call-screener"
                   className="rounded-full border rule px-4 py-1.5 text-xs text-paper-dim transition-colors hover:text-paper"
                 >

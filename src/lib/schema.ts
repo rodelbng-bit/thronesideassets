@@ -165,6 +165,41 @@ export const callScreenerResponses = pgTable("call_screener_responses", {
 
 export type CallScreenerResponse = typeof callScreenerResponses.$inferSelect;
 
+// Step-by-step "Apply for Deal Access" questionnaire on /start/apply. The
+// row is created the moment contact details are entered (step 1) and
+// filled in as each later answer arrives, so abandoned applications keep
+// the lead. status: "started" → "disqualified" (under £1,000 capital) |
+// "completed" (all answers in) → "booked" (call booked via GHL).
+export const funnelApplications = pgTable("funnel_applications", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  fullName: text("full_name").notNull(),
+  email: text("email").notNull(),
+  phone: text("phone").notNull(),
+  status: text("status").notNull().default("started"),
+  experience: text("experience"),
+  dealsWanted: integer("deals_wanted"),
+  location: text("location"),
+  capital: text("capital"),
+  appointmentAt: timestamp("appointment_at", { withTimezone: true }),
+  ghlAppointmentId: text("ghl_appointment_id"),
+  // Ad attribution, same shape as callScreenerResponses.
+  funnel: text("funnel"),
+  utmSource: text("utm_source"),
+  utmMedium: text("utm_medium"),
+  utmCampaign: text("utm_campaign"),
+  utmContent: text("utm_content"),
+  utmTerm: text("utm_term"),
+  fbclid: text("fbclid"),
+  createdAt: timestamp("created_at", { withTimezone: true })
+    .notNull()
+    .defaultNow(),
+  updatedAt: timestamp("updated_at", { withTimezone: true })
+    .notNull()
+    .defaultNow(),
+});
+
+export type FunnelApplication = typeof funnelApplications.$inferSelect;
+
 export const viewingRequestStatusEnum = pgEnum("viewing_request_status", [
   "pending",
   "confirmed",

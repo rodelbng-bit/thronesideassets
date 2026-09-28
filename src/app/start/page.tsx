@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { BookingCalendar } from "@/components/CallScreenerFlow";
 import {
   Eyebrow,
   FunnelFooter,
@@ -22,7 +21,7 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 };
 
-const CTA_LABEL = "Work with us";
+const CTA_LABEL = "Apply for Deal Access";
 
 const steps = [
   {
@@ -64,10 +63,11 @@ export default async function StartPage({
   const attribution = attributionFromSearchParams(params, `start-${angle.key}`);
   const [headlineLead, headlineAccent] = splitLastSentence(angle.headline);
   const [subheadLead, subheadRest] = splitFirstSentence(angle.subhead);
+  const applyHref = `/start/apply${queryString(params)}`;
 
   return (
     <FunnelShell>
-      <FunnelHeader cta={{ href: "#qualify", label: CTA_LABEL }} />
+      <FunnelHeader cta={{ href: applyHref, label: CTA_LABEL }} />
       <TrackMetaEvent event="ViewContent" params={{ content_name: attribution.funnel! }} />
 
       <main className="font-sans">
@@ -95,7 +95,7 @@ export default async function StartPage({
             </p>
 
             <div className="funnel-rise mt-10 flex flex-col items-center justify-center gap-4 [animation-delay:240ms] sm:flex-row">
-              <PrimaryCta />
+              <PrimaryCta href={applyHref} />
               <a
                 href="#how-it-works"
                 className="rounded-full border rule-strong px-8 py-4 text-base font-medium text-paper transition-colors hover:bg-white/5"
@@ -198,17 +198,17 @@ export default async function StartPage({
           />
           <div className="relative mx-auto max-w-3xl px-6 py-20 md:py-28">
             <div className="text-center">
-              <Eyebrow>Book your call</Eyebrow>
+              <Eyebrow>Get started</Eyebrow>
               <h2 className="font-funnel mt-6 text-4xl font-bold tracking-[-0.03em] text-paper md:text-5xl">
                 Let&apos;s find your <span className="text-gold">next property.</span>
               </h2>
               <p className="mx-auto mt-5 max-w-xl text-paper-dim">
-                Pick a time to talk through Airbnb property opportunities with
-                our UK team.
+                Answer a few quick questions, then pick a time to talk through
+                Airbnb property opportunities with our UK team.
               </p>
-            </div>
-            <div className="gold-ring mt-12 rounded-2xl p-2 shadow-2xl shadow-black">
-              <BookingCalendar prefill={utmParams(params)} />
+              <div className="mt-10">
+                <PrimaryCta href={applyHref} />
+              </div>
             </div>
           </div>
         </section>
@@ -243,7 +243,7 @@ export default async function StartPage({
             </div>
 
             <div className="mt-16 text-center">
-              <PrimaryCta />
+              <PrimaryCta href={applyHref} />
             </div>
           </div>
         </section>
@@ -254,10 +254,10 @@ export default async function StartPage({
   );
 }
 
-function PrimaryCta() {
+function PrimaryCta({ href }: { href: string }) {
   return (
     <a
-      href="#qualify"
+      href={href}
       className="bg-gold group inline-flex items-center gap-2 rounded-full px-8 py-4 text-base font-semibold text-ink shadow-[0_10px_40px_-10px_rgba(212,175,55,0.7)] transition-all hover:-translate-y-0.5 hover:shadow-[0_16px_50px_-10px_rgba(212,175,55,0.9)]"
     >
       {CTA_LABEL}
@@ -290,12 +290,13 @@ function splitFirstSentence(text: string): [string, string] {
   return [first, rest.join(" ")];
 }
 
-// Hand the ad's UTM tags to the GHL booking widget so the booking keeps
-// its campaign attribution in GHL.
-function utmParams(params: { [key: string]: string | string[] | undefined }) {
-  const out: Record<string, string> = {};
+// Carries ?v= and the ad's UTM/fbclid params through to /start/apply so
+// the application keeps its campaign attribution.
+function queryString(params: { [key: string]: string | string[] | undefined }) {
+  const out = new URLSearchParams();
   for (const [key, value] of Object.entries(params)) {
-    if (key.startsWith("utm_") && typeof value === "string") out[key] = value;
+    if (typeof value === "string") out.set(key, value);
   }
-  return out;
+  const qs = out.toString();
+  return qs ? `?${qs}` : "";
 }

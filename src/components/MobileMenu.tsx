@@ -44,6 +44,9 @@ export default function MobileMenu({
                 <Link href="/admin/deals/new" onClick={close} className={rowClass}>
                   Upload deal
                 </Link>
+                <Link href="/admin/applications" onClick={close} className={rowClass}>
+                  Applications
+                </Link>
                 <Link href="/admin/call-screener" onClick={close} className={rowClass}>
                   Screener
                 </Link>
