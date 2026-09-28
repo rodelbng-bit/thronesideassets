@@ -27,7 +27,7 @@ export type FunnelAngle = {
 export const funnelAngles: Record<string, FunnelAngle> = {
   default: {
     eyebrow: "FOR AIRBNB INVESTORS",
-    headline: "Find Properties. Run the Numbers.",
+    headline: "We Have Your Next Airbnb Deal — And The Ones After That.",
     subhead:
       "Build Your Profit. We source high-potential rental properties and analyse the numbers, helping you find opportunities designed to cover costs and generate positive cash flow.",
   },

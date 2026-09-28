@@ -277,9 +277,10 @@ function CheckIcon() {
 }
 
 // "Find Properties. Run the Numbers." → ["Find Properties.", "Run the Numbers."]
-// so the last sentence can be set in gold.
+// so the last sentence can be set in gold. An em dash also counts as a
+// break: "Deal — And The Ones After That." → ["Deal —", "And The Ones After That."]
 function splitLastSentence(text: string): [string, string] {
-  const parts = text.split(/(?<=\.)\s+/);
+  const parts = text.split(/(?<=[.—])\s+/);
   if (parts.length < 2) return [text, ""];
   return [parts.slice(0, -1).join(" "), parts[parts.length - 1]];
 }
