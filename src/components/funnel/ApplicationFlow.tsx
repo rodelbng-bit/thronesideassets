@@ -4,12 +4,10 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import type { Attribution } from "@/lib/attribution";
 import {
-  BOOKING_TIMEZONE,
   CAPITAL_OPTIONS,
   EXPERIENCE_OPTIONS,
   INELIGIBLE_CAPITAL,
   MAX_DEALS_WANTED,
-  ukDateKey,
 } from "@/lib/application";
 import {
   buildFbc,
@@ -323,7 +321,20 @@ function canContinue(step: Step, a: Answers) {
   }
 }
 
-type SlotData = { dates: string[]; slots: string[] };
+type SlotData = { days: { date: string; slots: string[] }[] };
+
+// GHL returns slots in UK local time with an offset, e.g.
+// "2026-09-29T08:00:00+01:00" — read the clock time straight off it.
+function slotTime(slot: string) {
+  return slot.slice(11, 16);
+}
+
+function dayLabel(date: string, part: "weekday" | "day" | "month") {
+  return new Date(`${date}T12:00:00Z`).toLocaleDateString("en-GB", {
+    [part]: part === "day" ? "numeric" : "short",
+    timeZone: "UTC",
+  });
+}
 
 function BookingStep({
   applicationId,
@@ -352,9 +363,9 @@ function BookingStep({
         setData(d);
         setLoadFailed(false);
         setDay((current) =>
-          current && d.slots.some((s) => ukDateKey(new Date(s)) === current)
+          current && d.days.some((x) => x.date === current && x.slots.length > 0)
             ? current
-            : d.dates.find((date) => d.slots.some((s) => ukDateKey(new Date(s)) === date)) ?? null
+            : d.days.find((x) => x.slots.length > 0)?.date ?? null
         );
       })
       .catch(() => !cancelled && setLoadFailed(true));
@@ -406,7 +417,8 @@ function BookingStep({
     </p>
   );
 
-  const daySlots = data && day ? data.slots.filter((s) => ukDateKey(new Date(s)) === day) : [];
+  const daySlots = data?.days.find((x) => x.date === day)?.slots ?? [];
+  const hasAnySlots = !!data?.days.some((x) => x.slots.length > 0);
 
   return (
     <div className="funnel-rise mt-8">
@@ -428,9 +440,8 @@ function BookingStep({
       ) : (
         <>
           <div className="mt-6 grid grid-cols-5 gap-2">
-            {data.dates.map((date) => {
-              const available = data.slots.some((s) => ukDateKey(new Date(s)) === date);
-              const d = new Date(`${date}T12:00:00Z`);
+            {data.days.map(({ date, slots }) => {
+              const available = slots.length > 0;
               return (
                 <button
                   key={date}
@@ -440,49 +451,61 @@ function BookingStep({
                     setDay(date);
                     setSlot(null);
                   }}
-                  className={`rounded-xl border px-1 py-3 text-center transition-colors disabled:cursor-not-allowed disabled:opacity-30 ${
-                    day === date ? "border-brass bg-brass/10 text-paper" : "rule text-paper-dim hover:border-brass/50"
+                  aria-pressed={day === date}
+                  className={`touch-manipulation rounded-xl border px-1 py-3 text-center transition-colors disabled:cursor-not-allowed disabled:opacity-30 ${
+                    day === date ? "bg-gold border-transparent text-ink" : "rule text-paper-dim hover:border-brass/50"
                   }`}
                 >
-                  <span className="block text-xs uppercase tracking-wide">
-                    {d.toLocaleDateString("en-GB", { weekday: "short", timeZone: "UTC" })}
+                  <span className="block text-xs uppercase tracking-wide">{dayLabel(date, "weekday")}</span>
+                  <span className={`font-funnel mt-1 block text-xl font-semibold ${day === date ? "text-ink" : "text-paper"}`}>
+                    {dayLabel(date, "day")}
                   </span>
-                  <span className="font-funnel mt-1 block text-xl font-semibold text-paper">
-                    {d.toLocaleDateString("en-GB", { day: "numeric", timeZone: "UTC" })}
-                  </span>
-                  <span className="block text-[11px]">
-                    {d.toLocaleDateString("en-GB", { month: "short", timeZone: "UTC" })}
-                  </span>
+                  <span className="block text-[11px]">{dayLabel(date, "month")}</span>
                 </button>
               );
             })}
           </div>
 
-          {data.slots.length === 0 ? (
+          {!hasAnySlots ? (
             <p className="mt-6 text-sm text-paper-dim">
               There are no times left in the next few days. Please check back
               tomorrow — new times open up every day.
             </p>
           ) : (
-            <div className="mt-5 grid max-h-72 grid-cols-3 gap-2 overflow-y-auto pr-1 sm:grid-cols-4">
+            <div className="mt-5 grid grid-cols-3 gap-2 sm:grid-cols-4">
               {daySlots.map((s) => (
                 <button
                   key={s}
                   type="button"
-                  onClick={() => setSlot(s)}
-                  className={`ledger-figure rounded-lg border py-2.5 text-sm transition-colors ${
-                    slot === s ? "border-brass bg-brass/15 text-paper" : "rule text-paper-dim hover:border-brass/50 hover:text-paper"
+                  aria-pressed={slot === s}
+                  onClick={() => {
+                    setSlot(s);
+                    setError("");
+                  }}
+                  className={`ledger-figure touch-manipulation rounded-lg border py-3 text-sm transition-colors ${
+                    slot === s
+                      ? "bg-gold border-transparent font-semibold text-ink"
+                      : "rule text-paper-dim hover:border-brass/50 hover:text-paper"
                   }`}
                 >
-                  {new Date(s).toLocaleTimeString("en-GB", {
-                    hour: "2-digit",
-                    minute: "2-digit",
-                    timeZone: BOOKING_TIMEZONE,
-                  })}
+                  {slotTime(s)}
                 </button>
               ))}
             </div>
           )}
+
+          <p className="mt-6 text-center text-sm text-paper-dim" aria-live="polite">
+            {slot && day ? (
+              <>
+                Selected:{" "}
+                <span className="font-semibold text-paper">
+                  {dayLabel(day, "weekday")} {dayLabel(day, "day")} {dayLabel(day, "month")}, {slotTime(slot)}
+                </span>
+              </>
+            ) : (
+              "Tap a time to select it."
+            )}
+          </p>
 
           {error && <p className="mt-5 text-sm text-red-400">{error}</p>}
 
@@ -490,7 +513,7 @@ function BookingStep({
             type="button"
             onClick={book}
             disabled={!slot || busy}
-            className="bg-gold mt-8 inline-flex w-full items-center justify-center gap-2 rounded-full px-8 py-4 text-base font-semibold text-ink transition-all hover:-translate-y-0.5 disabled:translate-y-0 disabled:opacity-40"
+            className="bg-gold mt-4 inline-flex w-full items-center justify-center gap-2 rounded-full px-8 py-4 text-base font-semibold text-ink transition-all hover:-translate-y-0.5 disabled:translate-y-0 disabled:opacity-40"
           >
             {busy ? "Booking…" : "Confirm booking"}
             {!busy && <span aria-hidden>→</span>}

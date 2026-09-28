@@ -95,5 +95,11 @@ export async function getOpenSlots(now = new Date()) {
     const at = new Date(slot);
     return at > now && dates.includes(ukDateKey(at));
   });
-  return { dates, slots: open };
+  // Grouped here so the browser never has to work out which UK day a
+  // slot falls on.
+  const days = dates.map((date) => ({
+    date,
+    slots: open.filter((slot) => ukDateKey(new Date(slot)) === date),
+  }));
+  return { days, slots: open };
 }

@@ -30,13 +30,19 @@ export const BOOKING_TIMEZONE = "Europe/London";
 
 /** YYYY-MM-DD for `date` as seen in the UK. */
 export function ukDateKey(date: Date) {
-  // en-CA formats as YYYY-MM-DD.
-  return new Intl.DateTimeFormat("en-CA", {
-    timeZone: BOOKING_TIMEZONE,
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-  }).format(date);
+  // Built from parts rather than relying on a locale's date format, which
+  // varies between browsers and ICU versions.
+  const parts = Object.fromEntries(
+    new Intl.DateTimeFormat("en-GB", {
+      timeZone: BOOKING_TIMEZONE,
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+    })
+      .formatToParts(date)
+      .map((p) => [p.type, p.value])
+  );
+  return `${parts.year}-${parts.month}-${parts.day}`;
 }
 
 /** The UK calendar dates (YYYY-MM-DD) currently open for booking. */
