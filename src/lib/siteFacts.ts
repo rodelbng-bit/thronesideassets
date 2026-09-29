@@ -12,7 +12,7 @@ export const faqs = [
   },
   {
     q: "What kind of deals do you source?",
-    a: "We source across multiple strategies: Rent-to-Rent (R2R), Serviced Accommodation (SA), HMO, Buy-to-Let, and BRRR — matched to your investment criteria.",
+    a: "We only source Rent-to-Rent Serviced Accommodation deals — properties suitable for Airbnb, Booking.com and similar platforms.",
   },
   {
     q: "How quickly will I see deals?",
