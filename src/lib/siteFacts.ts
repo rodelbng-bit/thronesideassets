@@ -7,10 +7,6 @@ export const faqs = [
     a: "Our membership starts at £497/month (Essential), on a fixed 12-month contract billed monthly. You can instead pay the full 12-month term upfront in one payment — £4,970 for Essential, saving £994. See the plans above for full details.",
   },
   {
-    q: "How does the 3-month partner programme work?",
-    a: "For a limited number of investors, we waive our sourcing fees for the first 3 months. You get full access to vetted deals while we build a working relationship. After 3 months, you continue on your chosen plan.",
-  },
-  {
     q: "What kind of deals do you source?",
     a: "We only source Rent-to-Rent Serviced Accommodation deals — properties suitable for Airbnb, Booking.com and similar platforms.",
   },
