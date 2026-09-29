@@ -165,7 +165,7 @@ export default async function StartPage({
         {/* Deals — hidden until at least one deal has a walkthrough video */}
         {featuredDeals.length > 0 && (
           <section id="deals" className="scroll-mt-20 border-b rule">
-            <div className="mx-auto max-w-4xl px-6 py-20 md:py-28">
+            <div className="mx-auto max-w-6xl px-6 py-20 md:py-28">
               <div className="text-center">
                 <Eyebrow>Recent deals</Eyebrow>
                 <h2 className="font-funnel mx-auto mt-6 max-w-2xl text-4xl font-bold tracking-[-0.03em] text-paper md:text-5xl">
@@ -177,7 +177,8 @@ export default async function StartPage({
                 </p>
               </div>
 
-              <div className="mt-14 space-y-8">
+              {/* Three across on large screens; stacked on phones and tablets. */}
+              <div className="mx-auto mt-14 grid max-w-xl grid-cols-1 items-start gap-6 lg:max-w-none lg:grid-cols-3">
                 {featuredDeals.map((deal) => (
                   <div key={deal.id}>
                     {deal.status === "unavailable" && (
@@ -185,7 +186,7 @@ export default async function StartPage({
                         Reserved — no longer available
                       </p>
                     )}
-                    <DealCard deal={deal} />
+                    <DealCard deal={deal} compact />
                   </div>
                 ))}
               </div>

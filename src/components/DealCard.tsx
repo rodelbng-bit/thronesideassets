@@ -18,6 +18,7 @@ export default function DealCard({
   reservationExpiresAt,
   viewingRequest,
   blurred = false,
+  compact = false,
 }: {
   deal: Deal;
   /** Omit to render without a Reserve control — used on the public preview page. */
@@ -30,15 +31,23 @@ export default function DealCard({
   viewingRequest?: { preferredAt: Date; status: "pending" | "confirmed" | "declined" };
   /** Obscures rate/utilities/earnings/thermometer behind a "Join to unlock" prompt — used on the public preview page. */
   blurred?: boolean;
+  /** Narrow single-column layout, for showing cards side by side (the /start landing page). */
+  compact?: boolean;
 }) {
   const freshness = freshnessFromDate(deal.dateAdded);
   const earnings = estimateMonthlyEarnings(deal);
   const annual = estimateAnnualAt75(deal);
 
   return (
-    <div className="rounded-lg border rule bg-ink-soft p-6">
+    <div className={`rounded-lg border rule bg-ink-soft ${compact ? "p-4" : "p-6"}`}>
       {/* A deal can have a video, photos, or both (video first). */}
-      {deal.videoUrl && <DealVideo src={deal.videoUrl} title={deal.title} />}
+      {deal.videoUrl && (
+        <DealVideo
+          src={deal.videoUrl}
+          title={deal.title}
+          maxHeight={compact ? "min(55vh, 360px)" : undefined}
+        />
+      )}
       {deal.photos.length > 0 && (
         <div className={deal.videoUrl ? "mt-4" : ""}>
           <DealGallery photos={deal.photos} alt={deal.title} />
@@ -48,7 +57,7 @@ export default function DealCard({
       <div className="mt-6">
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div>
-            <h3 className="font-display text-2xl text-paper">{deal.title}</h3>
+            <h3 className={`font-display text-paper ${compact ? "text-xl" : "text-2xl"}`}>{deal.title}</h3>
             <p className="ledger-figure mt-1 text-sm text-brass-bright">
               {deal.location}
             </p>
@@ -75,7 +84,7 @@ export default function DealCard({
               blurred ? "select-none blur-sm pointer-events-none" : ""
             }
           >
-            <div className="grid grid-cols-1 gap-6 sm:grid-cols-[minmax(0,1fr)_auto]">
+            <div className={`grid grid-cols-1 gap-6 ${compact ? "" : "sm:grid-cols-[minmax(0,1fr)_auto]"}`}>
               <div>
                 <dl className="grid grid-cols-2 gap-4 text-sm">
                   <div>
@@ -126,7 +135,7 @@ export default function DealCard({
                   </p>
                   <div className="mt-2 grid grid-cols-3 gap-px overflow-hidden rounded-md border rule">
                     {earnings.map(({ occupancy, net }) => (
-                      <div key={occupancy} className="bg-ink px-3 py-3">
+                      <div key={occupancy} className={`bg-ink py-3 ${compact ? "px-2" : "px-3"}`}>
                         <p className="text-xs text-paper-dim">
                           {Math.round(occupancy * 100)}% occ.
                         </p>
@@ -150,7 +159,7 @@ export default function DealCard({
                 </div>
               </div>
 
-              <div className="flex flex-row items-center justify-between gap-6 border-t rule pt-6 sm:flex-col sm:justify-center sm:border-l sm:border-t-0 sm:pl-6 sm:pt-0">
+              <div className={`flex flex-row items-center justify-between gap-6 border-t rule pt-6 ${compact ? "" : "sm:flex-col sm:justify-center sm:border-l sm:border-t-0 sm:pl-6 sm:pt-0"}`}>
                 <DealThermometer freshness={freshness} />
                 {reserveState && (
                   <ReserveButton

@@ -6,7 +6,16 @@ import { useRef, useState } from "react";
 // play button); tapping it starts playback full screen. Once it has been
 // started, the native controls take over, including after leaving full
 // screen.
-export default function DealVideo({ src, title }: { src: string; title: string }) {
+export default function DealVideo({
+  src,
+  title,
+  maxHeight = "min(55vh, 480px)",
+}: {
+  src: string;
+  title: string;
+  /** CSS height cap for the inline frame. */
+  maxHeight?: string;
+}) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [started, setStarted] = useState(false);
   // width / height, read from the file once its metadata loads. Starts
@@ -30,11 +39,11 @@ export default function DealVideo({ src, title }: { src: string; title: string }
   return (
     <div
       className="relative mx-auto overflow-hidden rounded-lg border rule bg-ink"
-      // Height is capped (55% of the screen, 480px at most) so portrait
-      // videos stay a preview-sized frame; tapping plays full screen.
+      // Height is capped (by default 55% of the screen, 480px at most) so
+      // portrait videos stay a preview-sized frame; tapping plays full screen.
       style={{
         aspectRatio: ratio,
-        width: `min(100%, calc(min(55vh, 480px) * ${ratio}))`,
+        width: `min(100%, calc(${maxHeight} * ${ratio}))`,
       }}
     >
       <video
