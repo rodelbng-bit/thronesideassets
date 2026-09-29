@@ -32,10 +32,12 @@ export default function NewDealForm({
       "photos"
     ) as HTMLInputElement;
     const files = Array.from(photosInput.files ?? []);
+    const videoInput = form.elements.namedItem("video") as HTMLInputElement;
+    const videoFile = videoInput.files?.[0];
 
-    if (files.length === 0) {
+    if (files.length === 0 && !videoFile) {
       setStatus("error");
-      setErrorMessage("Add at least one photo.");
+      setErrorMessage("Add a walkthrough video, at least one photo, or both.");
       return;
     }
 
@@ -51,8 +53,6 @@ export default function NewDealForm({
         photoUrls.push(blob.url);
       }
 
-      const videoInput = form.elements.namedItem("video") as HTMLInputElement;
-      const videoFile = videoInput.files?.[0];
       let videoUrl: string | null = null;
       if (videoFile) {
         setUploadProgress("Uploading video… 0%");
@@ -220,21 +220,7 @@ export default function NewDealForm({
 
       <div>
         <label className="text-xs uppercase tracking-wide text-paper-dim">
-          Photos
-        </label>
-        <input
-          type="file"
-          name="photos"
-          accept="image/jpeg,image/png,image/webp"
-          multiple
-          required
-          className="mt-2 w-full rounded-md border rule bg-ink px-4 py-3 text-sm text-paper file:mr-4 file:rounded-full file:border-0 file:bg-brass file:px-4 file:py-2 file:text-sm file:font-medium file:text-ink"
-        />
-      </div>
-
-      <div>
-        <label className="text-xs uppercase tracking-wide text-paper-dim">
-          Walkthrough video (optional)
+          Walkthrough video
         </label>
         <input
           type="file"
@@ -243,9 +229,22 @@ export default function NewDealForm({
           className="mt-2 w-full rounded-md border rule bg-ink px-4 py-3 text-sm text-paper file:mr-4 file:rounded-full file:border-0 file:bg-brass file:px-4 file:py-2 file:text-sm file:font-medium file:text-ink"
         />
         <p className="mt-2 text-xs text-paper-dim">
-          MP4 or iPhone video, up to 500 MB. Deals with a video are featured
-          on the /start landing page (newest 3).
+          MP4, up to 500 MB. Deals with a video are featured on the /start
+          landing page (newest 3).
         </p>
+      </div>
+
+      <div>
+        <label className="text-xs uppercase tracking-wide text-paper-dim">
+          Photos (optional if there&apos;s a video)
+        </label>
+        <input
+          type="file"
+          name="photos"
+          accept="image/jpeg,image/png,image/webp"
+          multiple
+          className="mt-2 w-full rounded-md border rule bg-ink px-4 py-3 text-sm text-paper file:mr-4 file:rounded-full file:border-0 file:bg-brass file:px-4 file:py-2 file:text-sm file:font-medium file:text-ink"
+        />
       </div>
 
       {status === "error" && (

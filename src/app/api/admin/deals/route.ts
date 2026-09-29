@@ -45,10 +45,11 @@ export async function POST(req: NextRequest) {
     typeof description !== "string" ||
     !description.trim() ||
     !Array.isArray(photos) ||
-    photos.length === 0 ||
     !photos.every((p) => typeof p === "string") ||
     (videoUrl != null &&
       (typeof videoUrl !== "string" || !videoUrl.startsWith("https://"))) ||
+    // A deal needs something to show: a video, photos, or both.
+    (photos.length === 0 && videoUrl == null) ||
     !Number.isFinite(ratePerNight) ||
     ratePerNight <= 0 ||
     !Number.isFinite(utilityCostPerMonth) ||

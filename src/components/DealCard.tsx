@@ -37,12 +37,13 @@ export default function DealCard({
 
   return (
     <div className="rounded-lg border rule bg-ink-soft p-6">
-      {deal.videoUrl && (
-        <div className="mb-4">
-          <DealVideo src={deal.videoUrl} title={deal.title} />
+      {/* A deal can have a video, photos, or both (video first). */}
+      {deal.videoUrl && <DealVideo src={deal.videoUrl} title={deal.title} />}
+      {deal.photos.length > 0 && (
+        <div className={deal.videoUrl ? "mt-4" : ""}>
+          <DealGallery photos={deal.photos} alt={deal.title} />
         </div>
       )}
-      <DealGallery photos={deal.photos} alt={deal.title} />
 
       <div className="mt-6">
         <div className="flex flex-wrap items-start justify-between gap-3">
