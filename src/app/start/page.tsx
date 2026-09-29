@@ -6,7 +6,6 @@ import {
   FunnelHeader,
   FunnelShell,
   FunnelVideo,
-  PlaceholderSlot,
 } from "@/components/funnel/FunnelParts";
 import TrackMetaEvent from "@/components/funnel/TrackMetaEvent";
 import DealCard from "@/components/DealCard";
@@ -222,20 +221,14 @@ export default async function StartPage({
           </section>
         )}
 
-        {/* Proof */}
-        <section className="border-b rule">
-          <div className="mx-auto max-w-6xl px-6 py-20 md:py-28">
-            <div className="text-center">
-              <Eyebrow>Results</Eyebrow>
-            </div>
-            {funnelProof.length === 0 ? (
-              <PlaceholderSlot label="PROOF" className="mx-auto mt-10 max-w-3xl">
-                Real deal examples, member results or testimonials you&apos;re
-                approved to publish. Add them to{" "}
-                <span className="ledger-figure">funnelProof</span> in{" "}
-                <span className="ledger-figure">src/lib/funnelContent.ts</span>.
-              </PlaceholderSlot>
-            ) : (
+        {/* Proof — hidden until there are real, approved items in
+            funnelProof (src/lib/funnelContent.ts). */}
+        {funnelProof.length > 0 && (
+          <section className="border-b rule">
+            <div className="mx-auto max-w-6xl px-6 py-20 md:py-28">
+              <div className="text-center">
+                <Eyebrow>Results</Eyebrow>
+              </div>
               <div className="mt-10 grid grid-cols-1 gap-5 md:grid-cols-2">
                 {funnelProof.map((item) => (
                   <figure key={item.name} className="gold-ring rounded-2xl p-8">
@@ -249,9 +242,9 @@ export default async function StartPage({
                   </figure>
                 ))}
               </div>
-            )}
-          </div>
-        </section>
+            </div>
+          </section>
+        )}
 
         {/* Booking */}
         <section id="qualify" className="relative scroll-mt-20 overflow-hidden border-b rule">
