@@ -1,3 +1,4 @@
+import { Fragment } from "react";
 import type { Metadata } from "next";
 import {
   Eyebrow,
@@ -136,7 +137,7 @@ export default async function StartPage({
 
         {/* How it works */}
         <section id="how-it-works" className="scroll-mt-20 border-b rule">
-          <div className="mx-auto max-w-6xl px-6 py-20 md:py-28">
+          <div className="mx-auto max-w-7xl px-6 py-20 md:py-28">
             <div className="text-center">
               <Eyebrow>How it works</Eyebrow>
               <h2 className="font-funnel mx-auto mt-6 max-w-2xl text-4xl font-bold tracking-[-0.03em] text-paper md:text-5xl">
@@ -144,41 +145,40 @@ export default async function StartPage({
               </h2>
             </div>
 
-            {/* One column, with a gold arrow leading from each step to the next. */}
-            <ol className="mx-auto mt-14 max-w-3xl">
+            {/* All five in one row on large screens with a gold arrow between
+                each; stacked with downward arrows on phones and tablets. */}
+            <ol className="mx-auto mt-14 flex max-w-md flex-col lg:max-w-none lg:flex-row">
               {steps.map((step, i) => (
-                <li key={step.n}>
-                  <div className="group relative flex items-start gap-5 overflow-hidden rounded-2xl border rule bg-ink-soft p-6 transition-all duration-300 hover:border-brass/50 hover:shadow-[0_20px_60px_-20px_rgba(212,175,55,0.35)] sm:gap-6 sm:p-8">
+                <Fragment key={step.n}>
+                  <li className="group relative min-w-0 flex-1 overflow-hidden rounded-2xl border rule bg-ink-soft p-6 transition-all duration-300 hover:-translate-y-1 hover:border-brass/50 hover:shadow-[0_20px_60px_-20px_rgba(212,175,55,0.35)] lg:p-5">
                     <span
                       aria-hidden
-                      className="font-funnel pointer-events-none absolute -right-2 -top-6 text-[7rem] font-extrabold leading-none text-white/[0.03] transition-colors group-hover:text-brass/10"
+                      className="font-funnel pointer-events-none absolute -right-2 -top-4 text-[5rem] font-extrabold leading-none text-white/[0.03] transition-colors group-hover:text-brass/10"
                     >
                       {step.n}
                     </span>
-                    <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-gold text-ink">
-                      <svg viewBox="0 0 24 24" className="h-6 w-6" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+                    <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-gold text-ink">
+                      <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" aria-hidden>
                         <path d={step.icon} />
                       </svg>
                     </span>
-                    <div className="relative">
-                      <p className="ledger-figure text-sm text-brass-bright">Step {step.n}</p>
-                      <h3 className="font-funnel mt-1 text-xl font-semibold tracking-tight text-paper">
-                        {step.title}
-                      </h3>
-                      <p className="mt-2 text-sm leading-relaxed text-paper-dim">
-                        {step.body}
-                      </p>
-                    </div>
-                  </div>
+                    <p className="ledger-figure mt-5 text-sm text-brass-bright">{step.n}</p>
+                    <h3 className="font-funnel mt-1 text-lg font-semibold leading-snug tracking-tight text-paper">
+                      {step.title}
+                    </h3>
+                    <p className="mt-3 text-sm leading-relaxed text-paper-dim">
+                      {step.body}
+                    </p>
+                  </li>
 
                   {i < steps.length - 1 && (
-                    <div aria-hidden className="flex justify-center py-2 text-brass-bright">
-                      <svg viewBox="0 0 24 40" className="h-10 w-6" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
-                        <path d="M12 2v34M5 29l7 7 7-7" />
+                    <li aria-hidden className="flex shrink-0 items-center justify-center py-2 text-brass-bright lg:px-2 lg:py-0">
+                      <svg viewBox="0 0 40 24" className="h-6 w-9 rotate-90 lg:rotate-0" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M2 12h34M29 5l7 7-7 7" />
                       </svg>
-                    </div>
+                    </li>
                   )}
-                </li>
+                </Fragment>
               ))}
             </ol>
           </div>
