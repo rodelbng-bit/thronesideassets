@@ -4,11 +4,16 @@ import { revalidatePath } from "next/cache";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { users, deals } from "@/lib/schema";
-import { isAdminEmail, getAdminEmails } from "@/lib/admin";
-import { sendNewDealNotificationEmail } from "@/lib/mailer";
+import { isAdminEmail } from "@/lib/admin";
+import { getDeal } from "@/lib/deals";
 import { isVideoUrl, parseDealFields } from "@/lib/dealInput";
 
-export async function POST(req: NextRequest) {
+// Edits a published deal's details. Photos are left as they are; the
+// video is only replaced when a new videoUrl is sent.
+export async function PATCH(
+  req: NextRequest,
+  { params }: { params: Promise<{ dealId: string }> }
+) {
   const session = await auth();
   if (!session?.user) {
     return NextResponse.json({ error: "Not signed in" }, { status: 401 });
@@ -24,36 +29,31 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 
+  const { dealId } = await params;
+  if (!(await getDeal(dealId))) {
+    return NextResponse.json({ error: "Deal not found" }, { status: 404 });
+  }
+
   const data = await req.json();
   const fields = parseDealFields(data);
-  const { photos, videoUrl } = data;
+  const { videoUrl } = data;
 
-  if (
-    !fields ||
-    !Array.isArray(photos) ||
-    !photos.every((p) => typeof p === "string") ||
-    (videoUrl != null && !isVideoUrl(videoUrl)) ||
-    // A deal needs something to show: a video, photos, or both.
-    (photos.length === 0 && videoUrl == null)
-  ) {
+  if (!fields || (videoUrl != null && !isVideoUrl(videoUrl))) {
     return NextResponse.json(
       { error: "Missing or invalid fields." },
       { status: 400 }
     );
   }
 
-  const [deal] = await db
-    .insert(deals)
-    .values({ ...fields, photos, videoUrl: videoUrl ?? null })
-    .returning();
+  await db
+    .update(deals)
+    .set({ ...fields, ...(videoUrl ? { videoUrl } : {}) })
+    .where(eq(deals.id, dealId));
 
   revalidatePath("/deals");
   revalidatePath("/start");
+  revalidatePath("/members");
+  revalidatePath(`/members/deals/${dealId}`);
 
-  // Best-effort — a failed notification shouldn't undo the deal creation.
-  sendNewDealNotificationEmail(getAdminEmails(), deal).catch((err) =>
-    console.error("Failed to send new deal notification", err)
-  );
-
-  return NextResponse.json({ deal });
+  return NextResponse.json({ ok: true });
 }

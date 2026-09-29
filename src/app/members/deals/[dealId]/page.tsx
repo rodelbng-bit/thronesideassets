@@ -80,11 +80,17 @@ export default async function MemberDealPage({
         </Link>
 
         {isAdminEmail(user?.email) && (
-          <div className="mt-6">
+          <div className="mt-6 flex flex-wrap items-start gap-4">
             <DealAvailabilityToggle
               dealId={deal.id}
               initialStatus={deal.status}
             />
+            <Link
+              href={`/admin/deals/${deal.id}/edit`}
+              className="rounded-full border rule px-5 py-2 text-sm text-paper transition-colors hover:border-brass/50"
+            >
+              Edit deal
+            </Link>
           </div>
         )}
 

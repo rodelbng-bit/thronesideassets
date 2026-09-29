@@ -28,7 +28,7 @@ export async function POST(req: NextRequest) {
     const jsonResponse = await handleUpload({
       body,
       request: req,
-      // NewDealForm sends clientPayload "video" for the walkthrough video;
+      // DealForm sends clientPayload "video" for the walkthrough video;
       // everything else is a photo.
       onBeforeGenerateToken: async (_pathname, clientPayload) =>
         clientPayload === "video"
