@@ -39,14 +39,14 @@ export default function DealCard({
   const annual = estimateAnnualAt75(deal);
 
   return (
-    <div className={`rounded-lg border rule bg-ink-soft ${compact ? "p-4" : "p-6"}`}>
+    <div
+      className={`rounded-lg border rule bg-ink-soft ${
+        compact ? "flex h-full flex-col p-4" : "p-6"
+      }`}
+    >
       {/* A deal can have a video, photos, or both (video first). */}
       {deal.videoUrl && (
-        <DealVideo
-          src={deal.videoUrl}
-          title={deal.title}
-          maxHeight={compact ? "min(55vh, 360px)" : undefined}
-        />
+        <DealVideo src={deal.videoUrl} title={deal.title} fill={compact} />
       )}
       {deal.photos.length > 0 && (
         <div className={deal.videoUrl ? "mt-4" : ""}>
@@ -54,8 +54,16 @@ export default function DealCard({
         </div>
       )}
 
-      <div className="mt-6">
-        <div className="flex flex-wrap items-start justify-between gap-3">
+      {/* Compact: the description stretches so the figures line up at the
+          bottom of side-by-side cards. */}
+      <div className={compact ? "mt-5 flex flex-1 flex-col" : "mt-6"}>
+        <div
+          className={
+            compact
+              ? "flex flex-col items-start gap-2"
+              : "flex flex-wrap items-start justify-between gap-3"
+          }
+        >
           <div>
             <h3 className={`font-display text-paper ${compact ? "text-xl" : "text-2xl"}`}>{deal.title}</h3>
             <p className="ledger-figure mt-1 text-sm text-brass-bright">
@@ -74,7 +82,7 @@ export default function DealCard({
               : "No guarantor required"}
           </span>
         </div>
-        <p className="mt-3 text-sm leading-relaxed text-paper-dim">
+        <p className={`mt-3 text-sm leading-relaxed text-paper-dim ${compact ? "flex-1" : ""}`}>
           {deal.description}
         </p>
 
@@ -159,17 +167,21 @@ export default function DealCard({
                 </div>
               </div>
 
-              <div className={`flex flex-row items-center justify-between gap-6 border-t rule pt-6 ${compact ? "" : "sm:flex-col sm:justify-center sm:border-l sm:border-t-0 sm:pl-6 sm:pt-0"}`}>
-                <DealThermometer freshness={freshness} />
-                {reserveState && (
-                  <ReserveButton
-                    dealId={deal.id}
-                    initialState={reserveState}
-                    limitReached={reservationLimitReached}
-                    expiresAt={reservationExpiresAt}
-                  />
-                )}
-              </div>
+              {/* The freshness gauge is left off compact cards — too tall
+                  for the narrow layout. */}
+              {(!compact || reserveState) && (
+                <div className={`flex flex-row items-center justify-between gap-6 border-t rule pt-6 ${compact ? "" : "sm:flex-col sm:justify-center sm:border-l sm:border-t-0 sm:pl-6 sm:pt-0"}`}>
+                  {!compact && <DealThermometer freshness={freshness} />}
+                  {reserveState && (
+                    <ReserveButton
+                      dealId={deal.id}
+                      initialState={reserveState}
+                      limitReached={reservationLimitReached}
+                      expiresAt={reservationExpiresAt}
+                    />
+                  )}
+                </div>
+              )}
             </div>
 
             {reserveState === "reserved-by-me" && (

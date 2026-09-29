@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 // A deal's walkthrough video. Sits in the card like a photo (first frame +
 // play button); tapping it starts playback full screen. Once it has been
@@ -9,18 +9,30 @@ import { useRef, useState } from "react";
 export default function DealVideo({
   src,
   title,
-  maxHeight = "min(55vh, 480px)",
+  fill = false,
 }: {
   src: string;
   title: string;
-  /** CSS height cap for the inline frame. */
-  maxHeight?: string;
+  /**
+   * Fill a fixed 4:5 frame (cropping to fit) instead of sizing to the
+   * video's own shape — keeps side-by-side cards identical.
+   */
+  fill?: boolean;
 }) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [started, setStarted] = useState(false);
   // width / height, read from the file once its metadata loads. Starts
   // landscape; phone walkthroughs are usually portrait.
   const [ratio, setRatio] = useState(16 / 9);
+
+  // The metadata can finish loading before React attaches onLoadedMetadata
+  // (a cached video), which would leave the frame stuck at 16:9.
+  useEffect(() => {
+    const video = videoRef.current;
+    if (video && video.readyState >= 1 && video.videoWidth && video.videoHeight) {
+      setRatio(video.videoWidth / video.videoHeight);
+    }
+  }, []);
 
   function play() {
     const video = videoRef.current;
@@ -38,13 +50,16 @@ export default function DealVideo({
 
   return (
     <div
-      className="relative mx-auto overflow-hidden rounded-lg border rule bg-ink"
-      // Height is capped (by default 55% of the screen, 480px at most) so
+      className={`relative overflow-hidden rounded-lg border rule bg-ink ${
+        fill ? "aspect-[4/5] w-full" : "mx-auto"
+      }`}
+      // Otherwise height is capped (55% of the screen, 480px at most) so
       // portrait videos stay a preview-sized frame; tapping plays full screen.
-      style={{
-        aspectRatio: ratio,
-        width: `min(100%, calc(${maxHeight} * ${ratio}))`,
-      }}
+      style={
+        fill
+          ? undefined
+          : { aspectRatio: ratio, width: `min(100%, calc(min(55vh, 480px) * ${ratio}))` }
+      }
     >
       <video
         ref={videoRef}
@@ -58,7 +73,7 @@ export default function DealVideo({
         preload="metadata"
         controls={started}
         aria-label={`${title} — walkthrough video`}
-        className="h-full w-full object-contain"
+        className={`h-full w-full ${fill && !started ? "object-cover" : "object-contain"}`}
       />
       {!started && (
         <button

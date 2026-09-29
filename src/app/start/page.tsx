@@ -192,15 +192,17 @@ export default async function StartPage({
               </div>
 
               {/* Three across on large screens; stacked on phones and tablets. */}
-              <div className="mx-auto mt-14 grid max-w-xl grid-cols-1 items-start gap-6 lg:max-w-none lg:grid-cols-3">
+              <div className="mx-auto mt-14 grid max-w-md grid-cols-1 gap-6 lg:max-w-none lg:grid-cols-3">
                 {featuredDeals.map((deal) => (
-                  <div key={deal.id}>
+                  <div key={deal.id} className="flex flex-col">
                     {deal.status === "unavailable" && (
                       <p className="ledger-figure mb-3 text-xs uppercase tracking-[0.18em] text-paper-dim">
                         Reserved — no longer available
                       </p>
                     )}
-                    <DealCard deal={deal} compact />
+                    <div className="flex-1">
+                      <DealCard deal={deal} compact />
+                    </div>
                   </div>
                 ))}
               </div>
