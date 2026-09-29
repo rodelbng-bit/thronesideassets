@@ -184,6 +184,13 @@ export default function ApplicationFlow({ attribution }: { attribution: Attribut
           next stage right now. When your circumstances change, you&apos;re
           very welcome to apply again.
         </p>
+        <button
+          type="button"
+          onClick={() => setStep("capital")}
+          className="mt-8 inline-flex w-full items-center justify-center gap-2 rounded-full border rule-strong px-8 py-4 text-base font-medium text-paper transition-colors hover:bg-white/5"
+        >
+          <span aria-hidden>←</span> Go back and change my answer
+        </button>
       </Card>
     );
   }

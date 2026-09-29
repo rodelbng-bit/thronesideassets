@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { eq } from "drizzle-orm";
 import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
+import DeleteApplicationButton from "@/components/DeleteApplicationButton";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { users } from "@/lib/schema";
@@ -105,6 +106,14 @@ export default async function ApplicationsAdminPage({
                     </div>
                   </div>
 
+                  {a.disqualifiedAt && a.status !== "disqualified" && (
+                    <p className="mt-4 rounded-lg border border-red-400/40 bg-red-500/5 px-4 py-3 text-sm text-red-300">
+                      Changed answer: first said they had less than £1,000 to
+                      invest ({formatUkDateTime(a.disqualifiedAt)} UK), then went
+                      back and picked {a.capital ?? "a different amount"}.
+                    </p>
+                  )}
+
                   <dl className="mt-5 grid grid-cols-1 gap-4 text-sm sm:grid-cols-2">
                     <Answer label="Call booked for" value={a.appointmentAt && `${formatUkDateTime(a.appointmentAt)} (UK)`} />
                     <Answer label="Property experience" value={a.experience} />
@@ -116,6 +125,10 @@ export default async function ApplicationsAdminPage({
                       value={[a.funnel, a.utmSource, a.utmCampaign, a.utmContent].filter(Boolean).join(" · ")}
                     />
                   </dl>
+
+                  <div className="mt-5 flex justify-end border-t rule pt-4">
+                    <DeleteApplicationButton applicationId={a.id} name={a.fullName} />
+                  </div>
                 </div>
               );
             })}

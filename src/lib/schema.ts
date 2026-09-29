@@ -169,7 +169,8 @@ export type CallScreenerResponse = typeof callScreenerResponses.$inferSelect;
 // row is created the moment contact details are entered (step 1) and
 // filled in as each later answer arrives, so abandoned applications keep
 // the lead. status: "started" → "disqualified" (under £1,000 capital) |
-// "completed" (all answers in) → "booked" (call booked via GHL).
+// "completed" (all answers in) → "booked" (call booked via GHL). A
+// disqualified applicant can change their capital answer and continue.
 export const funnelApplications = pgTable("funnel_applications", {
   id: uuid("id").primaryKey().defaultRandom(),
   fullName: text("full_name").notNull(),
@@ -182,6 +183,9 @@ export const funnelApplications = pgTable("funnel_applications", {
   capital: text("capital"),
   appointmentAt: timestamp("appointment_at", { withTimezone: true }),
   ghlAppointmentId: text("ghl_appointment_id"),
+  // First time they answered under £1,000. Kept if they go back and change
+  // their answer, so admins can see the application was once not eligible.
+  disqualifiedAt: timestamp("disqualified_at", { withTimezone: true }),
   // Ad attribution, same shape as callScreenerResponses.
   funnel: text("funnel"),
   utmSource: text("utm_source"),

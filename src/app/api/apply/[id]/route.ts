@@ -17,7 +17,9 @@ import {
 } from "@/lib/applicationServer";
 
 // Steps 2–5 of /start/apply. Each step PATCHes just its own answer, so
-// whatever was answered before someone drops off is kept.
+// whatever was answered before someone drops off is kept. A disqualified
+// application can still be changed — the not-eligible screen lets people
+// go back and correct their capital answer.
 export async function PATCH(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
@@ -27,7 +29,7 @@ export async function PATCH(
   if (!application) {
     return NextResponse.json({ error: "Application not found." }, { status: 404 });
   }
-  if (application.status === "disqualified" || application.status === "booked") {
+  if (application.status === "booked") {
     return NextResponse.json(
       { error: "This application can no longer be changed." },
       { status: 409 }
@@ -72,7 +74,14 @@ export async function PATCH(
 
   const [updated] = await db
     .update(funnelApplications)
-    .set({ ...changes, status, updatedAt: new Date() })
+    .set({
+      ...changes,
+      status,
+      ...(status === "disqualified" && !application.disqualifiedAt
+        ? { disqualifiedAt: new Date() }
+        : {}),
+      updatedAt: new Date(),
+    })
     .where(eq(funnelApplications.id, id))
     .returning();
 
