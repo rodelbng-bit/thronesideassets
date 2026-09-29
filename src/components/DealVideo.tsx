@@ -30,9 +30,12 @@ export default function DealVideo({ src, title }: { src: string; title: string }
   return (
     <div
       className="relative mx-auto overflow-hidden rounded-lg border rule bg-ink"
-      // Portrait videos are capped at 75% of the screen height rather than
-      // stretching to the card's full width.
-      style={{ aspectRatio: ratio, width: `min(100%, calc(75vh * ${ratio}))` }}
+      // Height is capped (55% of the screen, 480px at most) so portrait
+      // videos stay a preview-sized frame; tapping plays full screen.
+      style={{
+        aspectRatio: ratio,
+        width: `min(100%, calc(min(55vh, 480px) * ${ratio}))`,
+      }}
     >
       <video
         ref={videoRef}
