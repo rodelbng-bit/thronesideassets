@@ -94,7 +94,7 @@ export default async function StartPage({
             className="absolute left-1/2 top-0 h-[520px] w-[900px] -translate-x-1/2 -translate-y-1/3 rounded-full bg-[radial-gradient(closest-side,rgba(212,175,55,0.18),transparent)]"
           />
 
-          <div className="relative mx-auto max-w-6xl px-6 pb-20 pt-16 text-center md:pb-28 md:pt-24">
+          <div className="relative mx-auto max-w-7xl px-6 pb-20 pt-16 text-center md:pb-28 md:pt-24">
             <div className="funnel-rise">
               <Eyebrow>{angle.eyebrow}</Eyebrow>
             </div>
@@ -128,7 +128,7 @@ export default async function StartPage({
               ))}
             </ul>
 
-            <div className="funnel-rise mx-auto mt-16 max-w-4xl text-left [animation-delay:400ms] md:mt-20">
+            <div className="funnel-rise mt-16 w-full text-left [animation-delay:400ms] md:mt-20">
               <FunnelVideo video={landingVideo} title="Throneside Assets — how it works" />
             </div>
           </div>
