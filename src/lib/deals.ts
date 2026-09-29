@@ -1,4 +1,4 @@
-import { desc, eq, inArray, lt } from "drizzle-orm";
+import { desc, eq, inArray, isNotNull, lt } from "drizzle-orm";
 import { db } from "./db";
 import { deals as dealsTable, dealReservations } from "./schema";
 
@@ -12,6 +12,7 @@ export type Deal = {
   location: string;
   description: string;
   photos: string[];
+  videoUrl: string | null;
   ratePerNight: number;
   utilityCostPerMonth: number;
   monthlyRent: number | null;
@@ -31,6 +32,16 @@ export type ReserveState =
 
 export async function getDeals(): Promise<Deal[]> {
   return db.select().from(dealsTable).orderBy(desc(dealsTable.dateAdded));
+}
+
+/** Newest deals that have a walkthrough video — featured on /start. */
+export async function getFeaturedDeals(limit = 3): Promise<Deal[]> {
+  return db
+    .select()
+    .from(dealsTable)
+    .where(isNotNull(dealsTable.videoUrl))
+    .orderBy(desc(dealsTable.dateAdded))
+    .limit(limit);
 }
 
 export async function getDeal(id: string): Promise<Deal | undefined> {
@@ -104,6 +115,17 @@ export function estimateMonthlyEarnings(deal: Deal) {
       net: Math.round(gross - deal.utilityCostPerMonth - (deal.monthlyRent ?? 0)),
     };
   });
+}
+
+/**
+ * Twelve months at 75% occupancy. Rounded once at the end (not month by
+ * month) so it matches the deal sheets: £125/night, £1,150 rent, £300
+ * costs → £33,750 gross, £16,350 profit.
+ */
+export function estimateAnnualAt75(deal: Deal) {
+  const gross = deal.ratePerNight * DAYS_PER_MONTH * 0.75 * 12;
+  const costs = (deal.utilityCostPerMonth + (deal.monthlyRent ?? 0)) * 12;
+  return { gross: Math.round(gross), profit: Math.round(gross - costs) };
 }
 
 export type Freshness = {

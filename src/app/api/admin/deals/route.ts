@@ -29,6 +29,7 @@ export async function POST(req: NextRequest) {
     location,
     description,
     photos,
+    videoUrl,
     ratePerNight,
     utilityCostPerMonth,
     monthlyRent,
@@ -46,6 +47,8 @@ export async function POST(req: NextRequest) {
     !Array.isArray(photos) ||
     photos.length === 0 ||
     !photos.every((p) => typeof p === "string") ||
+    (videoUrl != null &&
+      (typeof videoUrl !== "string" || !videoUrl.startsWith("https://"))) ||
     !Number.isFinite(ratePerNight) ||
     ratePerNight <= 0 ||
     !Number.isFinite(utilityCostPerMonth) ||
@@ -68,6 +71,7 @@ export async function POST(req: NextRequest) {
       location: location.trim(),
       description: description.trim(),
       photos,
+      videoUrl: videoUrl ?? null,
       ratePerNight: Math.round(ratePerNight),
       utilityCostPerMonth: Math.round(utilityCostPerMonth),
       monthlyRent: Math.round(monthlyRent),
@@ -77,6 +81,7 @@ export async function POST(req: NextRequest) {
     .returning();
 
   revalidatePath("/deals");
+  revalidatePath("/start");
 
   // Best-effort — a failed notification shouldn't undo the deal creation.
   sendNewDealNotificationEmail(getAdminEmails(), deal).catch((err) =>

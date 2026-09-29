@@ -50,6 +50,22 @@ export default function NewDealForm({
         });
         photoUrls.push(blob.url);
       }
+
+      const videoInput = form.elements.namedItem("video") as HTMLInputElement;
+      const videoFile = videoInput.files?.[0];
+      let videoUrl: string | null = null;
+      if (videoFile) {
+        setUploadProgress("Uploading video… 0%");
+        const blob = await upload(videoFile.name, videoFile, {
+          access: "public",
+          handleUploadUrl: "/api/admin/deals/upload",
+          clientPayload: "video",
+          multipart: true,
+          onUploadProgress: ({ percentage }) =>
+            setUploadProgress(`Uploading video… ${Math.round(percentage)}%`),
+        });
+        videoUrl = blob.url;
+      }
       setUploadProgress("");
 
       setStatus("submitting");
@@ -67,6 +83,7 @@ export default function NewDealForm({
           deposit: Number(data.get("deposit")) || null,
           guarantorRequired: data.get("guarantorRequired") === "yes",
           photos: photoUrls,
+          videoUrl,
         }),
       });
       const result = await res.json();
@@ -145,7 +162,7 @@ export default function NewDealForm({
         </div>
         <div>
           <label className="text-xs uppercase tracking-wide text-paper-dim">
-            Est. utilities/mo (£)
+            Est. running costs/mo (£)
           </label>
           <input
             type="number"
@@ -213,6 +230,22 @@ export default function NewDealForm({
           required
           className="mt-2 w-full rounded-md border rule bg-ink px-4 py-3 text-sm text-paper file:mr-4 file:rounded-full file:border-0 file:bg-brass file:px-4 file:py-2 file:text-sm file:font-medium file:text-ink"
         />
+      </div>
+
+      <div>
+        <label className="text-xs uppercase tracking-wide text-paper-dim">
+          Walkthrough video (optional)
+        </label>
+        <input
+          type="file"
+          name="video"
+          accept="video/mp4,video/quicktime,video/webm"
+          className="mt-2 w-full rounded-md border rule bg-ink px-4 py-3 text-sm text-paper file:mr-4 file:rounded-full file:border-0 file:bg-brass file:px-4 file:py-2 file:text-sm file:font-medium file:text-ink"
+        />
+        <p className="mt-2 text-xs text-paper-dim">
+          MP4 or iPhone video, up to 500 MB. Deals with a video are featured
+          on the /start landing page (newest 3).
+        </p>
       </div>
 
       {status === "error" && (

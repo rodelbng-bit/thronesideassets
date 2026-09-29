@@ -28,11 +28,20 @@ export async function POST(req: NextRequest) {
     const jsonResponse = await handleUpload({
       body,
       request: req,
-      onBeforeGenerateToken: async () => ({
-        allowedContentTypes: ["image/jpeg", "image/png", "image/webp"],
-        maximumSizeInBytes: 10 * 1024 * 1024,
-        addRandomSuffix: true,
-      }),
+      // NewDealForm sends clientPayload "video" for the walkthrough video;
+      // everything else is a photo.
+      onBeforeGenerateToken: async (_pathname, clientPayload) =>
+        clientPayload === "video"
+          ? {
+              allowedContentTypes: ["video/mp4", "video/quicktime", "video/webm"],
+              maximumSizeInBytes: 500 * 1024 * 1024,
+              addRandomSuffix: true,
+            }
+          : {
+              allowedContentTypes: ["image/jpeg", "image/png", "image/webp"],
+              maximumSizeInBytes: 10 * 1024 * 1024,
+              addRandomSuffix: true,
+            },
     });
     return NextResponse.json(jsonResponse);
   } catch (err) {

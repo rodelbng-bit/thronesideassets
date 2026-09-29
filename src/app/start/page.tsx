@@ -8,6 +8,8 @@ import {
   PlaceholderSlot,
 } from "@/components/funnel/FunnelParts";
 import TrackMetaEvent from "@/components/funnel/TrackMetaEvent";
+import DealCard from "@/components/DealCard";
+import { getFeaturedDeals } from "@/lib/deals";
 import { attributionFromSearchParams } from "@/lib/attribution";
 import { funnelProof, getFunnelAngle, landingVideo } from "@/lib/funnelContent";
 import { faqs } from "@/lib/siteFacts";
@@ -64,6 +66,7 @@ export default async function StartPage({
   const [headlineLead, headlineAccent] = splitLastSentence(angle.headline);
   const [subheadLead, subheadRest] = splitFirstSentence(angle.subhead);
   const applyHref = `/start/apply${queryString(params)}`;
+  const featuredDeals = await getFeaturedDeals();
 
   return (
     <FunnelShell>
@@ -158,6 +161,41 @@ export default async function StartPage({
             </ol>
           </div>
         </section>
+
+        {/* Deals — hidden until at least one deal has a walkthrough video */}
+        {featuredDeals.length > 0 && (
+          <section id="deals" className="scroll-mt-20 border-b rule">
+            <div className="mx-auto max-w-4xl px-6 py-20 md:py-28">
+              <div className="text-center">
+                <Eyebrow>Recent deals</Eyebrow>
+                <h2 className="font-funnel mx-auto mt-6 max-w-2xl text-4xl font-bold tracking-[-0.03em] text-paper md:text-5xl">
+                  See the <span className="text-gold">numbers for yourself.</span>
+                </h2>
+                <p className="mx-auto mt-5 max-w-xl text-paper-dim">
+                  Some of the latest properties our team has sourced and
+                  analysed. Tap a video to watch the walkthrough.
+                </p>
+              </div>
+
+              <div className="mt-14 space-y-8">
+                {featuredDeals.map((deal) => (
+                  <div key={deal.id}>
+                    {deal.status === "unavailable" && (
+                      <p className="ledger-figure mb-3 text-xs uppercase tracking-[0.18em] text-paper-dim">
+                        Reserved — no longer available
+                      </p>
+                    )}
+                    <DealCard deal={deal} />
+                  </div>
+                ))}
+              </div>
+
+              <div className="mt-14 text-center">
+                <PrimaryCta href={applyHref} />
+              </div>
+            </div>
+          </section>
+        )}
 
         {/* Proof */}
         <section className="border-b rule">

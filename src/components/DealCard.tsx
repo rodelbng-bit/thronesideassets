@@ -1,7 +1,12 @@
 import Link from "next/link";
 import type { Deal, ReserveState } from "@/lib/deals";
-import { estimateMonthlyEarnings, freshnessFromDate } from "@/lib/deals";
+import {
+  estimateAnnualAt75,
+  estimateMonthlyEarnings,
+  freshnessFromDate,
+} from "@/lib/deals";
 import DealGallery from "./DealGallery";
+import DealVideo from "./DealVideo";
 import DealThermometer from "./DealThermometer";
 import ReserveButton from "./ReserveButton";
 import RequestViewingButton from "./RequestViewingButton";
@@ -28,9 +33,15 @@ export default function DealCard({
 }) {
   const freshness = freshnessFromDate(deal.dateAdded);
   const earnings = estimateMonthlyEarnings(deal);
+  const annual = estimateAnnualAt75(deal);
 
   return (
     <div className="rounded-lg border rule bg-ink-soft p-6">
+      {deal.videoUrl && (
+        <div className="mb-4">
+          <DealVideo src={deal.videoUrl} title={deal.title} />
+        </div>
+      )}
       <DealGallery photos={deal.photos} alt={deal.title} />
 
       <div className="mt-6">
@@ -76,7 +87,7 @@ export default function DealCard({
                   </div>
                   <div>
                     <dt className="text-xs uppercase tracking-wide text-paper-dim">
-                      Est. utilities
+                      Est. running costs
                     </dt>
                     <dd className="ledger-figure mt-1 text-paper">
                       £{deal.utilityCostPerMonth}/mo
@@ -110,7 +121,7 @@ export default function DealCard({
                 <div className="mt-5">
                   <p className="text-xs uppercase tracking-wide text-paper-dim">
                     Potential earnings (net of{" "}
-                    {deal.monthlyRent !== null ? "rent & utilities" : "utilities"})
+                    {deal.monthlyRent !== null ? "rent & running costs" : "running costs"})
                   </p>
                   <div className="mt-2 grid grid-cols-3 gap-px overflow-hidden rounded-md border rule">
                     {earnings.map(({ occupancy, net }) => (
@@ -124,6 +135,17 @@ export default function DealCard({
                       </div>
                     ))}
                   </div>
+                  <p className="mt-3 text-sm text-paper-dim">
+                    At 75% occupancy:{" "}
+                    <span className="ledger-figure text-paper">
+                      £{annual.profit.toLocaleString("en-GB")}
+                    </span>{" "}
+                    estimated profit a year (
+                    <span className="ledger-figure">
+                      £{annual.gross.toLocaleString("en-GB")}
+                    </span>{" "}
+                    gross)
+                  </p>
                 </div>
               </div>
 

@@ -94,6 +94,9 @@ export const deals = pgTable("deals", {
   location: text("location").notNull(),
   description: text("description").notNull(),
   photos: text("photos").array().notNull(),
+  // Optional walkthrough video (Vercel Blob URL). Deals with one are the
+  // ones featured on the /start landing page.
+  videoUrl: text("video_url"),
   ratePerNight: integer("rate_per_night").notNull(),
   utilityCostPerMonth: integer("utility_cost_per_month").notNull(),
   // Nullable: listings added before these fields existed have no value.
