@@ -9,6 +9,9 @@ import { useRef, useState } from "react";
 export default function DealVideo({ src, title }: { src: string; title: string }) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [started, setStarted] = useState(false);
+  // width / height, read from the file once its metadata loads. Starts
+  // landscape; phone walkthroughs are usually portrait.
+  const [ratio, setRatio] = useState(16 / 9);
 
   function play() {
     const video = videoRef.current;
@@ -25,9 +28,18 @@ export default function DealVideo({ src, title }: { src: string; title: string }
   }
 
   return (
-    <div className="relative aspect-video w-full overflow-hidden rounded-lg border rule bg-ink">
+    <div
+      className="relative mx-auto overflow-hidden rounded-lg border rule bg-ink"
+      // Portrait videos are capped at 75% of the screen height rather than
+      // stretching to the card's full width.
+      style={{ aspectRatio: ratio, width: `min(100%, calc(75vh * ${ratio}))` }}
+    >
       <video
         ref={videoRef}
+        onLoadedMetadata={(e) => {
+          const { videoWidth, videoHeight } = e.currentTarget;
+          if (videoWidth && videoHeight) setRatio(videoWidth / videoHeight);
+        }}
         // #t=0.1 makes iOS render the first frame instead of a blank box.
         src={`${src}#t=0.1`}
         playsInline
