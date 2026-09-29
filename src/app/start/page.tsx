@@ -28,21 +28,33 @@ const CTA_LABEL = "Apply for Deal Access";
 const steps = [
   {
     n: "01",
-    title: "We Source",
-    body: "We're in network with landlords and agents across the UK, surfacing deals before they're widely listed.",
+    title: "We Source & Pre-Qualify the Deals",
+    body: "We source properties through our private network of landlords and agents. Every deal is pre-qualified for Rent-to-Rent Serviced Accommodation and comes with the key numbers and analysis already completed for you.",
     icon: "M21 21l-4.35-4.35M10.5 18a7.5 7.5 0 1 1 0-15 7.5 7.5 0 0 1 0 15Z",
   },
   {
     n: "02",
-    title: "We Analyse",
-    body: "Every deal gets a full financial breakdown — yield, expenses, profit and loss — checked against real demand data. If the numbers don't hold up, it doesn't go out.",
-    icon: "M4 20V10m6 10V4m6 16v-7m4 7H2",
+    title: "Browse the Deals",
+    body: "New opportunities are uploaded weekly, giving you access to an unlimited pipeline of properties. Browse the available deals and choose the ones that fit your requirements and strategy.",
+    icon: "M4 4h6v6H4zM14 4h6v6h-6zM4 14h6v6H4zM14 14h6v6h-6z",
   },
   {
     n: "03",
-    title: "You Decide",
-    body: "You review a vetted opportunity and the numbers behind it. There's never an obligation to proceed on any deal we show you.",
+    title: "View the Property",
+    body: "Found a property you like? Arrange a viewing if you want to see it in person. If you're happy with the information and content provided, you can move forward without a viewing.",
+    icon: "M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12ZM12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z",
+  },
+  {
+    n: "04",
+    title: "Proceed With the Landlord",
+    body: "The landlord or agent is already aware of and open to the Serviced Accommodation/Rent-to-Rent model, so you don't have to approach them to request permission to sublet. Once you're happy with the opportunity, you can proceed to the legal stage.",
     icon: "M5 12.5l4.5 4.5L19 7",
+  },
+  {
+    n: "05",
+    title: "Sign, Pay & Launch",
+    body: "Complete the necessary agreements with the landlord, pay the agreed rent and deposit (where applicable), and begin setting up your Serviced Accommodation. Your only cost to us is your Throneside membership — no hidden costs or transaction fees.",
+    icon: "M4 20h4L19 9l-4-4L4 16v4ZM13.5 6.5l4 4",
   },
 ];
 
@@ -132,11 +144,13 @@ export default async function StartPage({
               </h2>
             </div>
 
-            <ol className="mt-14 grid grid-cols-1 gap-5 md:grid-cols-3">
+            {/* Five steps: 3 + 2 (centred) on large screens, 2 per row on
+                tablets, stacked on phones. */}
+            <ol className="mt-14 flex flex-wrap justify-center gap-5">
               {steps.map((step) => (
                 <li
                   key={step.n}
-                  className="group relative overflow-hidden rounded-2xl border rule bg-ink-soft p-8 transition-all duration-300 hover:-translate-y-1 hover:border-brass/50 hover:shadow-[0_20px_60px_-20px_rgba(212,175,55,0.35)]"
+                  className="group relative w-full overflow-hidden rounded-2xl border rule bg-ink-soft p-8 transition-all duration-300 hover:-translate-y-1 hover:border-brass/50 hover:shadow-[0_20px_60px_-20px_rgba(212,175,55,0.35)] md:w-[calc((100%-1.25rem)/2)] lg:w-[calc((100%-2.5rem)/3)]"
                 >
                   <span
                     aria-hidden
@@ -150,7 +164,7 @@ export default async function StartPage({
                     </svg>
                   </span>
                   <p className="ledger-figure mt-6 text-sm text-brass-bright">{step.n}</p>
-                  <h3 className="font-funnel mt-1 text-2xl font-semibold tracking-tight text-paper">
+                  <h3 className="font-funnel mt-1 text-xl font-semibold tracking-tight text-paper">
                     {step.title}
                   </h3>
                   <p className="mt-3 text-sm leading-relaxed text-paper-dim">
