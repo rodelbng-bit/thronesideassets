@@ -10,6 +10,8 @@ export type FunnelVideo = {
    * null renders a placeholder slot.
    */
   url: string | null;
+  /** Cover image shown before the video plays (.mp4 only). */
+  poster?: string;
   /** What the placeholder slot tells whoever is filming. */
   brief: string;
 };
@@ -41,7 +43,10 @@ export function getFunnelAngle(key: string | undefined): FunnelAngle & { key: st
 }
 
 export const landingVideo: FunnelVideo = {
-  url: null, // TODO
+  // 3 min walkthrough, compressed for the web (Vercel Blob).
+  url: "https://hjlcfh9zpan2wk8m.public.blob.vercel-storage.com/funnel/landing-video-2ZOxWL8dq3HTDXqP6XZ1waXvjW42S4.mp4",
+  poster:
+    "https://hjlcfh9zpan2wk8m.public.blob.vercel-storage.com/funnel/landing-video-poster-eFxMt3VExhXwDhGBSn9TXJajLWm6Q4.jpg",
   brief:
     "1–3 min: who you are, what a profitable Airbnb / serviced accommodation deal looks like, how we find and analyse them, and why book a call.",
 };

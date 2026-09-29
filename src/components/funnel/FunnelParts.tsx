@@ -129,6 +129,7 @@ export function FunnelVideo({
         ) : video.url.endsWith(".mp4") ? (
           <video
             src={video.url}
+            poster={video.poster}
             controls
             playsInline
             preload="metadata"
