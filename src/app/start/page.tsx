@@ -144,32 +144,40 @@ export default async function StartPage({
               </h2>
             </div>
 
-            {/* Five steps: 3 + 2 (centred) on large screens, 2 per row on
-                tablets, stacked on phones. */}
-            <ol className="mt-14 flex flex-wrap justify-center gap-5">
-              {steps.map((step) => (
-                <li
-                  key={step.n}
-                  className="group relative w-full overflow-hidden rounded-2xl border rule bg-ink-soft p-8 transition-all duration-300 hover:-translate-y-1 hover:border-brass/50 hover:shadow-[0_20px_60px_-20px_rgba(212,175,55,0.35)] md:w-[calc((100%-1.25rem)/2)] lg:w-[calc((100%-2.5rem)/3)]"
-                >
-                  <span
-                    aria-hidden
-                    className="font-funnel pointer-events-none absolute -right-2 -top-6 text-[7rem] font-extrabold leading-none text-white/[0.03] transition-colors group-hover:text-brass/10"
-                  >
-                    {step.n}
-                  </span>
-                  <span className="flex h-12 w-12 items-center justify-center rounded-xl bg-gold text-ink">
-                    <svg viewBox="0 0 24 24" className="h-6 w-6" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" aria-hidden>
-                      <path d={step.icon} />
-                    </svg>
-                  </span>
-                  <p className="ledger-figure mt-6 text-sm text-brass-bright">{step.n}</p>
-                  <h3 className="font-funnel mt-1 text-xl font-semibold tracking-tight text-paper">
-                    {step.title}
-                  </h3>
-                  <p className="mt-3 text-sm leading-relaxed text-paper-dim">
-                    {step.body}
-                  </p>
+            {/* One column, with a gold arrow leading from each step to the next. */}
+            <ol className="mx-auto mt-14 max-w-3xl">
+              {steps.map((step, i) => (
+                <li key={step.n}>
+                  <div className="group relative flex items-start gap-5 overflow-hidden rounded-2xl border rule bg-ink-soft p-6 transition-all duration-300 hover:border-brass/50 hover:shadow-[0_20px_60px_-20px_rgba(212,175,55,0.35)] sm:gap-6 sm:p-8">
+                    <span
+                      aria-hidden
+                      className="font-funnel pointer-events-none absolute -right-2 -top-6 text-[7rem] font-extrabold leading-none text-white/[0.03] transition-colors group-hover:text-brass/10"
+                    >
+                      {step.n}
+                    </span>
+                    <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-gold text-ink">
+                      <svg viewBox="0 0 24 24" className="h-6 w-6" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+                        <path d={step.icon} />
+                      </svg>
+                    </span>
+                    <div className="relative">
+                      <p className="ledger-figure text-sm text-brass-bright">Step {step.n}</p>
+                      <h3 className="font-funnel mt-1 text-xl font-semibold tracking-tight text-paper">
+                        {step.title}
+                      </h3>
+                      <p className="mt-2 text-sm leading-relaxed text-paper-dim">
+                        {step.body}
+                      </p>
+                    </div>
+                  </div>
+
+                  {i < steps.length - 1 && (
+                    <div aria-hidden className="flex justify-center py-2 text-brass-bright">
+                      <svg viewBox="0 0 24 40" className="h-10 w-6" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M12 2v34M5 29l7 7 7-7" />
+                      </svg>
+                    </div>
+                  )}
                 </li>
               ))}
             </ol>
