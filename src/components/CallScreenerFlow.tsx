@@ -2,6 +2,7 @@
 
 import { useEffect, useId, useState } from "react";
 import type { Attribution } from "@/lib/attribution";
+import { CAPITAL_OPTIONS } from "@/lib/application";
 import { GHL_CALENDAR_WIDGET_URL } from "@/lib/ghlCalendar";
 import {
   buildFbc,
@@ -12,14 +13,8 @@ import {
 
 type Step = "screener" | "submitting" | "calendar" | "error";
 
-const BUDGET_OPTIONS = [
-  "Under £50k",
-  "£50k–£100k",
-  "£100k–£250k",
-  "£250k–£500k",
-  "£500k+",
-  "Not sure yet",
-];
+// Same ranges as the capital question on the /start/apply landing funnel.
+const BUDGET_OPTIONS = CAPITAL_OPTIONS;
 
 const EXPERIENCE_OPTIONS = [
   "First-time investor",
@@ -279,7 +274,7 @@ function Select({
 }: {
   label: string;
   name: string;
-  options: string[];
+  options: readonly string[];
   required?: boolean;
 }) {
   return (
