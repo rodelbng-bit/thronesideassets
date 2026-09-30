@@ -3,6 +3,7 @@ import Link from "next/link";
 import { eq } from "drizzle-orm";
 import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
+import AdminDeleteButton from "@/components/AdminDeleteButton";
 import ViewingRequestStatus from "@/components/ViewingRequestStatus";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
@@ -95,6 +96,13 @@ export default async function ViewingRequestsAdminPage() {
                     <ViewingRequestStatus
                       requestId={r.id}
                       initialStatus={r.status}
+                    />
+                  </div>
+
+                  <div className="mt-5 flex justify-end border-t rule pt-4">
+                    <AdminDeleteButton
+                      endpoint={`/api/admin/viewing-requests/${r.id}`}
+                      confirmMessage="Permanently delete this viewing request?"
                     />
                   </div>
                 </div>

@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { eq } from "drizzle-orm";
 import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
+import AdminDeleteButton from "@/components/AdminDeleteButton";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { users } from "@/lib/schema";
@@ -121,6 +122,13 @@ export default async function CallScreenerAdminPage() {
                     </div>
                   )}
                 </dl>
+
+                <div className="mt-5 flex justify-end border-t rule pt-4">
+                  <AdminDeleteButton
+                    endpoint={`/api/admin/call-screener/${r.id}`}
+                    confirmMessage={`Permanently delete ${r.firstName}'s screener response?`}
+                  />
+                </div>
               </div>
             ))}
           </div>

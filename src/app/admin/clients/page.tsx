@@ -3,6 +3,7 @@ import Link from "next/link";
 import { eq } from "drizzle-orm";
 import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
+import AdminDeleteButton from "@/components/AdminDeleteButton";
 import ClientApprovalStatus from "@/components/ClientApprovalStatus";
 import ClientsFilterBar from "@/components/ClientsFilterBar";
 import { auth } from "@/lib/auth";
@@ -181,6 +182,10 @@ export default async function ClientsAdminPage({
                       >
                         View profile
                       </Link>
+                      <AdminDeleteButton
+                        endpoint={`/api/admin/clients/${registration.id}`}
+                        confirmMessage={`Permanently delete ${registration.name}'s client record?`}
+                      />
                     </div>
                   </div>
                 </div>

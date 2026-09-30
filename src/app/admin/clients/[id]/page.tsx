@@ -7,6 +7,7 @@ import ClientApprovalStatus from "@/components/ClientApprovalStatus";
 import MarkPaymentReceived from "@/components/MarkPaymentReceived";
 import RegistrationStageSelect from "@/components/RegistrationStageSelect";
 import InternalNotesEditor from "@/components/InternalNotesEditor";
+import AdminDeleteButton from "@/components/AdminDeleteButton";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { users } from "@/lib/schema";
@@ -325,6 +326,14 @@ export default async function ClientProfilePage({
               </ul>
             </div>
           )}
+        </div>
+
+        <div className="mt-10 flex justify-end border-t rule pt-6">
+          <AdminDeleteButton
+            endpoint={`/api/admin/clients/${registration.id}`}
+            confirmMessage={`Permanently delete ${registration.name}'s client record?`}
+            redirectTo="/admin/clients"
+          />
         </div>
       </main>
       <SiteFooter />

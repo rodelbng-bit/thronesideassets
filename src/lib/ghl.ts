@@ -8,7 +8,9 @@
 //
 // Setup:
 // 1. In GHL: Settings → Business Profile → API Keys → Private Integrations
-//    → create a Private Integration token with Contacts (write) scope.
+//    → create a Private Integration token with these scopes:
+//    contacts.write, calendars.readonly (free slots) and
+//    calendars/events.write (booking calls from /start/apply).
 // 2. Copy your Location ID from Settings → Business Profile.
 // 3. Set GHL_API_KEY and GHL_LOCATION_ID in your environment (see .env.example).
 //
