@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { CAPITAL_OPTIONS } from "@/lib/application";
 
 type Interval = "monthly" | "annual";
 type Step = "details" | "screening" | "billing";
@@ -19,14 +20,8 @@ const options: { value: Interval; label: string; note: string }[] = [
   },
 ];
 
-const BUDGET_OPTIONS = [
-  "Under £50k",
-  "£50k–£100k",
-  "£100k–£250k",
-  "£250k–£500k",
-  "£500k+",
-  "Not sure yet",
-];
+// Same ranges as the capital question on the /start/apply landing funnel.
+const BUDGET_OPTIONS = CAPITAL_OPTIONS;
 
 const EXPERIENCE_OPTIONS = [
   "First-time investor",
@@ -428,7 +423,7 @@ function SelectField({
   label: string;
   value: string;
   onChange: (value: string) => void;
-  options: string[];
+  options: readonly string[];
 }) {
   return (
     <div>

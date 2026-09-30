@@ -2,6 +2,7 @@
 
 import { useEffect, useId, useState } from "react";
 import type { Attribution } from "@/lib/attribution";
+import { GHL_CALENDAR_WIDGET_URL } from "@/lib/ghlCalendar";
 import {
   buildFbc,
   getFbp,
@@ -28,7 +29,7 @@ const EXPERIENCE_OPTIONS = [
 ];
 
 // GHL booking widget — Calendars → your calendar → Embed/Share.
-const CALENDAR_URL = "https://api.leadconnectorhq.com/widget/booking/u1093rNHSQ03sJCDKKFF";
+const CALENDAR_URL = GHL_CALENDAR_WIDGET_URL;
 
 type ContactDetails = {
   firstName: string;

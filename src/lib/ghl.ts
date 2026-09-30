@@ -15,6 +15,7 @@
 // Docs: https://highlevel.stoplight.io/docs/integrations/
 
 import { getEnv } from "./env";
+import { GHL_CALENDAR_ID } from "./ghlCalendar";
 
 const GHL_API_BASE = "https://services.leadconnectorhq.com";
 const GHL_API_VERSION = "2021-07-28";
@@ -76,7 +77,6 @@ export async function upsertGhlContact(payload: ContactPayload) {
 // The "book a call" calendar — same one the GHL booking widget embeds.
 // Booking through the API needs the Private Integration token to have the
 // Calendars and Calendar Events (read + write) scopes as well as Contacts.
-const GHL_CALENDAR_ID = process.env.GHL_CALENDAR_ID ?? "u1093rNHSQ03sJCDKKFF";
 const GHL_CALENDAR_API_VERSION = "2021-04-15";
 
 /** Open slot start times (ISO strings, UK offset) between two instants. */
