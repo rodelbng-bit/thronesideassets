@@ -1,6 +1,15 @@
+import type { Metadata } from "next";
 import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
 import { faqs } from "@/lib/siteFacts";
+import { pageMetadata } from "@/lib/seo";
+
+export const metadata: Metadata = pageMetadata({
+  title: "FAQ",
+  description:
+    "Answers to common questions about Throneside Assets — fees, timelines, and the Rent-to-Rent Serviced Accommodation deals we source.",
+  path: "/faq",
+});
 
 export default function FaqPage() {
   return (

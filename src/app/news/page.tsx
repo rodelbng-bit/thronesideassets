@@ -1,7 +1,16 @@
+import type { Metadata } from "next";
 import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
 import NewsSection from "@/components/NewsSection";
 import { getR2SANews } from "@/lib/news";
+import { pageMetadata } from "@/lib/seo";
+
+export const metadata: Metadata = pageMetadata({
+  title: "Serviced Accommodation & R2SA News",
+  description:
+    "Serviced accommodation and short-term let headlines from around the UK, refreshed daily.",
+  path: "/news",
+});
 
 export default async function NewsPage() {
   const news = await getR2SANews();

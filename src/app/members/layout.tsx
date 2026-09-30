@@ -1,9 +1,13 @@
+import type { Metadata } from "next";
 import { eq } from "drizzle-orm";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { users } from "@/lib/schema";
 import { CURRENT_TERMS_VERSION } from "@/lib/siteFacts";
 import TermsGate from "@/components/TermsGate";
+import { noIndex } from "@/lib/seo";
+
+export const metadata: Metadata = noIndex;
 
 export default async function MembersLayout({
   children,

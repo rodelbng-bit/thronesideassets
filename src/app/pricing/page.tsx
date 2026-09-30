@@ -1,7 +1,16 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
 import { plans } from "@/lib/siteFacts";
+import { pageMetadata } from "@/lib/seo";
+
+export const metadata: Metadata = pageMetadata({
+  title: "Membership Plans & Pricing",
+  description:
+    "Fixed 12-month memberships giving you the weekly deal sheet plus the guidance around it. Compare plans or book a call to find the right tier.",
+  path: "/pricing",
+});
 
 export default function PricingPage() {
   return (

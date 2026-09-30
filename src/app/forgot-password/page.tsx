@@ -1,6 +1,13 @@
+import type { Metadata } from "next";
 import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
 import ForgotPasswordForm from "@/components/ForgotPasswordForm";
+import { noIndex } from "@/lib/seo";
+
+export const metadata: Metadata = {
+  title: "Reset Your Password",
+  ...noIndex,
+};
 
 export default function ForgotPasswordPage() {
   return (

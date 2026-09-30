@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
@@ -5,6 +6,12 @@ import SetPasswordForm from "@/components/SetPasswordForm";
 import { gocardlessClient, describeGoCardlessError } from "@/lib/gocardless";
 import { ensureUserForBillingRequest } from "@/lib/membership";
 import type { ApprovalStatus } from "@/lib/schema";
+import { noIndex } from "@/lib/seo";
+
+export const metadata: Metadata = {
+  title: "Set Up Your Account",
+  ...noIndex,
+};
 
 const GENERIC_ERROR_MESSAGE =
   "We couldn't confirm your payment just now. If you've already paid, check your email for a link to finish setting up your account.";

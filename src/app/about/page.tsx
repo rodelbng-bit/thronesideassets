@@ -1,5 +1,14 @@
+import type { Metadata } from "next";
 import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
+import { pageMetadata } from "@/lib/seo";
+
+export const metadata: Metadata = pageMetadata({
+  title: "About Us",
+  description:
+    "Throneside Assets sources property deals for investors who value time — contacting landlords, analysing the numbers, and filtering out everything that doesn't hold up.",
+  path: "/about",
+});
 
 const process = [
   {

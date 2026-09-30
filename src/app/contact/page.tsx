@@ -1,6 +1,15 @@
+import type { Metadata } from "next";
 import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
 import CallScreenerFlow from "@/components/CallScreenerFlow";
+import { pageMetadata } from "@/lib/seo";
+
+export const metadata: Metadata = pageMetadata({
+  title: "Book a Call",
+  description:
+    "Book a call with the Throneside Assets UK team. Answer a few quick questions, then pick a time that works for you.",
+  path: "/contact",
+});
 
 export default function ContactPage() {
   return (

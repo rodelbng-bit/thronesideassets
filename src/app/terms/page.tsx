@@ -1,10 +1,15 @@
+import type { Metadata } from "next";
 import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
 import { termsIntro, termsSections } from "@/lib/siteFacts";
+import { pageMetadata } from "@/lib/seo";
 
-export const metadata = {
-  title: "Membership Terms & Conditions | Throneside Assets",
-};
+export const metadata: Metadata = pageMetadata({
+  title: "Membership Terms & Conditions",
+  description:
+    "The terms and conditions of a Throneside Assets membership.",
+  path: "/terms",
+});
 
 export default function TermsPage() {
   return (

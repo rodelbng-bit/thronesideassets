@@ -1,7 +1,14 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
 import SetPasswordForm from "@/components/SetPasswordForm";
+import { noIndex } from "@/lib/seo";
+
+export const metadata: Metadata = {
+  title: "Set a New Password",
+  ...noIndex,
+};
 
 export default async function ResetPasswordPage({
   searchParams,

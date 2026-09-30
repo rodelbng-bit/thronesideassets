@@ -1,6 +1,15 @@
+import type { Metadata } from "next";
 import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
 import JoinForm from "@/components/JoinForm";
+import { pageMetadata } from "@/lib/seo";
+
+export const metadata: Metadata = pageMetadata({
+  title: "Join the Essential Plan",
+  description:
+    "Join Throneside Assets in a couple of minutes — choose how you'd like to be billed and set up a secure Direct Debit with GoCardless.",
+  path: "/join",
+});
 
 export default function JoinPage() {
   return (
