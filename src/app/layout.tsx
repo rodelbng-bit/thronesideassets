@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Fraunces, Work_Sans, IBM_Plex_Mono } from "next/font/google";
 import Providers from "@/components/Providers";
 import MetaPixel from "@/components/MetaPixel";
+import WelcomePopup from "@/components/WelcomePopup";
 import { HOME_DESCRIPTION, HOME_TITLE, SITE_NAME, SITE_URL } from "@/lib/seo";
 import "./globals.css";
 
@@ -47,7 +48,10 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       className={`${fraunces.variable} ${workSans.variable} ${plexMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col bg-ink text-paper">
-        <Providers>{children}</Providers>
+        <Providers>
+          {children}
+          <WelcomePopup />
+        </Providers>
         <MetaPixel />
       </body>
     </html>
