@@ -7,37 +7,31 @@ const properties = [
     image:
       "https://images.unsplash.com/photo-1633694705199-bc1e0a87c97a?w=1200&q=80&auto=format&fit=crop",
     type: "Conversion properties",
-    area: "Zone 2, East London",
   },
   {
     image:
       "https://images.unsplash.com/photo-1676680071181-0a0b45968d23?w=1200&q=80&auto=format&fit=crop",
     type: "Purpose-built blocks",
-    area: "Zone 1, Central London",
   },
   {
     image:
       "https://images.unsplash.com/photo-1595846519845-68e298c2edd8?w=1200&q=80&auto=format&fit=crop",
     type: "Ex-local authority flats",
-    area: "Zone 3, South London",
   },
   {
     image:
       "https://images.unsplash.com/photo-1595846265893-f433f6cca81d?w=1200&q=80&auto=format&fit=crop",
     type: "Victorian conversions",
-    area: "Zone 2, North London",
   },
   {
     image:
       "https://images.unsplash.com/photo-1716576587284-691abcf83267?w=1200&q=80&auto=format&fit=crop",
     type: "New-build apartments",
-    area: "Zone 2, East London",
   },
   {
     image:
       "https://images.unsplash.com/photo-1595848463742-764e6b5c11d2?w=1200&q=80&auto=format&fit=crop",
     type: "New-build apartments",
-    area: "Zone 3, West London",
   },
 ];
 
@@ -55,7 +49,7 @@ export default function PropertyShowcase() {
           </h2>
           <p className="mt-4 max-w-xl text-paper-dim">
             Illustrative examples of the property types we source across
-            London — not current live listings.
+            Manchester and Leeds — not current live listings.
           </p>
         </div>
 
@@ -68,7 +62,7 @@ export default function PropertyShowcase() {
               <div className="relative aspect-4/3 w-full overflow-hidden">
                 <Image
                   src={property.image}
-                  alt={`${property.type} in ${property.area}`}
+                  alt={`Illustrative example of ${property.type.toLowerCase()}, the kind we source in Manchester and Leeds`}
                   fill
                   sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
                   className="object-cover transition-transform duration-700 ease-out group-hover:scale-105"
