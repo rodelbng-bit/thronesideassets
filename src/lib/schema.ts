@@ -36,6 +36,10 @@ export const users = pgTable("users", {
   passwordHash: text("password_hash"),
   gocardlessCustomerId: text("gocardless_customer_id"),
   gocardlessMandateId: text("gocardless_mandate_id"),
+  // Billing moved from GoCardless to Stripe — the gocardless_* columns
+  // above are kept for members who signed up under Direct Debit.
+  stripeCustomerId: text("stripe_customer_id"),
+  stripeSubscriptionId: text("stripe_subscription_id"),
   subscriptionStatus: subscriptionStatusEnum("subscription_status")
     .notNull()
     .default("none"),
@@ -55,7 +59,7 @@ export const users = pgTable("users", {
   }),
   // Defaults to 'approved' so adding this column to a live table never
   // retroactively locks out an existing/renewing member — only the
-  // brand-new-signup branch of ensureUserForBillingRequest ever writes
+  // brand-new-signup branch of ensureUserForCheckoutSession ever writes
   // 'pending' explicitly.
   approvalStatus: approvalStatusEnum("approval_status")
     .notNull()
@@ -242,7 +246,7 @@ export const registrationStageEnum = pgEnum("registration_stage", [
   "contact_details_completed", // row created — same moment as "New Registration"
   "screening_completed",
   "plan_selected",
-  "payment_started", // GoCardless Billing Request created
+  "payment_started", // Stripe Checkout Session created
   "under_review", // paid, new account pending admin approval
   "approved", // admin-approved, has /members access
   "rejected", // admin-rejected
@@ -277,6 +281,7 @@ export const registrations = pgTable("registrations", {
   internalNotes: text("internal_notes"),
   interval: text("interval"), // "monthly" | "annual", set at plan_selected
   gocardlessBillingRequestId: text("gocardless_billing_request_id"),
+  stripeCheckoutSessionId: text("stripe_checkout_session_id"),
   // Not a hard dependency for the funnel row's own lifecycle — set null on
   // user delete rather than cascading the registration away.
   userId: uuid("user_id").references(() => users.id, { onDelete: "set null" }),

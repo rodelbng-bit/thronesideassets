@@ -8,7 +8,7 @@ locally with **Claude Code**.
 - **Marketing pages** (Home, About, Pricing, Contact, FAQ) — the part
   you'll iterate on most.
 - **Membership + login** now live here instead of GHL: clients pay via
-  GoCardless Direct Debit at `/join`, get a native email/password account
+  Stripe Checkout (card subscription) at `/join`, get a native email/password account
   (Postgres + Auth.js), and see their weekly deals at `/members`.
 - **Theme Room** — once a member's reservation on a deal is confirmed
   (admin marks it Unavailable), they get an interior-styling tool at
@@ -43,16 +43,13 @@ Open http://localhost:3000.
   → Create Database → Postgres; it's injected automatically once
   connected to the project, or copy it into `.env.local` for local dev.
 - `AUTH_SECRET` — generate with `npx auth secret`.
-- `GOCARDLESS_ACCESS_TOKEN` — GoCardless → Developers → Create → Access
-  Token (sandbox for local dev).
-- `GOCARDLESS_WEBHOOK_SECRET` — GoCardless → Developers → Webhook
-  endpoints → your endpoint → secret (point the webhook at
-  `/api/webhooks/gocardless`, subscribe to `billing_requests`,
-  `mandates`, `payments`, `subscriptions`).
-- `GOCARDLESS_ENVIRONMENT` — `sandbox` or `live`. The Essential plan's
-  amounts (£497/mo, £4,970/yr) are hardcoded in `src/lib/gocardless.ts`
-  — GoCardless has no Price-ID concept, so there's nothing to create in
-  the dashboard for pricing.
+- `STRIPE_SECRET_KEY` — Stripe → Developers → API keys → Secret key
+  (`sk_test_…` for local dev). The Essential plan's amounts (£497/mo,
+  £4,970/yr) are passed inline in `src/lib/stripe.ts`, so there are no
+  Products/Prices to create in the dashboard.
+- `STRIPE_WEBHOOK_SECRET` — Stripe → Developers → Webhooks → your
+  endpoint → Signing secret. Locally, run `stripe listen --forward-to
+  localhost:3000/api/webhooks/stripe` and use the `whsec_…` it prints.
 - `RESEND_API_KEY`, `RESEND_FROM_EMAIL` — resend.com/api-keys, plus a
   verified sending domain/address — used for password-reset and
   account-setup emails.
@@ -82,10 +79,11 @@ every push to `master` auto-deploys.
    Settings → Environment Variables.
 3. Run `npm run db:push` once (locally, pointed at the production
    `DATABASE_URL`, or via `vercel env pull` first) to create the tables.
-4. In GoCardless, add a webhook endpoint at
-   `https://www.thronesideassets.com/api/webhooks/gocardless` subscribed
-   to `billing_requests`, `mandates`, `payments`, and `subscriptions`;
-   copy its secret into `GOCARDLESS_WEBHOOK_SECRET`.
+4. In Stripe, add a webhook endpoint at
+   `https://www.thronesideassets.com/api/webhooks/stripe` subscribed to
+   `checkout.session.completed`, `customer.subscription.updated` and
+   `customer.subscription.deleted`; copy its signing secret into
+   `STRIPE_WEBHOOK_SECRET`.
 
 ## Working with Claude Code
 
@@ -98,7 +96,7 @@ one or two files.
 ## Still to do
 
 - [ ] Provision the production Postgres database and
-      GoCardless/Resend env vars in Vercel (see Deploying above) —
+      Stripe/Resend env vars in Vercel (see Deploying above) —
       required before `/join` works live.
 - [ ] Run `scripts/invite-existing-members.ts` against the real list of
       existing GHL members once it's ready.

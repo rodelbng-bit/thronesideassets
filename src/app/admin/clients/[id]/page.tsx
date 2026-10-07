@@ -210,7 +210,7 @@ export default async function ClientProfilePage({
               value={registration.interval ?? "—"}
             />
             <Field
-              label="Payment / Direct Debit status"
+              label="Payment / subscription status"
               value={user ? user.subscriptionStatus : "Not yet paid"}
             />
             <Field

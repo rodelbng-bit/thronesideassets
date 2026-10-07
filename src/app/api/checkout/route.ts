@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { eq } from "drizzle-orm";
 import {
-  createEssentialBillingRequestFlow,
-  describeGoCardlessError,
+  createEssentialCheckoutSession,
+  describeStripeError,
   type BillingInterval,
-} from "@/lib/gocardless";
+} from "@/lib/stripe";
 import { db } from "@/lib/db";
 import { registrations } from "@/lib/schema";
 
@@ -43,8 +43,8 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  // Recorded before the GoCardless call — a prospect who picks a plan and
-  // agrees to terms is captured even if the GoCardless request itself fails.
+  // Recorded before the Stripe call — a prospect who picks a plan and
+  // agrees to terms is captured even if the Stripe request itself fails.
   try {
     await db
       .update(registrations)
@@ -60,35 +60,37 @@ export async function POST(req: NextRequest) {
   }
 
   try {
-    const { billingRequestId, authorisationUrl } =
-      await createEssentialBillingRequestFlow(
-        interval,
-        req.nextUrl.origin,
-        new Date().toISOString(),
-        { id: registration.id, email: registration.email }
-      );
+    const checkoutSession = await createEssentialCheckoutSession(
+      interval,
+      req.nextUrl.origin,
+      new Date().toISOString(),
+      { id: registration.id, email: registration.email }
+    );
+    if (!checkoutSession.url) {
+      throw new Error("Stripe did not return a checkout URL");
+    }
 
     try {
       await db
         .update(registrations)
         .set({
           stage: "payment_started",
-          gocardlessBillingRequestId: billingRequestId,
+          stripeCheckoutSessionId: checkoutSession.id,
           checkoutStartedAt: new Date(),
           updatedAt: new Date(),
         })
         .where(eq(registrations.id, registration.id));
     } catch (err) {
       // Best-effort — never block a redirect that already has a live
-      // GoCardless billing request behind it over a funnel-tracking write
+      // Stripe checkout session behind it over a funnel-tracking write
       // failing.
       console.error("Failed to mark registration payment_started", err);
     }
 
-    return NextResponse.json({ url: authorisationUrl });
+    return NextResponse.json({ url: checkoutSession.url });
   } catch (err) {
-    const detail = describeGoCardlessError(err);
-    console.error("Checkout: GoCardless billing request flow failed", {
+    const detail = describeStripeError(err);
+    console.error("Checkout: Stripe checkout session failed", {
       registrationId: registration.id,
       interval,
       ...detail,

@@ -10,7 +10,7 @@ import { deleteUserAccount } from "@/lib/membership";
 // Permanently deletes a member account. Admin-only, and guarded against
 // the two ways this goes badly wrong: deleting yourself, and deleting a
 // fellow admin. An account with a live subscription is rejected inside
-// deleteUserAccount — cancel the GoCardless mandate first.
+// deleteUserAccount — cancel the Stripe subscription first.
 export async function DELETE(
   _req: NextRequest,
   { params }: { params: Promise<{ id: string }> }

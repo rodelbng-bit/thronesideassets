@@ -3,8 +3,8 @@ import Link from "next/link";
 import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
 import SetPasswordForm from "@/components/SetPasswordForm";
-import { gocardlessClient, describeGoCardlessError } from "@/lib/gocardless";
-import { ensureUserForBillingRequest } from "@/lib/membership";
+import { stripe, describeStripeError } from "@/lib/stripe";
+import { ensureUserForCheckoutSession } from "@/lib/membership";
 import type { ApprovalStatus } from "@/lib/schema";
 import { noIndex } from "@/lib/seo";
 
@@ -16,8 +16,8 @@ export const metadata: Metadata = {
 const GENERIC_ERROR_MESSAGE =
   "We couldn't confirm your payment just now. If you've already paid, check your email for a link to finish setting up your account.";
 
-async function resolveCheckout(billingRequestId: string | undefined) {
-  if (!billingRequestId) {
+async function resolveCheckout(sessionId: string | undefined) {
+  if (!sessionId) {
     return {
       ok: false as const,
       message:
@@ -26,10 +26,8 @@ async function resolveCheckout(billingRequestId: string | undefined) {
   }
 
   try {
-    const billingRequest = await gocardlessClient.billingRequests.find(
-      billingRequestId
-    );
-    if (billingRequest.status !== "fulfilled") {
+    const session = await stripe.checkout.sessions.retrieve(sessionId);
+    if (session.status !== "complete" || session.payment_status !== "paid") {
       return {
         ok: false as const,
         message:
@@ -37,12 +35,12 @@ async function resolveCheckout(billingRequestId: string | undefined) {
       };
     }
     const { email, resetToken, approvalStatus } =
-      await ensureUserForBillingRequest(billingRequest);
+      await ensureUserForCheckoutSession(session);
     return { ok: true as const, email, resetToken, approvalStatus };
   } catch (err) {
     console.error("Join success: could not resolve checkout", {
-      billingRequestId,
-      ...describeGoCardlessError(err),
+      sessionId,
+      ...describeStripeError(err),
     });
     return { ok: false as const, message: GENERIC_ERROR_MESSAGE };
   }
@@ -72,10 +70,10 @@ const copyByApprovalStatus: Record<
 export default async function JoinSuccessPage({
   searchParams,
 }: {
-  searchParams: Promise<{ billing_request_id?: string }>;
+  searchParams: Promise<{ session_id?: string }>;
 }) {
-  const { billing_request_id: billingRequestId } = await searchParams;
-  const result = await resolveCheckout(billingRequestId);
+  const { session_id: sessionId } = await searchParams;
+  const result = await resolveCheckout(sessionId);
 
   if (!result.ok) {
     return <ErrorShell message={result.message} />;

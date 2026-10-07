@@ -1,6 +1,5 @@
 import { eq, inArray } from "drizzle-orm";
-import type { BillingRequest } from "gocardless-nodejs";
-import { gocardlessClient } from "./gocardless";
+import type Stripe from "stripe";
 import { db } from "./db";
 import {
   users,
@@ -24,16 +23,16 @@ type EnsureResult = {
 
 /**
  * Turns a paid-up registration into an active user account — the shared
- * core behind both ensureUserForBillingRequest (GoCardless webhook /
+ * core behind both ensureUserForCheckoutSession (Stripe webhook /
  * /join/success) and the admin "mark payment as received" action for
- * clients who paid outside GoCardless. Whichever caller fires first does
+ * clients who paid outside Stripe. Whichever caller fires first does
  * the work; a second call for the same email is a harmless no-op update.
  */
 export async function ensureUserForRegistration(params: {
   email: string;
   registrationId?: string;
-  gocardlessCustomerId?: string;
-  gocardlessMandateId?: string;
+  stripeCustomerId?: string;
+  stripeSubscriptionId?: string;
   termsAcceptedAt?: Date;
   /**
    * Pass CURRENT_TERMS_VERSION only when this call represents the account
@@ -45,8 +44,8 @@ export async function ensureUserForRegistration(params: {
 }): Promise<EnsureResult> {
   const {
     registrationId,
-    gocardlessCustomerId: customerId,
-    gocardlessMandateId: mandateId,
+    stripeCustomerId: customerId,
+    stripeSubscriptionId: subscriptionId,
     termsAcceptedAt,
     termsVersion,
   } = params;
@@ -66,8 +65,8 @@ export async function ensureUserForRegistration(params: {
     await db
       .update(users)
       .set({
-        gocardlessCustomerId: customerId ?? existing.gocardlessCustomerId,
-        gocardlessMandateId: mandateId ?? existing.gocardlessMandateId,
+        stripeCustomerId: customerId ?? existing.stripeCustomerId,
+        stripeSubscriptionId: subscriptionId ?? existing.stripeSubscriptionId,
         subscriptionStatus: "active",
         subscriptionPlan: "essential",
         termsAcceptedAt: termsAcceptedAt ?? existing.termsAcceptedAt,
@@ -88,14 +87,14 @@ export async function ensureUserForRegistration(params: {
       .insert(users)
       .values({
         email: normalizedEmail,
-        gocardlessCustomerId: customerId,
-        gocardlessMandateId: mandateId,
+        stripeCustomerId: customerId,
+        stripeSubscriptionId: subscriptionId,
         subscriptionStatus: "active",
         subscriptionPlan: "essential",
         termsAcceptedAt,
         termsVersionAccepted: termsVersion,
         termsVersionAcceptedAt: termsVersion ? new Date() : undefined,
-        // Auto-approved on signup — a successful GoCardless payment is
+        // Auto-approved on signup — a successful Stripe payment is
         // itself the gate, no manual review step. approvedAt doubles as
         // the "membership activation date" shown in /admin/clients.
         approvalStatus: "approved",
@@ -137,38 +136,36 @@ export async function ensureUserForRegistration(params: {
   };
 }
 
+function stripeId(ref: string | { id: string } | null): string | undefined {
+  if (!ref) return undefined;
+  return typeof ref === "string" ? ref : ref.id;
+}
+
 /**
- * Turns a fulfilled Billing Request into an active user account. Called
- * from both the GoCardless webhook and the /join/success page.
+ * Turns a completed Checkout Session into an active user account. Called
+ * from both the Stripe webhook and the /join/success page.
  */
-export async function ensureUserForBillingRequest(
-  billingRequest: BillingRequest
+export async function ensureUserForCheckoutSession(
+  session: Stripe.Checkout.Session
 ): Promise<EnsureResult> {
-  const customerId = billingRequest.links?.customer;
-  const mandateId = billingRequest.links?.mandate_request_mandate;
-  if (!customerId) {
-    throw new Error(
-      `Billing request ${billingRequest.id} has no customer link`
-    );
+  const email = session.customer_details?.email ?? session.customer_email;
+  if (!email) {
+    throw new Error(`Checkout session ${session.id} has no customer email`);
   }
-  const customer = await gocardlessClient.customers.find(customerId);
-  if (!customer.email) {
-    throw new Error(`Customer ${customerId} has no email`);
-  }
+  const termsAcceptedAt = session.metadata?.termsAcceptedAt;
   return ensureUserForRegistration({
-    email: customer.email,
-    registrationId: billingRequest.metadata?.registrationId,
-    gocardlessCustomerId: customerId,
-    gocardlessMandateId: mandateId,
-    termsAcceptedAt: billingRequest.metadata?.termsAcceptedAt
-      ? new Date(billingRequest.metadata.termsAcceptedAt)
-      : undefined,
+    email,
+    registrationId:
+      session.metadata?.registrationId ??
+      session.client_reference_id ??
+      undefined,
+    stripeCustomerId: stripeId(session.customer),
+    stripeSubscriptionId: stripeId(session.subscription),
+    termsAcceptedAt: termsAcceptedAt ? new Date(termsAcceptedAt) : undefined,
     // JoinForm's billing-step checkbox links to /terms and is required
-    // before checkout starts, so a fulfilled billing request is real
+    // before checkout starts, so a completed checkout session is real
     // consent to the current Terms.
-    termsVersion: billingRequest.metadata?.termsAcceptedAt
-      ? CURRENT_TERMS_VERSION
-      : undefined,
+    termsVersion: termsAcceptedAt ? CURRENT_TERMS_VERSION : undefined,
   });
 }
 
@@ -183,8 +180,8 @@ export type DeleteUserResult = {
  * theme redesigns. Registration funnel rows are kept but unlinked
  * (registrations.userId → null) so drop-off history survives the delete.
  *
- * Refuses an account with an active subscription: the GoCardless mandate
- * has to be cancelled first, otherwise Direct Debit keeps collecting for
+ * Refuses an account with an active subscription: the Stripe subscription
+ * has to be cancelled first, otherwise Stripe keeps charging the card for
  * an account no one can see. Self / admin-email checks are the caller's
  * responsibility (see /api/admin/users/[id]).
  *
@@ -208,7 +205,7 @@ export async function deleteUserAccount(
     }
     if (user.subscriptionStatus === "active") {
       throw new Error(
-        "This account has an active subscription — cancel the GoCardless mandate before deleting."
+        "This account has an active subscription — cancel it in Stripe before deleting."
       );
     }
 
@@ -240,12 +237,12 @@ export async function deleteUserAccount(
 
 export type SyncableStatus = "active" | "past_due" | "canceled";
 
-export async function syncSubscriptionStatusByMandateId(
-  mandateId: string,
+export async function syncSubscriptionStatusByCustomerId(
+  customerId: string,
   status: SyncableStatus
 ) {
   await db
     .update(users)
     .set({ subscriptionStatus: status })
-    .where(eq(users.gocardlessMandateId, mandateId));
+    .where(eq(users.stripeCustomerId, customerId));
 }

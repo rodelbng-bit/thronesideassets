@@ -7,7 +7,7 @@ import { pageMetadata } from "@/lib/seo";
 export const metadata: Metadata = pageMetadata({
   title: "Join the Essential Plan",
   description:
-    "Join Throneside Assets in a couple of minutes — choose how you'd like to be billed and set up a secure Direct Debit with GoCardless.",
+    "Join Throneside Assets in a couple of minutes — choose how you'd like to be billed and pay securely by card with Stripe.",
   path: "/join",
 });
 
@@ -21,8 +21,8 @@ export default function JoinPage() {
           Join in a couple of minutes.
         </h1>
         <p className="mt-4 text-paper-dim">
-          Choose how you&apos;d like to be billed, then set up a secure
-          Direct Debit with GoCardless. You&apos;ll set your password right
+          Choose how you&apos;d like to be billed, then pay securely by card
+          with Stripe. You&apos;ll set your password right
           after.
         </p>
 

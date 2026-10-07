@@ -61,8 +61,8 @@ export default async function UsersAdminPage() {
           it also removes their password, deal reservations, viewing
           requests and Theme Room redesigns, and frees any deal they were
           holding. Registration funnel history is kept. An account with an
-          active subscription can&apos;t be deleted until its GoCardless
-          mandate is cancelled.
+          active subscription can&apos;t be deleted until it is cancelled in
+          Stripe.
         </p>
 
         {allUsers.length === 0 ? (
