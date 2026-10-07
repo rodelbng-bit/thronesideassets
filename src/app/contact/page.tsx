@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
+import PageHero from "@/components/PageHero";
 import CallScreenerFlow from "@/components/CallScreenerFlow";
 import { pageMetadata } from "@/lib/seo";
 
@@ -15,17 +16,19 @@ export default function ContactPage() {
   return (
     <>
       <SiteHeader />
-      <main className="mx-auto max-w-2xl px-6 py-20">
-        <p className="ledger-figure text-sm text-brass-bright">GET IN TOUCH</p>
-        <h1 className="mt-3 font-display text-4xl tracking-tight text-paper md:text-5xl">
-          Book a call with our UK team.
-        </h1>
-        <p className="mt-4 text-paper-dim">
-          A few quick questions first so we can prepare for the call — then
-          pick a time that works for you.
-        </p>
+      <main className="mx-auto max-w-2xl px-6 py-20 md:pt-28">
+        <PageHero
+          eyebrow="Get in touch"
+          title="Book a call with our"
+          accent="UK team."
+        >
+          <p>
+            A few quick questions first so we can prepare for the call — then
+            pick a time that works for you.
+          </p>
+        </PageHero>
 
-        <div className="mt-10">
+        <div className="enter mt-10 rounded-3xl border rule p-6 [animation-delay:270ms] md:p-8">
           <CallScreenerFlow />
         </div>
       </main>

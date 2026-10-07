@@ -49,13 +49,21 @@ Assets, a UK property-deal-sourcing membership business. See
 
 ## Design system
 
-Dark "ledger" theme defined in `src/app/globals.css` as CSS custom
-properties (`--ink`, `--paper`, `--brass`, `--ledger-green`, etc.),
-exposed to Tailwind via `@theme inline`. Fonts: Fraunces (`font-display`,
-headings), Work Sans (body), IBM Plex Mono (`.ledger-figure`, used for
-stats/figures with tabular numerals). Reuse these tokens and existing
-component patterns (bordered stat strips, numbered process lists,
-pill buttons) rather than introducing new colors or one-off styles.
+Dark theme of deep teal, pumpkin orange and white, defined in
+`src/app/globals.css` as CSS custom properties exposed to Tailwind via
+`@theme inline`. The token names predate the rebrand: `ink`/`ink-soft` are
+the teal surfaces, `paper`/`paper-dim` the white text, `brass`/
+`brass-bright` the pumpkin orange (the main accent: eyebrows, subtitles,
+highlighted words, figures, buttons) and `ledger-green` the teal accent.
+Fonts: Bricolage Grotesque (`font-display`, headings; also
+`.ledger-figure` for stats with tabular numerals), Figtree (body), and
+Instrument Serif italic (`font-accent`) for the orange accent phrase in a
+headline. Shared patterns: `.eyebrow` (orange rule + uppercase label),
+`PageHero` for inner-page openings, `ClosingCta`, `.card-lift` and
+`.cta-glow` hover states, and `.enter` / `.reveal` entrance animations.
+Reuse these rather than introducing new colours or one-off styles. The
+`/start` ad funnel keeps its own black/gold theme and fonts via
+`.funnel-theme` (FunnelShell) — don't restyle it along with the site.
 
 ## Commands
 

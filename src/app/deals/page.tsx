@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
+import PageHero from "@/components/PageHero";
 import DealCard from "@/components/DealCard";
 import { auth } from "@/lib/auth";
 import { getDeals } from "@/lib/deals";
@@ -25,15 +26,13 @@ export default async function DealsPage() {
   return (
     <>
       <SiteHeader />
-      <main className="mx-auto max-w-7xl px-6 py-20">
-        <p className="ledger-figure text-sm text-brass-bright">DEALS</p>
-        <h1 className="mt-3 font-display text-4xl tracking-tight text-paper md:text-5xl">
-          This week&apos;s deals.
-        </h1>
-        <p className="mt-4 max-w-xl text-paper-dim">
-          A preview of the kind of deals members get — join to see rates,
-          earnings, and reserve.
-        </p>
+      <main className="mx-auto max-w-7xl px-6 py-20 md:pt-28">
+        <PageHero eyebrow="Deals" title="This week's" accent="deals.">
+          <p className="max-w-xl">
+            A preview of the kind of deals members get — join to see rates,
+            earnings, and reserve.
+          </p>
+        </PageHero>
 
         <div className="mt-16 space-y-8">
           {deals.map((deal) => (

@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
+import PageHero from "@/components/PageHero";
+import ClosingCta from "@/components/ClosingCta";
 import { pageMetadata } from "@/lib/seo";
 
 export const metadata: Metadata = pageMetadata({
@@ -39,65 +41,69 @@ export default function AboutPage() {
     <>
       <SiteHeader />
       <main>
-        <div className="mx-auto max-w-3xl px-6 pb-16 pt-20 md:pt-28">
-          <p className="ledger-figure text-sm text-brass-bright">ABOUT US</p>
-          <h1 className="mt-3 font-display text-4xl tracking-tight text-paper md:text-5xl">
-            Built for investors who value time.
-          </h1>
-          <p className="mt-6 text-lg leading-relaxed text-paper-dim">
-            Throneside Assets exists for one reason: sourcing good property
-            deals takes hours most investors don&apos;t have. We do that work
-            for you — contacting landlords, analysing the numbers, and
-            filtering out everything that doesn&apos;t hold up — so what
-            reaches you is already vetted and ready to act on.
-          </p>
-          <p className="mt-4 text-lg leading-relaxed text-paper-dim">
-            We provide property investment opportunities, strategic business
-            guidance, and growth solutions that help clients build and scale
-            their property portfolios. We currently operate across the UK,
-            with plans to expand internationally from 2027.
-          </p>
-        </div>
+        <section className="mx-auto max-w-7xl px-6 pb-16 pt-20 md:pt-28">
+          <PageHero
+            eyebrow="About us"
+            title="Built for investors who"
+            accent="value time."
+          >
+            <p>
+              Throneside Assets exists for one reason: sourcing good property
+              deals takes hours most investors don&apos;t have. We do that
+              work for you — contacting landlords, analysing the numbers, and
+              filtering out everything that doesn&apos;t hold up — so what
+              reaches you is already vetted and ready to act on.
+            </p>
+            <p className="mt-4">
+              We provide property investment opportunities, strategic business
+              guidance, and growth solutions that help clients build and scale
+              their property portfolios. We currently operate across the UK,
+              with plans to expand internationally from 2027.
+            </p>
+          </PageHero>
 
-        {/* Ledger stat strip, matching the homepage signature element */}
-        <div className="mx-auto max-w-3xl px-6">
-          <dl className="grid grid-cols-1 gap-px overflow-hidden rounded-lg border rule sm:grid-cols-3">
-            {facts.map((fact, i) => (
+          <dl className="enter mt-14 grid grid-cols-1 gap-4 [animation-delay:270ms] sm:grid-cols-3">
+            {facts.map((fact) => (
               <div
                 key={fact.label}
-                className={`bg-ink-soft px-6 py-5 ${
-                  i > 0 ? "sm:border-l rule" : ""
-                }`}
+                className="card-lift rounded-2xl border rule bg-ink-soft/80 px-6 py-5"
               >
-                <dt className="text-xs uppercase tracking-wide text-paper-dim">
+                <dt className="text-xs uppercase tracking-[0.12em] text-paper-dim">
                   {fact.label}
                 </dt>
-                <dd className="ledger-figure mt-2 text-3xl text-brass-bright">
+                <dd className="ledger-figure mt-2 text-3xl tracking-tight text-brass-bright">
                   {fact.value}
                 </dd>
               </div>
             ))}
           </dl>
-        </div>
+        </section>
 
-        <section className="mt-20 border-t rule">
-          <div className="mx-auto max-w-3xl px-6 py-16">
-            <p className="ledger-figure text-sm text-brass-bright">
-              HOW WE WORK
-            </p>
-            <h2 className="mt-3 font-display text-3xl tracking-tight text-paper md:text-4xl">
-              Source, analyse, execute.
-            </h2>
-            <ol className="mt-10 space-y-8">
+        <section className="border-t rule">
+          <div className="mx-auto max-w-7xl px-6 py-20 md:py-24">
+            <div className="reveal">
+              <p className="eyebrow">How we work</p>
+              <h2 className="mt-4 font-display text-4xl text-paper md:text-5xl">
+                Source, analyse,{" "}
+                <span className="font-accent text-brass">execute.</span>
+              </h2>
+            </div>
+
+            {/* Same orange-to-teal route as the home page framework. */}
+            <ol className="relative mt-14 grid grid-cols-1 gap-10 md:grid-cols-3 md:gap-8">
+              <span
+                aria-hidden
+                className="absolute left-0 right-0 top-[1.4rem] hidden h-px bg-linear-to-r from-brass via-brass/40 to-ledger-green md:block"
+              />
               {process.map((step) => (
-                <li key={step.n} className="border-l-2 border-ledger-green pl-6">
-                  <span className="ledger-figure text-sm text-paper-dim">
+                <li key={step.n} className="reveal relative">
+                  <span className="relative flex h-11 w-11 items-center justify-center rounded-full border-2 border-brass bg-ink font-display text-sm text-brass-bright">
                     {step.n}
                   </span>
-                  <h3 className="mt-2 font-display text-2xl text-paper">
+                  <h3 className="mt-6 font-display text-2xl text-paper">
                     {step.title}
                   </h3>
-                  <p className="mt-3 max-w-xl text-sm leading-relaxed text-paper-dim">
+                  <p className="mt-3 text-sm leading-relaxed text-paper-dim">
                     {step.body}
                   </p>
                 </li>
@@ -107,69 +113,50 @@ export default function AboutPage() {
         </section>
 
         <section className="border-t rule bg-ink-soft">
-          <div className="mx-auto max-w-3xl px-6 py-16">
-            <p className="ledger-figure text-sm text-brass-bright">
-              ONE MEMBERSHIP
-            </p>
-            <h2 className="mt-3 font-display text-3xl tracking-tight text-paper md:text-4xl">
-              Full access, not just listings.
-            </h2>
-            <p className="mt-6 max-w-xl text-lg leading-relaxed text-paper-dim">
-              Clients join through a fixed 12-month membership agreement
-              rather than paying per deal or per lead. That gets you the
-              weekly deal sheet plus
-              the guidance around it — business consulting, management
-              support, and education — tailored to your package, so you&apos;re
-              not left to work out execution on your own.
-            </p>
-          </div>
-        </section>
-
-        <section className="border-t rule">
-          <div className="mx-auto max-w-3xl px-6 py-16">
-            <p className="ledger-figure text-sm text-brass-bright">
-              WHERE WE OPERATE
-            </p>
-            <h2 className="mt-3 font-display text-3xl tracking-tight text-paper md:text-4xl">
-              UK-wide today, international from 2027.
-            </h2>
-            <p className="mt-6 max-w-xl text-lg leading-relaxed text-paper-dim">
-              We source across London, Manchester, Liverpool, Birmingham,
-              Southampton, Bromley, and other major UK cities, choosing areas
-              based on
-              occupancy data, demand drivers, and rental yield rather than
-              guesswork. We&apos;re UK-only for now, with plans to expand
-              internationally starting in 2027.
-            </p>
-          </div>
-        </section>
-
-        <section className="border-t rule bg-ledger-green-soft">
-          <div className="mx-auto flex max-w-3xl flex-col items-start gap-6 px-6 py-16 md:flex-row md:items-center md:justify-between">
-            <div>
-              <h2 className="font-display text-3xl tracking-tight text-paper">
-                Want to see this week&apos;s deal sheet?
+          <div className="mx-auto grid max-w-7xl grid-cols-1 gap-5 px-6 py-20 md:grid-cols-2 md:py-24">
+            <div className="card-lift reveal rounded-2xl border rule bg-ink p-8 md:p-10">
+              <p className="eyebrow">One membership</p>
+              <h2 className="mt-4 font-display text-3xl text-paper md:text-4xl">
+                Full access,{" "}
+                <span className="font-accent text-brass">
+                  not just listings.
+                </span>
               </h2>
-              <p className="mt-2 max-w-md text-sm text-paper-dim">
-                Book a call with our UK team, or see what membership includes.
+              <p className="mt-5 leading-relaxed text-paper-dim">
+                Clients join through a fixed 12-month membership agreement
+                rather than paying per deal or per lead. That gets you the
+                weekly deal sheet plus the guidance around it — business
+                consulting, management support, and education — tailored to
+                your package, so you&apos;re not left to work out execution
+                on your own.
               </p>
             </div>
-            <div className="flex shrink-0 flex-wrap gap-3">
-              <a
-                href="/contact"
-                className="rounded-full bg-brass px-6 py-3 text-sm font-medium text-ink transition-colors hover:bg-brass-bright"
-              >
-                Book a Call
-              </a>
-              <a
-                href="/pricing"
-                className="rounded-full border rule px-6 py-3 text-sm font-medium text-paper transition-colors hover:border-paper-dim"
-              >
-                See Our Plans
-              </a>
+
+            <div className="card-lift reveal rounded-2xl border rule bg-ink p-8 md:p-10">
+              <p className="eyebrow">Where we operate</p>
+              <h2 className="mt-4 font-display text-3xl text-paper md:text-4xl">
+                UK-wide today,{" "}
+                <span className="font-accent text-brass">
+                  international from 2027.
+                </span>
+              </h2>
+              <p className="mt-5 leading-relaxed text-paper-dim">
+                We source across London, Manchester, Liverpool, Birmingham,
+                Southampton, Bromley, and other major UK cities, choosing
+                areas based on occupancy data, demand drivers, and rental
+                yield rather than guesswork. We&apos;re UK-only for now, with
+                plans to expand internationally starting in 2027.
+              </p>
             </div>
           </div>
         </section>
+
+        <ClosingCta
+          title="Want to see"
+          accent="this week's deal sheet?"
+          body="Book a call with our UK team, or see what membership includes."
+          secondary={{ href: "/pricing", label: "See Our Plans" }}
+        />
       </main>
       <SiteFooter />
     </>

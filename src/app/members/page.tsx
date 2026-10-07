@@ -90,13 +90,13 @@ export default async function MembersPage({
       <SiteHeader />
       <main className="mx-auto max-w-7xl px-6 py-20">
         <div className="flex items-center justify-between">
-          <p className="ledger-figure text-sm text-brass-bright">MEMBERS</p>
+          <p className="eyebrow">MEMBERS</p>
           <SignOutButton />
         </div>
 
         {showDeals ? (
           <>
-            <h1 className="mt-3 font-display text-4xl tracking-tight text-paper md:text-5xl">
+            <h1 className="enter mt-4 font-display text-4xl text-paper [animation-delay:90ms] md:text-5xl">
               This week&apos;s deals.
             </h1>
             <p className="mt-4 max-w-xl text-paper-dim">
@@ -144,7 +144,7 @@ export default async function MembersPage({
           </>
         ) : isActive && approvalStatus === "pending" ? (
           <>
-            <h1 className="mt-3 font-display text-4xl tracking-tight text-paper md:text-5xl">
+            <h1 className="enter mt-4 font-display text-4xl text-paper [animation-delay:90ms] md:text-5xl">
               Your application is under review.
             </h1>
             <p className="mt-4 text-paper-dim">
@@ -156,7 +156,7 @@ export default async function MembersPage({
           </>
         ) : isActive && approvalStatus === "rejected" ? (
           <>
-            <h1 className="mt-3 font-display text-4xl tracking-tight text-paper md:text-5xl">
+            <h1 className="enter mt-4 font-display text-4xl text-paper [animation-delay:90ms] md:text-5xl">
               We couldn&apos;t approve this application.
             </h1>
             <p className="mt-4 text-paper-dim">
@@ -172,7 +172,7 @@ export default async function MembersPage({
           </>
         ) : (
           <>
-            <h1 className="mt-3 font-display text-4xl tracking-tight text-paper md:text-5xl">
+            <h1 className="enter mt-4 font-display text-4xl text-paper [animation-delay:90ms] md:text-5xl">
               Your membership isn&apos;t active.
             </h1>
             <p className="mt-4 text-paper-dim">

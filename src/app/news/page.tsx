@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
+import PageHero from "@/components/PageHero";
 import NewsSection from "@/components/NewsSection";
 import { getR2SANews } from "@/lib/news";
 import { pageMetadata } from "@/lib/seo";
@@ -18,11 +19,8 @@ export default async function NewsPage() {
   return (
     <>
       <SiteHeader />
-      <main className="mx-auto max-w-7xl px-6 py-20">
-        <p className="ledger-figure text-sm text-brass-bright">NEWS</p>
-        <h1 className="mt-3 font-display text-4xl tracking-tight text-paper md:text-5xl">
-          News.
-        </h1>
+      <main className="mx-auto max-w-7xl px-6 py-20 md:pt-28">
+        <PageHero eyebrow="News" accent="News." />
 
         {news.length === 0 ? (
           <div className="mt-10 rounded-lg border rule bg-ink-soft p-6 text-sm text-paper-dim">

@@ -129,7 +129,7 @@ export default function WelcomePopup() {
 
         {status === "done" ? (
           <div>
-            <p className="ledger-figure text-sm text-brass-bright">THANK YOU</p>
+            <p className="eyebrow">THANK YOU</p>
             <h2
               id="welcome-popup-title"
               className="mt-2 font-display text-2xl tracking-tight text-paper sm:text-3xl"
@@ -159,7 +159,7 @@ export default function WelcomePopup() {
         ) : (
           <form onSubmit={handleSubmit} className="space-y-3">
             <div className="pr-8">
-              <p className="ledger-figure text-sm text-brass-bright">WELCOME</p>
+              <p className="eyebrow">WELCOME</p>
               <h2
                 id="welcome-popup-title"
                 className="mt-2 font-display text-2xl tracking-tight text-paper sm:text-3xl"

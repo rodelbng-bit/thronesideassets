@@ -40,8 +40,8 @@ export default async function ViewingRequestsAdminPage() {
     <>
       <SiteHeader />
       <main className="mx-auto max-w-4xl px-6 py-20">
-        <p className="ledger-figure text-sm text-brass-bright">ADMIN</p>
-        <h1 className="mt-3 font-display text-4xl tracking-tight text-paper md:text-5xl">
+        <p className="eyebrow">ADMIN</p>
+        <h1 className="enter mt-4 font-display text-4xl text-paper [animation-delay:90ms] md:text-5xl">
           Viewing requests.
         </h1>
         <p className="mt-4 max-w-xl text-paper-dim">

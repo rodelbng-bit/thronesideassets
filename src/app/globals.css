@@ -1,17 +1,28 @@
 @import "tailwindcss";
 
 :root {
-  /* Ledger palette */
-  --ink: #12100e;
-  --ink-soft: #1c1a17;
-  --paper: #f2ede2;
-  --paper-dim: #d9d0bd;
-  --brass: #b98a46;
-  --brass-bright: #d9a862;
-  --ledger-green: #2f5d45;
-  --ledger-green-soft: #23402f;
-  --rule: rgba(242, 237, 226, 0.14);
-  --rule-strong: rgba(242, 237, 226, 0.28);
+  /* Brand palette — deep teal base, pumpkin orange accent, white text.
+     Token names predate the rebrand and are kept so every page picks the
+     palette up: ink = teal surfaces, paper = white text, brass = pumpkin
+     orange (highlights, eyebrows, buttons), ledger-green = teal accent. */
+  --ink: #061a1c;
+  --ink-soft: #0b2629;
+  --paper: #ffffff;
+  --paper-dim: #a7bfbd;
+  --brass: #ff7518;
+  --brass-bright: #ff9a4d;
+  --ledger-green: #14807b;
+  --ledger-green-soft: #0c3a3c;
+  --rule: rgba(255, 255, 255, 0.1);
+  --rule-strong: rgba(255, 255, 255, 0.22);
+  --glow-orange: rgba(255, 117, 24, 0.16);
+  --glow-teal: rgba(31, 181, 173, 0.14);
+
+  /* Font roles — FunnelShell remaps these to keep the funnel's own type. */
+  --font-heading: var(--font-bricolage);
+  --font-body: var(--font-figtree);
+  --font-figure: var(--font-bricolage);
+  --font-highlight: var(--font-instrument-serif);
 
   --background: var(--ink);
   --foreground: var(--paper);
@@ -28,9 +39,10 @@
   --color-ledger-green-soft: var(--ledger-green-soft);
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-display: var(--font-fraunces);
-  --font-sans: var(--font-work-sans);
-  --font-mono: var(--font-plex-mono);
+  --font-display: var(--font-heading);
+  --font-sans: var(--font-body);
+  --font-mono: var(--font-figure);
+  --font-accent: var(--font-highlight);
 }
 
 * {
@@ -43,25 +55,126 @@ html {
 
 body {
   background:
-    radial-gradient(1100px 560px at 50% -8%, rgba(185, 138, 70, 0.09), transparent 60%),
+    radial-gradient(900px 520px at 85% -10%, var(--glow-orange), transparent 60%),
+    radial-gradient(1000px 600px at 0% 0%, var(--glow-teal), transparent 60%),
     var(--background);
   color: var(--foreground);
-  font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
+  font-family: var(--font-body), ui-sans-serif, system-ui, sans-serif;
 }
 
-.rule {
-  border-color: var(--rule);
+::selection {
+  background: var(--brass);
+  color: var(--ink);
 }
 
-.rule-strong {
-  border-color: var(--rule-strong);
+/* Type defaults live in the components layer so a utility on the same
+   element (font-normal, tracking-tight, …) still wins. */
+@layer components {
+  /* Bricolage's optical sizing does the heavy lifting; set weight and
+     tighten it. */
+  .font-display {
+    font-weight: 600;
+    letter-spacing: -0.025em;
+  }
+
+  /* The italic accent face reads small next to the grotesque — nudge it
+     up. */
+  .font-accent {
+    font-size: 1.08em;
+    font-weight: 400;
+    letter-spacing: -0.01em;
+  }
+
+  /* Figures and eyebrow labels — tabular so stats/yields line up. */
+  .ledger-figure {
+    font-family: var(--font-figure), ui-sans-serif, system-ui, sans-serif;
+    font-variant-numeric: tabular-nums;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+  }
+
+  /* Hairline borders — layered so hover:/open: border utilities win. */
+  .rule {
+    border-color: var(--rule);
+  }
+
+  .rule-strong {
+    border-color: var(--rule-strong);
+  }
 }
 
-/* Tabular ledger figures — used for stats/yields */
-.ledger-figure {
-  font-family: var(--font-mono), ui-monospace, monospace;
-  font-variant-numeric: tabular-nums;
-  letter-spacing: -0.02em;
+/* Section label: short orange rule + label, the site's subtitle style. */
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-family: var(--font-figure), ui-sans-serif, system-ui, sans-serif;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--brass-bright);
+}
+
+.eyebrow::before {
+  content: "";
+  height: 2px;
+  width: 1.75rem;
+  border-radius: 999px;
+  background: var(--brass);
+}
+
+/* Primary CTA lift — solid pumpkin with a warm glow on hover. */
+.cta-glow {
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease,
+    background-color 0.2s ease;
+}
+
+.cta-glow:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 14px 36px -12px rgba(255, 117, 24, 0.6);
+}
+
+/* Cards that react: lift + orange edge on hover. */
+.card-lift {
+  transition:
+    transform 0.3s cubic-bezier(0.2, 0.7, 0.2, 1),
+    border-color 0.3s ease,
+    box-shadow 0.3s ease;
+}
+
+.card-lift:hover {
+  transform: translateY(-4px);
+  border-color: rgba(255, 117, 24, 0.45);
+  box-shadow: 0 24px 50px -28px rgba(255, 117, 24, 0.45);
+}
+
+@keyframes site-enter {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Staggered entrance for above-the-fold content (set animation-delay). */
+.enter {
+  animation: site-enter 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* Sections ease in as they scroll into view, where the browser supports
+   scroll-driven animations; elsewhere they simply render. */
+@supports (animation-timeline: view()) {
+  .reveal {
+    animation: site-enter linear both;
+    animation-timeline: view();
+    animation-range: entry 0% entry 60%;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -88,6 +201,12 @@ body {
   --paper-dim: #a1a1a1;
   --brass: #d4af37;
   --brass-bright: #f0cf6b;
+  --ledger-green: #2f5d45;
+  --ledger-green-soft: #23402f;
+  --font-heading: var(--font-funnel);
+  --font-body: var(--font-work-sans);
+  --font-figure: var(--font-plex-mono);
+  font-family: var(--font-body), ui-sans-serif, system-ui, sans-serif;
   --rule: rgba(255, 255, 255, 0.09);
   --rule-strong: rgba(255, 255, 255, 0.18);
   --gold-gradient: linear-gradient(100deg, #f7e3a1 0%, #d4af37 45%, #a67c1f 100%);
@@ -97,6 +216,11 @@ body {
   flex-direction: column;
   background: var(--ink);
   color: var(--paper);
+}
+
+.funnel-theme .ledger-figure {
+  font-weight: inherit;
+  letter-spacing: -0.02em;
 }
 
 .font-funnel {

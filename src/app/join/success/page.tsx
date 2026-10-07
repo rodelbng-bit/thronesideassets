@@ -86,10 +86,10 @@ export default async function JoinSuccessPage({
     <>
       <SiteHeader />
       <main className="mx-auto max-w-lg px-6 py-20">
-        <p className="ledger-figure text-sm text-brass-bright">
+        <p className="eyebrow">
           {copy.eyebrow}
         </p>
-        <h1 className="mt-3 font-display text-4xl tracking-tight text-paper md:text-5xl">
+        <h1 className="enter mt-4 font-display text-4xl text-paper [animation-delay:90ms] md:text-5xl">
           {resetToken && approvalStatus !== "rejected"
             ? "Set your password."
             : copy.heading}
@@ -134,10 +134,10 @@ function ErrorShell({ message }: { message: string }) {
     <>
       <SiteHeader />
       <main className="mx-auto max-w-lg px-6 py-20">
-        <p className="ledger-figure text-sm text-brass-bright">
+        <p className="eyebrow">
           PAYMENT CONFIRMED
         </p>
-        <h1 className="mt-3 font-display text-4xl tracking-tight text-paper md:text-5xl">
+        <h1 className="enter mt-4 font-display text-4xl text-paper [animation-delay:90ms] md:text-5xl">
           Almost there.
         </h1>
         <p className="mt-4 text-paper-dim">{message}</p>

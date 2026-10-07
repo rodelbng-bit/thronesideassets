@@ -1,26 +1,33 @@
 import type { Metadata } from "next";
-import { Fraunces, Work_Sans, IBM_Plex_Mono } from "next/font/google";
+import {
+  Bricolage_Grotesque,
+  Figtree,
+  Instrument_Serif,
+} from "next/font/google";
 import Providers from "@/components/Providers";
 import MetaPixel from "@/components/MetaPixel";
 import WelcomePopup from "@/components/WelcomePopup";
 import { HOME_DESCRIPTION, HOME_TITLE, SITE_NAME, SITE_URL } from "@/lib/seo";
 import "./globals.css";
 
-const fraunces = Fraunces({
-  variable: "--font-fraunces",
+// Headings and figures — characterful grotesque with optical sizing.
+const bricolage = Bricolage_Grotesque({
+  variable: "--font-bricolage",
   subsets: ["latin"],
-  axes: ["opsz", "SOFT", "WONK"],
+  axes: ["opsz"],
 });
 
-const workSans = Work_Sans({
-  variable: "--font-work-sans",
+const figtree = Figtree({
+  variable: "--font-figtree",
   subsets: ["latin"],
 });
 
-const plexMono = IBM_Plex_Mono({
-  variable: "--font-plex-mono",
+// Italic accent for the highlighted phrase in a headline (`font-accent`).
+const instrumentSerif = Instrument_Serif({
+  variable: "--font-instrument-serif",
   subsets: ["latin"],
-  weight: ["400", "500", "600"],
+  weight: "400",
+  style: "italic",
 });
 
 // Site-wide defaults. No canonical/og:url here — those would be inherited by
@@ -45,7 +52,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"
-      className={`${fraunces.variable} ${workSans.variable} ${plexMono.variable} h-full antialiased`}
+      className={`${bricolage.variable} ${figtree.variable} ${instrumentSerif.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col bg-ink text-paper">
         <Providers>

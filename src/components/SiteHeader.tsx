@@ -11,11 +11,11 @@ export default async function SiteHeader() {
   const isAdmin = !!session?.user?.isAdmin;
 
   return (
-    <header className="sticky top-0 z-50 border-b rule bg-ink/90 backdrop-blur">
+    <header className="sticky top-0 z-50 border-b rule bg-ink/80 backdrop-blur-md">
       <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
         <Link
           href="/"
-          className="flex items-center gap-2.5 font-display text-lg tracking-tight text-paper"
+          className="flex items-center gap-2.5 font-display text-lg font-semibold text-paper"
         >
           <Image
             src="/logo-mark.png"
@@ -33,7 +33,7 @@ export default async function SiteHeader() {
             <Link
               key={item.href}
               href={item.href}
-              className="text-sm text-paper-dim transition-colors hover:text-paper"
+              className="relative py-1 text-sm text-paper-dim transition-colors after:absolute after:inset-x-0 after:-bottom-0.5 after:h-0.5 after:origin-left after:scale-x-0 after:rounded-full after:bg-brass after:transition-transform after:duration-300 hover:text-paper hover:after:scale-x-100"
             >
               {item.label}
             </Link>
@@ -121,7 +121,7 @@ export default async function SiteHeader() {
                 </Link>
                 <Link
                   href="/join"
-                  className="rounded-full bg-brass px-4 py-2 text-sm font-medium text-ink transition-colors hover:bg-brass-bright"
+                  className="cta-glow rounded-full bg-brass px-5 py-2 text-sm font-semibold text-ink hover:bg-brass-bright"
                 >
                   Register
                 </Link>

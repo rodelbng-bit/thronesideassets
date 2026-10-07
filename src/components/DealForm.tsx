@@ -342,7 +342,7 @@ function ReviewPanel({
 
   return (
     <div className="rounded-lg border border-brass/50 bg-ink-soft p-6">
-      <p className="ledger-figure text-sm text-brass-bright">CHECK BEFORE {isEdit ? "SAVING" : "PUBLISHING"}</p>
+      <p className="eyebrow">CHECK BEFORE {isEdit ? "SAVING" : "PUBLISHING"}</p>
       <p className="mt-2 text-sm text-paper-dim">
         This is what the deal card will show. Compare it with your deal sheet.
       </p>

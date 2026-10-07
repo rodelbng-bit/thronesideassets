@@ -81,10 +81,10 @@ export default async function ThemeRoomPage({
           ← Back to {deal.title}
         </Link>
 
-        <p className="mt-6 ledger-figure text-sm text-brass-bright">
+        <p className="eyebrow mt-6">
           THEME ROOM
         </p>
-        <h1 className="mt-3 font-display text-4xl tracking-tight text-paper md:text-5xl">
+        <h1 className="enter mt-4 font-display text-4xl text-paper [animation-delay:90ms] md:text-5xl">
           Restyle this room.
         </h1>
         <p className="mt-4 max-w-xl text-paper-dim">

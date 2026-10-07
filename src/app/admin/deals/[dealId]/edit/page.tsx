@@ -49,7 +49,7 @@ export default async function EditDealPage({
           ← Back to deal
         </Link>
         <p className="ledger-figure mt-8 text-sm text-brass-bright">ADMIN</p>
-        <h1 className="mt-3 font-display text-4xl tracking-tight text-paper md:text-5xl">
+        <h1 className="enter mt-4 font-display text-4xl text-paper [animation-delay:90ms] md:text-5xl">
           Edit deal.
         </h1>
         <p className="mt-4 text-paper-dim">

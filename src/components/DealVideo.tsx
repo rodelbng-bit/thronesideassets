@@ -82,7 +82,7 @@ export default function DealVideo({
           aria-label={`Play ${title} walkthrough video`}
           className="group absolute inset-0 flex items-center justify-center bg-ink/30 transition-colors hover:bg-ink/10"
         >
-          <span className="flex h-16 w-16 items-center justify-center rounded-full bg-brass text-ink shadow-[0_0_40px_rgba(212,175,55,0.45)] transition-transform group-hover:scale-105">
+          <span className="flex h-16 w-16 items-center justify-center rounded-full bg-brass text-ink shadow-[0_0_40px_color-mix(in_srgb,var(--brass)_45%,transparent)] transition-transform group-hover:scale-105">
             <svg viewBox="0 0 24 24" className="ml-1 h-7 w-7" fill="currentColor" aria-hidden>
               <path d="M8 5.5v13l11-6.5-11-6.5Z" />
             </svg>

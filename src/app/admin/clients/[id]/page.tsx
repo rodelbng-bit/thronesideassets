@@ -150,7 +150,7 @@ export default async function ClientProfilePage({
         <p className="ledger-figure mt-4 text-sm text-brass-bright">
           ADMIN · CLIENT PROFILE
         </p>
-        <h1 className="mt-3 font-display text-4xl tracking-tight text-paper md:text-5xl">
+        <h1 className="enter mt-4 font-display text-4xl text-paper [animation-delay:90ms] md:text-5xl">
           {registration.name}
         </h1>
 

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
+import PageHero from "@/components/PageHero";
 import JoinForm from "@/components/JoinForm";
 import { pageMetadata } from "@/lib/seo";
 
@@ -15,18 +16,19 @@ export default function JoinPage() {
   return (
     <>
       <SiteHeader />
-      <main className="mx-auto max-w-lg px-6 py-20">
-        <p className="ledger-figure text-sm text-brass-bright">ESSENTIAL</p>
-        <h1 className="mt-3 font-display text-4xl tracking-tight text-paper md:text-5xl">
-          Join in a couple of minutes.
-        </h1>
-        <p className="mt-4 text-paper-dim">
-          Choose how you&apos;d like to be billed, then pay securely by card
-          with Stripe. You&apos;ll set your password right
-          after.
-        </p>
+      <main className="mx-auto max-w-lg px-6 py-20 md:pt-28">
+        <PageHero
+          eyebrow="Essential"
+          title="Join in a"
+          accent="couple of minutes."
+        >
+          <p>
+            Choose how you&apos;d like to be billed, then pay securely by card
+            with Stripe. You&apos;ll set your password right after.
+          </p>
+        </PageHero>
 
-        <div className="mt-10">
+        <div className="enter mt-10 rounded-3xl border rule p-6 [animation-delay:270ms] md:p-8">
           <JoinForm />
         </div>
       </main>

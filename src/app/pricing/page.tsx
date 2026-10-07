@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
+import PageHero from "@/components/PageHero";
 import { plans } from "@/lib/siteFacts";
 import { pageMetadata } from "@/lib/seo";
 
@@ -16,57 +17,91 @@ export default function PricingPage() {
   return (
     <>
       <SiteHeader />
-      <main className="mx-auto max-w-4xl px-6 py-20">
-        <p className="ledger-figure text-sm text-brass-bright">MEMBERSHIP</p>
-        <h1 className="mt-3 font-display text-4xl tracking-tight text-paper md:text-5xl">
-          Choose your plan.
-        </h1>
-        <p className="mt-4 max-w-xl text-paper-dim">
-          Every plan is a fixed 12-month membership agreement — not a
-          month-to-month subscription and not a per-deal fee — you get
-          the weekly deal sheet plus the guidance around it, tailored to
-          your package. Book a call and we&apos;ll walk you through current
-          pricing and which tier fits.
-        </p>
+      <main className="mx-auto max-w-5xl px-6 py-20 md:pt-28">
+        <PageHero eyebrow="Membership" title="Choose your" accent="plan.">
+          <p className="max-w-xl">
+            Every plan is a fixed 12-month membership agreement — not a
+            month-to-month subscription and not a per-deal fee — you get the
+            weekly deal sheet plus the guidance around it, tailored to your
+            package. Book a call and we&apos;ll walk you through current
+            pricing and which tier fits.
+          </p>
+        </PageHero>
 
-        <div className="mt-12 grid grid-cols-1 gap-6 sm:grid-cols-2">
-          {plans.map((plan) => (
+        <div className="mt-14 grid grid-cols-1 gap-6 sm:grid-cols-2">
+          {plans.map((plan, i) => (
             <div
               key={plan.name}
-              className="rounded-lg border rule bg-ink-soft p-8"
+              className={`card-lift enter relative flex flex-col overflow-hidden rounded-3xl border bg-ink-soft p-8 md:p-10 ${
+                plan.comingSoon ? "rule" : "border-brass/50"
+              }`}
+              style={{ animationDelay: `${270 + i * 90}ms` }}
             >
-              <h2 className="font-display text-2xl text-paper">
+              {!plan.comingSoon && (
+                <>
+                  <span
+                    aria-hidden
+                    className="absolute inset-x-0 top-0 h-1 bg-linear-to-r from-brass to-brass-bright"
+                  />
+                  <span
+                    aria-hidden
+                    className="pointer-events-none absolute -right-20 -top-20 h-56 w-56 rounded-full bg-[radial-gradient(closest-side,rgba(255,117,24,0.18),transparent)]"
+                  />
+                </>
+              )}
+
+              <h2 className="relative font-display text-2xl text-paper">
                 {plan.name}
               </h2>
-              <p className="ledger-figure mt-2 text-lg text-brass-bright">
+              <p className="ledger-figure relative mt-4 text-4xl tracking-tight text-brass-bright">
                 {plan.price}
               </p>
               {plan.term && (
-                <p className="mt-1 text-xs font-medium uppercase tracking-wide text-paper-dim">
+                <p className="mt-2 text-xs font-semibold uppercase tracking-[0.12em] text-paper-dim">
                   {plan.term}
                 </p>
               )}
               {plan.priceNote && (
-                <p className="mt-2 text-sm text-paper-dim">
-                  {plan.priceNote}
-                </p>
+                <p className="mt-2 text-sm text-paper-dim">{plan.priceNote}</p>
               )}
-              <ul className="mt-6 space-y-2 text-sm text-paper-dim">
+
+              <ul className="mt-8 space-y-3 text-sm text-paper-dim">
                 {plan.features.map((f) => (
-                  <li key={f}>— {f}</li>
+                  <li key={f} className="flex gap-3">
+                    <svg
+                      viewBox="0 0 20 20"
+                      aria-hidden
+                      className="mt-0.5 h-4 w-4 shrink-0 text-brass"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth={2.5}
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    >
+                      <path d="M4 10.5l4 4 8-9" />
+                    </svg>
+                    {f}
+                  </li>
                 ))}
               </ul>
-              <div className="mt-8 flex flex-wrap gap-3">
+
+              <div className="mt-auto flex flex-wrap gap-3 pt-10">
                 {plan.comingSoon ? (
-                  <span className="inline-block rounded-full border rule px-6 py-3 text-sm font-medium text-paper-dim">
+                  <span className="inline-block rounded-full border rule-strong px-7 py-3.5 text-sm font-semibold text-paper-dim">
                     Coming Soon
                   </span>
                 ) : (
                   <Link
                     href="/join"
-                    className="inline-block rounded-full bg-brass px-6 py-3 text-sm font-medium text-ink transition-colors hover:bg-brass-bright"
+                    className="cta-glow group inline-flex items-center gap-2 rounded-full bg-brass px-7 py-3.5 text-sm font-semibold text-ink hover:bg-brass-bright"
                   >
                     Register
+                    <span
+                      aria-hidden
+                      className="transition-transform duration-300 group-hover:translate-x-1"
+                    >
+                      →
+                    </span>
                   </Link>
                 )}
               </div>
@@ -76,7 +111,10 @@ export default function PricingPage() {
 
         <p className="mt-10 text-sm text-paper-dim">
           Have questions first? See the{" "}
-          <a href="/faq" className="text-brass-bright hover:text-paper">
+          <a
+            href="/faq"
+            className="font-medium text-brass-bright underline decoration-brass/50 underline-offset-4 hover:text-paper"
+          >
             FAQ
           </a>
           .

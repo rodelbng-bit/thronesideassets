@@ -1,4 +1,4 @@
-import { Inter_Tight } from "next/font/google";
+import { IBM_Plex_Mono, Inter_Tight, Work_Sans } from "next/font/google";
 import Image from "next/image";
 import Link from "next/link";
 import type { FunnelVideo as FunnelVideoContent } from "@/lib/funnelContent";
@@ -9,10 +9,27 @@ const funnelFont = Inter_Tight({
   variable: "--font-funnel",
 });
 
+// The funnel keeps its own body/figure fonts so main-site typography
+// changes don't leak into it (see .funnel-theme in globals.css).
+const funnelBodyFont = Work_Sans({
+  subsets: ["latin"],
+  variable: "--font-work-sans",
+});
+
+const funnelFigureFont = IBM_Plex_Mono({
+  subsets: ["latin"],
+  weight: ["400", "500", "600"],
+  variable: "--font-plex-mono",
+});
+
 /** Wraps an ad funnel page in the black / white / gold funnel theme. */
 export function FunnelShell({ children }: { children: React.ReactNode }) {
   return (
-    <div className={`funnel-theme ${funnelFont.variable}`}>{children}</div>
+    <div
+      className={`funnel-theme ${funnelFont.variable} ${funnelBodyFont.variable} ${funnelFigureFont.variable}`}
+    >
+      {children}
+    </div>
   );
 }
 

@@ -46,7 +46,7 @@ export default function SiteFooter() {
               <li key={item.label}>
                 <a
                   href={item.href}
-                  className="text-sm text-paper-dim transition-colors hover:text-paper"
+                  className="text-sm text-paper-dim transition-colors hover:text-brass-bright"
                 >
                   {item.label}
                 </a>
@@ -62,7 +62,7 @@ export default function SiteFooter() {
               <li key={item.label}>
                 <a
                   href={item.href}
-                  className="text-sm text-paper-dim transition-colors hover:text-paper"
+                  className="text-sm text-paper-dim transition-colors hover:text-brass-bright"
                 >
                   {item.label}
                 </a>

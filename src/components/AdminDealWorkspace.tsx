@@ -39,7 +39,7 @@ export default function AdminDealWorkspace() {
 
       {unlocked ? (
         <div className="max-w-2xl">
-          <p className="ledger-figure text-sm text-brass-bright">PUBLISH</p>
+          <p className="eyebrow">PUBLISH</p>
           <h2 className="mt-3 font-display text-2xl text-paper">
             Add the listing.
           </h2>

@@ -19,18 +19,29 @@ const steps = [
 export default function Framework() {
   return (
     <section className="border-b rule">
-      <div className="mx-auto max-w-7xl px-6 py-20">
-        <p className="ledger-figure text-sm text-brass-bright">
-          THE INVESTMENT FRAMEWORK
-        </p>
+      <div className="mx-auto max-w-7xl px-6 py-20 md:py-24">
+        <div className="reveal">
+          <p className="eyebrow">The investment framework</p>
+          <h2 className="mt-4 max-w-2xl font-display text-4xl font-semibold text-paper md:text-5xl">
+            Three steps,{" "}
+            <span className="font-accent font-normal text-brass">
+              one clear process.
+            </span>
+          </h2>
+        </div>
 
-        <ol className="mt-10 grid grid-cols-1 gap-8 md:grid-cols-3">
+        {/* Steps sit on a single orange-to-teal line, like a route. */}
+        <ol className="relative mt-14 grid grid-cols-1 gap-10 md:grid-cols-3 md:gap-8">
+          <span
+            aria-hidden
+            className="absolute left-0 right-0 top-[1.4rem] hidden h-px bg-linear-to-r from-brass via-brass/40 to-ledger-green md:block"
+          />
           {steps.map((step) => (
-            <li key={step.n} className="border-l-2 border-ledger-green pl-6">
-              <span className="ledger-figure text-sm text-paper-dim">
+            <li key={step.n} className="reveal relative">
+              <span className="relative flex h-11 w-11 items-center justify-center rounded-full border-2 border-brass bg-ink font-display text-sm font-semibold text-brass-bright">
                 {step.n}
               </span>
-              <h3 className="mt-2 font-display text-2xl text-paper">
+              <h3 className="mt-6 font-display text-2xl font-semibold text-paper">
                 {step.title}
               </h3>
               <p className="mt-3 text-sm leading-relaxed text-paper-dim">

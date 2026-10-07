@@ -260,7 +260,7 @@ export default function RoomRedesignForm({
 
       {status === "done" && generatedImageUrl && (
         <div className="mt-10">
-          <p className="ledger-figure text-sm text-brass-bright">RESULT</p>
+          <p className="eyebrow">RESULT</p>
           <ThemeRedesignHotspots imageUrl={generatedImageUrl} items={items} />
 
           {items.some((item) => item.point) && (

@@ -21,10 +21,10 @@ export default async function ResetPasswordPage({
     <>
       <SiteHeader />
       <main className="mx-auto max-w-md px-6 py-20">
-        <p className="ledger-figure text-sm text-brass-bright">
+        <p className="eyebrow">
           MEMBER LOGIN
         </p>
-        <h1 className="mt-3 font-display text-4xl tracking-tight text-paper md:text-5xl">
+        <h1 className="enter mt-4 font-display text-4xl text-paper [animation-delay:90ms] md:text-5xl">
           Set a new password.
         </h1>
 

@@ -19,18 +19,21 @@ const cards = [
 export default function AboutFeatures() {
   return (
     <section className="border-b rule">
-      <div className="mx-auto grid max-w-7xl grid-cols-1 gap-px overflow-hidden border-x rule sm:grid-cols-3">
+      <div className="mx-auto grid max-w-7xl grid-cols-1 gap-5 px-6 py-16 sm:grid-cols-3 md:py-20">
         {cards.map((card, i) => (
           <div
             key={card.tag}
-            className={`bg-ink px-6 py-10 sm:px-8 ${
-              i > 0 ? "sm:border-l rule" : ""
-            }`}
+            className="card-lift reveal rounded-2xl border rule bg-ink-soft/60 px-6 py-8 sm:px-7"
           >
-            <p className="ledger-figure text-xs text-brass-bright">
-              {String(i + 1).padStart(2, "0")} / {card.tag}
-            </p>
-            <h3 className="mt-4 font-display text-2xl text-paper">
+            <div className="flex items-baseline gap-3">
+              <span className="font-accent text-3xl text-brass">
+                {String(i + 1).padStart(2, "0")}
+              </span>
+              <span className="text-xs font-semibold uppercase tracking-[0.14em] text-brass-bright">
+                {card.tag}
+              </span>
+            </div>
+            <h3 className="mt-5 font-display text-2xl font-semibold text-paper">
               {card.title}
             </h3>
             <p className="mt-3 text-sm leading-relaxed text-paper-dim">

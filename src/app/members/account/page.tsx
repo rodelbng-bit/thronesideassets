@@ -65,7 +65,7 @@ export default async function AccountPage() {
           ← Back to deals
         </Link>
 
-        <p className="mt-6 ledger-figure text-sm text-brass-bright">
+        <p className="eyebrow mt-6">
           MY ACCOUNT
         </p>
 
