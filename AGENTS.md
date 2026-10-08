@@ -62,9 +62,10 @@ headline. Shared patterns: `.eyebrow` (orange rule + uppercase label),
 `PageHero` for inner-page openings, `ClosingCta`, `.card-lift` and
 `.cta-glow` hover states, and `.enter` / `.reveal` entrance animations.
 Reuse these rather than introducing new colours or one-off styles. The
-`/start` ad funnel uses the same theme; `.funnel-theme` (FunnelShell)
-only sets its page frame, and its `gold`-named helpers (`.bg-gold`,
-`.gold-ring`) render in the site's orange.
+`/start` ad funnel uses the same colours but keeps its own fonts (Inter
+Tight, Work Sans, IBM Plex Mono) via `.funnel-theme` (FunnelShell); its
+`gold`-named helpers (`.bg-gold`, `.gold-ring`) render in the site's
+orange.
 
 ## Commands
 

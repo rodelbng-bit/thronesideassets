@@ -40,7 +40,7 @@ export default async function BookedPage({
 
           <h1 className="font-funnel funnel-rise mt-8 text-4xl font-bold leading-[1.08] tracking-[-0.03em] text-paper [animation-delay:80ms] sm:text-5xl md:text-6xl">
             You&apos;ve taken the first step in your Airbnb journey with{" "}
-            <span className="font-accent font-normal text-brass">Throneside.</span>
+            <span className="text-brass">Throneside.</span>
           </h1>
 
           <p className="funnel-rise mx-auto mt-8 max-w-lg text-lg leading-relaxed text-paper-dim [animation-delay:160ms]">

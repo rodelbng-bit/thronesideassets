@@ -1,10 +1,36 @@
+import { IBM_Plex_Mono, Inter_Tight, Work_Sans } from "next/font/google";
 import Image from "next/image";
 import Link from "next/link";
 import type { FunnelVideo as FunnelVideoContent } from "@/lib/funnelContent";
 
-/** Page frame for an ad funnel page (the main site theme applies). */
+const funnelFont = Inter_Tight({
+  subsets: ["latin"],
+  weight: ["500", "600", "700", "800"],
+  variable: "--font-funnel",
+});
+
+// The funnel keeps its own body/figure fonts so main-site typography
+// changes don't leak into it (see .funnel-theme in globals.css).
+const funnelBodyFont = Work_Sans({
+  subsets: ["latin"],
+  variable: "--font-work-sans",
+});
+
+const funnelFigureFont = IBM_Plex_Mono({
+  subsets: ["latin"],
+  weight: ["400", "500", "600"],
+  variable: "--font-plex-mono",
+});
+
+/** Wraps an ad funnel page: the site's colours with the funnel's own fonts. */
 export function FunnelShell({ children }: { children: React.ReactNode }) {
-  return <div className="funnel-theme">{children}</div>;
+  return (
+    <div
+      className={`funnel-theme ${funnelFont.variable} ${funnelBodyFont.variable} ${funnelFigureFont.variable}`}
+    >
+      {children}
+    </div>
+  );
 }
 
 // Stripped-down header/footer for ad landing pages: no nav, so paid

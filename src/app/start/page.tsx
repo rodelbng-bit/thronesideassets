@@ -101,7 +101,7 @@ export default async function StartPage({
 
             <h1 className="font-funnel funnel-rise mx-auto mt-8 max-w-4xl text-5xl font-bold leading-[1.02] tracking-[-0.035em] text-paper [animation-delay:80ms] sm:text-6xl md:text-7xl lg:text-8xl">
               {headlineLead}{" "}
-              {headlineAccent && <span className="font-accent font-normal text-brass">{headlineAccent}</span>}
+              {headlineAccent && <span className="text-brass">{headlineAccent}</span>}
             </h1>
 
             <p className="funnel-rise mx-auto mt-8 max-w-2xl text-lg leading-relaxed text-paper-dim [animation-delay:160ms] md:text-xl">
@@ -140,7 +140,7 @@ export default async function StartPage({
             <div className="text-center">
               <Eyebrow>How it works</Eyebrow>
               <h2 className="font-funnel mx-auto mt-6 max-w-2xl text-4xl font-bold tracking-[-0.03em] text-paper md:text-5xl">
-                From first search to <span className="font-accent font-normal text-brass">final numbers.</span>
+                From first search to <span className="text-brass">final numbers.</span>
               </h2>
             </div>
 
@@ -190,7 +190,7 @@ export default async function StartPage({
               <div className="text-center">
                 <Eyebrow>Recent deals</Eyebrow>
                 <h2 className="font-funnel mx-auto mt-6 max-w-2xl text-4xl font-bold tracking-[-0.03em] text-paper md:text-5xl">
-                  See the <span className="font-accent font-normal text-brass">numbers for yourself.</span>
+                  See the <span className="text-brass">numbers for yourself.</span>
                 </h2>
                 <p className="mx-auto mt-5 max-w-xl text-paper-dim">
                   Some of the latest properties our team has sourced and
@@ -256,7 +256,7 @@ export default async function StartPage({
             <div className="text-center">
               <Eyebrow>Get started</Eyebrow>
               <h2 className="font-funnel mt-6 text-4xl font-bold tracking-[-0.03em] text-paper md:text-5xl">
-                Let&apos;s find your <span className="font-accent font-normal text-brass">next property.</span>
+                Let&apos;s find your <span className="text-brass">next property.</span>
               </h2>
               <p className="mx-auto mt-5 max-w-xl text-paper-dim">
                 Answer a few quick questions, then pick a time to talk through

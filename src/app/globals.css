@@ -18,7 +18,7 @@
   --glow-orange: rgba(255, 117, 24, 0.16);
   --glow-teal: rgba(31, 181, 173, 0.14);
 
-  /* Font roles. */
+  /* Font roles — FunnelShell remaps these to keep the funnel's own type. */
   --font-heading: var(--font-bricolage);
   --font-body: var(--font-figtree);
   --font-figure: var(--font-bricolage);
@@ -192,10 +192,16 @@ body {
 }
 
 /* ── Ad funnel (/start) ───────────────────────────────────────────────
-   Uses the main site's palette, fonts and background; FunnelShell only
-   adds the page frame. The gold-named classes predate the rebrand and
-   now render in pumpkin orange. */
+   Uses the main site's palette and background but keeps its own fonts
+   (Inter Tight, Work Sans, IBM Plex Mono — loaded by FunnelShell). The
+   gold-named classes predate the rebrand and now render in pumpkin
+   orange. */
 .funnel-theme {
+  --font-heading: var(--font-funnel);
+  --font-body: var(--font-work-sans);
+  --font-figure: var(--font-plex-mono);
+  font-family: var(--font-body), ui-sans-serif, system-ui, sans-serif;
+
   display: flex;
   min-height: 100vh;
   flex-direction: column;
@@ -207,8 +213,13 @@ body {
     var(--ink);
 }
 
+.funnel-theme .ledger-figure {
+  font-weight: inherit;
+  letter-spacing: -0.02em;
+}
+
 .font-funnel {
-  font-family: var(--font-heading), ui-sans-serif, system-ui, sans-serif;
+  font-family: var(--font-funnel), ui-sans-serif, system-ui, sans-serif;
 }
 
 /* Solid pumpkin, like the main site's primary buttons. */
