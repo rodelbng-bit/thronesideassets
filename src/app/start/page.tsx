@@ -131,6 +131,10 @@ export default async function StartPage({
             <div className="funnel-rise mt-16 w-full text-left [animation-delay:400ms] md:mt-20">
               <FunnelVideo video={landingVideo} title="Throneside Assets — how it works" />
             </div>
+
+            <div className="mt-10 md:mt-12">
+              <PrimaryCta href={applyHref} />
+            </div>
           </div>
         </section>
 
