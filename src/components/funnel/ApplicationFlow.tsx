@@ -294,7 +294,7 @@ export default function ApplicationFlow({ attribution }: { attribution: Attribut
           <button
             type="submit"
             disabled={busy || !canContinue(step, answers)}
-            className="bg-gold mt-8 inline-flex w-full items-center justify-center gap-2 rounded-full px-8 py-4 text-base font-semibold text-ink transition-all hover:-translate-y-0.5 disabled:translate-y-0 disabled:opacity-40"
+            className="bg-gold-gradient mt-8 inline-flex w-full items-center justify-center gap-2 rounded-full px-8 py-4 text-base font-semibold text-ink transition-all hover:-translate-y-0.5 disabled:translate-y-0 disabled:opacity-40"
           >
             {busy ? "Saving…" : "Next"}
             {!busy && <span aria-hidden>→</span>}
@@ -460,7 +460,7 @@ function BookingStep({
                   }}
                   aria-pressed={day === date}
                   className={`touch-manipulation rounded-xl border px-1 py-3 text-center transition-colors disabled:cursor-not-allowed disabled:opacity-30 ${
-                    day === date ? "bg-gold border-transparent text-ink" : "rule text-paper-dim hover:border-brass/50"
+                    day === date ? "bg-gold-gradient border-transparent text-ink" : "rule text-paper-dim hover:border-brass/50"
                   }`}
                 >
                   <span className="block text-xs uppercase tracking-wide">{dayLabel(date, "weekday")}</span>
@@ -491,7 +491,7 @@ function BookingStep({
                   }}
                   className={`ledger-figure touch-manipulation rounded-lg border py-3 text-sm transition-colors ${
                     slot === s
-                      ? "bg-gold border-transparent font-semibold text-ink"
+                      ? "bg-gold-gradient border-transparent font-semibold text-ink"
                       : "rule text-paper-dim hover:border-brass/50 hover:text-paper"
                   }`}
                 >
@@ -520,7 +520,7 @@ function BookingStep({
             type="button"
             onClick={book}
             disabled={!slot || busy}
-            className="bg-gold mt-4 inline-flex w-full items-center justify-center gap-2 rounded-full px-8 py-4 text-base font-semibold text-ink transition-all hover:-translate-y-0.5 disabled:translate-y-0 disabled:opacity-40"
+            className="bg-gold-gradient mt-4 inline-flex w-full items-center justify-center gap-2 rounded-full px-8 py-4 text-base font-semibold text-ink transition-all hover:-translate-y-0.5 disabled:translate-y-0 disabled:opacity-40"
           >
             {busy ? "Booking…" : "Confirm booking"}
             {!busy && <span aria-hidden>→</span>}

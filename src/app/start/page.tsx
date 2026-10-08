@@ -314,7 +314,7 @@ function PrimaryCta({ href }: { href: string }) {
   return (
     <a
       href={href}
-      className="bg-gold group inline-flex items-center gap-2 rounded-full px-8 py-4 text-base font-semibold text-ink shadow-[0_10px_40px_-10px_rgba(255,117,24,0.7)] transition-all hover:-translate-y-0.5 hover:shadow-[0_16px_50px_-10px_rgba(255,117,24,0.9)]"
+      className="bg-gold-gradient group inline-flex items-center gap-2 rounded-full px-8 py-4 text-base font-semibold text-ink shadow-[0_10px_40px_-10px_rgba(255,117,24,0.7)] transition-all hover:-translate-y-0.5 hover:shadow-[0_16px_50px_-10px_rgba(255,117,24,0.9)]"
     >
       {CTA_LABEL}
       <span aria-hidden className="transition-transform group-hover:translate-x-1">

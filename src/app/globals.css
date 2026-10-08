@@ -201,6 +201,7 @@ body {
   --font-body: var(--font-work-sans);
   --font-figure: var(--font-plex-mono);
   font-family: var(--font-body), ui-sans-serif, system-ui, sans-serif;
+  --orange-gradient: linear-gradient(100deg, #ffb070 0%, #ff7518 50%, #e35f00 100%);
 
   display: flex;
   min-height: 100vh;
@@ -224,15 +225,20 @@ body {
 
 /* Orange gradient for the accent phrase in funnel headlines. */
 .text-gold {
-  background: linear-gradient(100deg, #ffb070 0%, #ff7518 50%, #e35f00 100%);
+  background: var(--orange-gradient);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
 }
 
-/* Solid pumpkin, like the main site's primary buttons. */
+/* Solid pumpkin for icons, progress and selection marks. */
 .bg-gold {
   background: var(--brass);
+}
+
+/* Orange gradient fill for funnel buttons. */
+.bg-gold-gradient {
+  background: var(--orange-gradient);
 }
 
 /* Faint grid that fades out from the top of the hero. */
