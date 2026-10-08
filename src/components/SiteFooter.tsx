@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { SOCIAL_LINKS } from "@/lib/seo";
 
 const company = [
   { label: "Home", href: "/" },
@@ -7,14 +8,6 @@ const company = [
   { label: "FAQ", href: "/faq" },
   { label: "Contact Us", href: "/contact" },
   { label: "Terms & Conditions", href: "/terms" },
-];
-
-const social = [
-  { label: "Instagram", href: "https://www.instagram.com/thronesideassets" },
-  {
-    label: "LinkedIn",
-    href: "https://www.linkedin.com/company/throneside-assets",
-  },
 ];
 
 export default function SiteFooter() {
@@ -58,7 +51,7 @@ export default function SiteFooter() {
         <div>
           <p className="ledger-figure text-xs text-brass-bright">SOCIAL</p>
           <ul className="mt-4 space-y-2">
-            {social.map((item) => (
+            {SOCIAL_LINKS.map((item) => (
               <li key={item.label}>
                 <a
                   href={item.href}

@@ -7,9 +7,22 @@ export const SITE_URL = "https://www.thronesideassets.com";
 
 export const SITE_NAME = "Throneside Assets";
 
-export const HOME_TITLE = "Throneside Assets — Vetted UK Property Deals, Weekly";
+// Leads with what people search for (rent-to-rent / Airbnb deals); the
+// brand sits at the end, where a truncated title loses least.
+export const HOME_TITLE =
+  "Vetted Rent-to-Rent & Airbnb Deals, Weekly | Throneside Assets";
 export const HOME_DESCRIPTION =
-  "We source, analyse, and deliver off-market property investment opportunities across the UK. You review the numbers and decide — no searching required.";
+  "Vetted Rent-to-Rent Serviced Accommodation deals in Manchester and Leeds, sourced and analysed for you every week. Review the numbers and decide — no searching.";
+
+// Official profiles — shown in the footer and listed as the organisation's
+// sameAs in structured data.
+export const SOCIAL_LINKS = [
+  { label: "Instagram", href: "https://www.instagram.com/thronesideassets" },
+  {
+    label: "LinkedIn",
+    href: "https://www.linkedin.com/company/throneside-assets",
+  },
+];
 
 // Public, indexable pages — drives sitemap.xml.
 export const publicRoutes: {

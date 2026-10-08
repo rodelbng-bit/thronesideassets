@@ -13,9 +13,24 @@ export const metadata: Metadata = pageMetadata({
   path: "/faq",
 });
 
+// FAQPage structured data, built from the same answers shown on the page.
+const faqJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: faqs.map((item) => ({
+    "@type": "Question",
+    name: item.q,
+    acceptedAnswer: { "@type": "Answer", text: item.a },
+  })),
+};
+
 export default function FaqPage() {
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
+      />
       <SiteHeader />
       <main>
         <section className="mx-auto max-w-3xl px-6 pb-16 pt-20 md:pt-28">
