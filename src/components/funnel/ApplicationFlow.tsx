@@ -163,9 +163,9 @@ export default function ApplicationFlow({ attribution }: { attribution: Attribut
 
   function back() {
     const i = QUESTION_STEPS.indexOf(step);
-    // Contact details are already saved once past step 1, so back stops
-    // at step 2.
-    if (i > 1) setStep(QUESTION_STEPS[i - 1]);
+    // Contact details are saved (and locked) once past step 1; going back
+    // to them just shows what was entered.
+    if (i > 0) setStep(QUESTION_STEPS[i - 1]);
     setError("");
   }
 
@@ -195,7 +195,7 @@ export default function ApplicationFlow({ attribution }: { attribution: Attribut
     );
   }
 
-  const canGoBack = QUESTION_STEPS.indexOf(step) > 1 && step !== "booking";
+  const canGoBack = QUESTION_STEPS.indexOf(step) > 0 && step !== "booking";
 
   return (
     <Card>
