@@ -81,9 +81,14 @@ export function FunnelFooter() {
   );
 }
 
-/** The site's section label (orange rule + uppercase label). */
+/** Small orange-dot pill used above section headings. */
 export function Eyebrow({ children }: { children: React.ReactNode }) {
-  return <p className="eyebrow">{children}</p>;
+  return (
+    <p className="inline-flex items-center gap-2 rounded-full border rule-strong bg-white/[0.03] px-3.5 py-1.5 text-xs font-medium uppercase tracking-[0.18em] text-paper-dim">
+      <span className="h-1.5 w-1.5 rounded-full bg-brass-bright shadow-[0_0_10px_2px_rgba(255,154,77,0.6)]" />
+      {children}
+    </p>
+  );
 }
 
 /** Obvious "not filled in yet" slot — never styled like real content. */
