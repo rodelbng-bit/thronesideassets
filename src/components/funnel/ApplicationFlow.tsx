@@ -195,27 +195,10 @@ export default function ApplicationFlow({ attribution }: { attribution: Attribut
     );
   }
 
-  const stepNumber = QUESTION_STEPS.indexOf(step) + 1;
+  const canGoBack = QUESTION_STEPS.indexOf(step) > 1 && step !== "booking";
 
   return (
     <Card>
-      <div className="flex items-center justify-between text-xs text-paper-dim">
-        <span className="ledger-figure uppercase tracking-[0.18em]">
-          Step {stepNumber} of {QUESTION_STEPS.length}
-        </span>
-        {stepNumber > 2 && step !== "booking" && (
-          <button type="button" onClick={back} className="hover:text-paper">
-            ← Back
-          </button>
-        )}
-      </div>
-      <div className="mt-3 h-1 overflow-hidden rounded-full bg-white/10">
-        <div
-          className="bg-gold h-full rounded-full transition-all duration-500"
-          style={{ width: `${(stepNumber / QUESTION_STEPS.length) * 100}%` }}
-        />
-      </div>
-
       {step === "booking" && id ? (
         <BookingStep
           applicationId={id}
@@ -226,7 +209,7 @@ export default function ApplicationFlow({ attribution }: { attribution: Attribut
           }}
         />
       ) : (
-        <form key={step} onSubmit={next} className="funnel-rise mt-8">
+        <form key={step} onSubmit={next} className="funnel-rise">
           {step === "contact" && (
             <>
               <Question>First, where can we reach you?</Question>
@@ -299,6 +282,17 @@ export default function ApplicationFlow({ attribution }: { attribution: Attribut
             {busy ? "Saving…" : "Next"}
             {!busy && <span aria-hidden>→</span>}
           </button>
+
+          {canGoBack && (
+            <button
+              type="button"
+              onClick={back}
+              disabled={busy}
+              className="mt-3 inline-flex w-full items-center justify-center gap-2 rounded-full border rule-strong px-8 py-4 text-base font-medium text-paper transition-colors hover:bg-white/5 disabled:opacity-40"
+            >
+              <span aria-hidden>←</span> Go Back
+            </button>
+          )}
         </form>
       )}
     </Card>
@@ -408,7 +402,7 @@ function BookingStep({
 
   if (useWidget) {
     return (
-      <div className="mt-8">
+      <div>
         <BookingCalendar contact={{ firstName: first, lastName, email: answers.email, phone: answers.phone }} />
       </div>
     );
@@ -428,7 +422,7 @@ function BookingStep({
   const hasAnySlots = !!data?.days.some((x) => x.slots.length > 0);
 
   return (
-    <div className="funnel-rise mt-8">
+    <div className="funnel-rise">
       <Question>Great, {first}. Pick a time for your call.</Question>
       <p className="mt-2 text-sm text-paper-dim">
         A short call with our UK team to talk through your goals. All times are UK time.

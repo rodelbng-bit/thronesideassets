@@ -231,7 +231,7 @@ body {
   color: transparent;
 }
 
-/* Solid pumpkin for icons, progress and selection marks. */
+/* Solid pumpkin for icons and selection marks. */
 .bg-gold {
   background: var(--brass);
 }

@@ -66,7 +66,7 @@ Reuse these rather than introducing new colours or one-off styles. The
 Tight, Work Sans, IBM Plex Mono) via `.funnel-theme` (FunnelShell); its
 `gold`-named helpers render in the site's orange: `.text-gold` (gradient,
 headline accent words), `.bg-gold-gradient` (buttons), `.bg-gold`
-(solid; icons, progress, selection marks) and `.gold-ring`.
+(solid; icons, selection marks) and `.gold-ring`.
 
 ## Commands
 
