@@ -64,8 +64,8 @@ headline. Shared patterns: `.eyebrow` (orange rule + uppercase label),
 Reuse these rather than introducing new colours or one-off styles. The
 `/start` ad funnel uses the same colours but keeps its own fonts (Inter
 Tight, Work Sans, IBM Plex Mono) via `.funnel-theme` (FunnelShell); its
-`gold`-named helpers (`.bg-gold`, `.gold-ring`) render in the site's
-orange.
+`gold`-named helpers (`.text-gold` gradient for headline accent words,
+`.bg-gold`, `.gold-ring`) render in the site's orange.
 
 ## Commands
 
