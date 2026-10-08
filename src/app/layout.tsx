@@ -46,6 +46,8 @@ export const metadata: Metadata = {
     locale: "en_GB",
   },
   twitter: { card: "summary_large_image" },
+  // Google Search Console ownership check (HTML tag method).
+  verification: { google: "Z9QyoRL_1yyve0Wf4Esrhk9P81CJdG6JLRtrUixNVVE" },
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
