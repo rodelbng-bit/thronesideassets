@@ -1,36 +1,10 @@
-import { IBM_Plex_Mono, Inter_Tight, Work_Sans } from "next/font/google";
 import Image from "next/image";
 import Link from "next/link";
 import type { FunnelVideo as FunnelVideoContent } from "@/lib/funnelContent";
 
-const funnelFont = Inter_Tight({
-  subsets: ["latin"],
-  weight: ["500", "600", "700", "800"],
-  variable: "--font-funnel",
-});
-
-// The funnel keeps its own body/figure fonts so main-site typography
-// changes don't leak into it (see .funnel-theme in globals.css).
-const funnelBodyFont = Work_Sans({
-  subsets: ["latin"],
-  variable: "--font-work-sans",
-});
-
-const funnelFigureFont = IBM_Plex_Mono({
-  subsets: ["latin"],
-  weight: ["400", "500", "600"],
-  variable: "--font-plex-mono",
-});
-
-/** Wraps an ad funnel page in the black / white / gold funnel theme. */
+/** Page frame for an ad funnel page (the main site theme applies). */
 export function FunnelShell({ children }: { children: React.ReactNode }) {
-  return (
-    <div
-      className={`funnel-theme ${funnelFont.variable} ${funnelBodyFont.variable} ${funnelFigureFont.variable}`}
-    >
-      {children}
-    </div>
-  );
+  return <div className="funnel-theme">{children}</div>;
 }
 
 // Stripped-down header/footer for ad landing pages: no nav, so paid
@@ -81,14 +55,9 @@ export function FunnelFooter() {
   );
 }
 
-/** Small gold-dot pill used above section headings. */
+/** The site's section label (orange rule + uppercase label). */
 export function Eyebrow({ children }: { children: React.ReactNode }) {
-  return (
-    <p className="inline-flex items-center gap-2 rounded-full border rule-strong bg-white/[0.03] px-3.5 py-1.5 text-xs font-medium uppercase tracking-[0.18em] text-paper-dim">
-      <span className="h-1.5 w-1.5 rounded-full bg-brass-bright shadow-[0_0_10px_2px_rgba(240,207,107,0.6)]" />
-      {children}
-    </p>
-  );
+  return <p className="eyebrow">{children}</p>;
 }
 
 /** Obvious "not filled in yet" slot — never styled like real content. */
@@ -125,7 +94,7 @@ export function FunnelVideo({
       {/* Soft gold glow behind the frame. */}
       <div
         aria-hidden
-        className="absolute -inset-6 -z-10 rounded-[2rem] bg-[radial-gradient(closest-side,rgba(212,175,55,0.22),transparent)] blur-2xl"
+        className="absolute -inset-6 -z-10 rounded-[2rem] bg-[radial-gradient(closest-side,rgba(255,117,24,0.22),transparent)] blur-2xl"
       />
       <div className="gold-ring overflow-hidden rounded-2xl p-1.5 shadow-2xl shadow-black">
         {!video.url ? (
@@ -133,7 +102,7 @@ export function FunnelVideo({
             label="VIDEO"
             className="flex aspect-video flex-col items-center justify-center rounded-xl border-brass/40 text-center"
           >
-            <span className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-gold text-ink shadow-[0_0_40px_rgba(212,175,55,0.45)]">
+            <span className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-gold text-ink shadow-[0_0_40px_rgba(255,117,24,0.45)]">
               <svg viewBox="0 0 24 24" className="ml-1 h-7 w-7" fill="currentColor" aria-hidden>
                 <path d="M8 5.5v13l11-6.5-11-6.5Z" />
               </svg>

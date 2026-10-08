@@ -91,7 +91,7 @@ export default async function StartPage({
           <div aria-hidden className="funnel-grid absolute inset-0" />
           <div
             aria-hidden
-            className="absolute left-1/2 top-0 h-[520px] w-[900px] -translate-x-1/2 -translate-y-1/3 rounded-full bg-[radial-gradient(closest-side,rgba(212,175,55,0.18),transparent)]"
+            className="absolute left-1/2 top-0 h-[520px] w-[900px] -translate-x-1/2 -translate-y-1/3 rounded-full bg-[radial-gradient(closest-side,rgba(255,117,24,0.18),transparent)]"
           />
 
           <div className="relative mx-auto max-w-7xl px-6 pb-20 pt-16 text-center md:pb-28 md:pt-24">
@@ -101,7 +101,7 @@ export default async function StartPage({
 
             <h1 className="font-funnel funnel-rise mx-auto mt-8 max-w-4xl text-5xl font-bold leading-[1.02] tracking-[-0.035em] text-paper [animation-delay:80ms] sm:text-6xl md:text-7xl lg:text-8xl">
               {headlineLead}{" "}
-              {headlineAccent && <span className="text-gold">{headlineAccent}</span>}
+              {headlineAccent && <span className="font-accent font-normal text-brass">{headlineAccent}</span>}
             </h1>
 
             <p className="funnel-rise mx-auto mt-8 max-w-2xl text-lg leading-relaxed text-paper-dim [animation-delay:160ms] md:text-xl">
@@ -140,7 +140,7 @@ export default async function StartPage({
             <div className="text-center">
               <Eyebrow>How it works</Eyebrow>
               <h2 className="font-funnel mx-auto mt-6 max-w-2xl text-4xl font-bold tracking-[-0.03em] text-paper md:text-5xl">
-                From first search to <span className="text-gold">final numbers.</span>
+                From first search to <span className="font-accent font-normal text-brass">final numbers.</span>
               </h2>
             </div>
 
@@ -149,7 +149,7 @@ export default async function StartPage({
             <ol className="mx-auto mt-14 flex max-w-md flex-col lg:max-w-none lg:flex-row">
               {steps.map((step, i) => (
                 <Fragment key={step.n}>
-                  <li className="group relative min-w-0 flex-1 overflow-hidden rounded-2xl border rule bg-ink-soft p-6 transition-all duration-300 hover:-translate-y-1 hover:border-brass/50 hover:shadow-[0_20px_60px_-20px_rgba(212,175,55,0.35)] lg:p-5">
+                  <li className="group relative min-w-0 flex-1 overflow-hidden rounded-2xl border rule bg-ink-soft p-6 transition-all duration-300 hover:-translate-y-1 hover:border-brass/50 hover:shadow-[0_20px_60px_-20px_rgba(255,117,24,0.35)] lg:p-5">
                     <span
                       aria-hidden
                       className="font-funnel pointer-events-none absolute -right-2 -top-4 text-[5rem] font-extrabold leading-none text-white/[0.03] transition-colors group-hover:text-brass/10"
@@ -190,7 +190,7 @@ export default async function StartPage({
               <div className="text-center">
                 <Eyebrow>Recent deals</Eyebrow>
                 <h2 className="font-funnel mx-auto mt-6 max-w-2xl text-4xl font-bold tracking-[-0.03em] text-paper md:text-5xl">
-                  See the <span className="text-gold">numbers for yourself.</span>
+                  See the <span className="font-accent font-normal text-brass">numbers for yourself.</span>
                 </h2>
                 <p className="mx-auto mt-5 max-w-xl text-paper-dim">
                   Some of the latest properties our team has sourced and
@@ -250,13 +250,13 @@ export default async function StartPage({
         <section id="qualify" className="relative scroll-mt-20 overflow-hidden border-b rule">
           <div
             aria-hidden
-            className="absolute left-1/2 top-1/3 h-[600px] w-[900px] -translate-x-1/2 rounded-full bg-[radial-gradient(closest-side,rgba(212,175,55,0.12),transparent)]"
+            className="absolute left-1/2 top-1/3 h-[600px] w-[900px] -translate-x-1/2 rounded-full bg-[radial-gradient(closest-side,rgba(255,117,24,0.12),transparent)]"
           />
           <div className="relative mx-auto max-w-3xl px-6 py-20 md:py-28">
             <div className="text-center">
               <Eyebrow>Get started</Eyebrow>
               <h2 className="font-funnel mt-6 text-4xl font-bold tracking-[-0.03em] text-paper md:text-5xl">
-                Let&apos;s find your <span className="text-gold">next property.</span>
+                Let&apos;s find your <span className="font-accent font-normal text-brass">next property.</span>
               </h2>
               <p className="mx-auto mt-5 max-w-xl text-paper-dim">
                 Answer a few quick questions, then pick a time to talk through
@@ -314,7 +314,7 @@ function PrimaryCta({ href }: { href: string }) {
   return (
     <a
       href={href}
-      className="bg-gold group inline-flex items-center gap-2 rounded-full px-8 py-4 text-base font-semibold text-ink shadow-[0_10px_40px_-10px_rgba(212,175,55,0.7)] transition-all hover:-translate-y-0.5 hover:shadow-[0_16px_50px_-10px_rgba(212,175,55,0.9)]"
+      className="bg-gold group inline-flex items-center gap-2 rounded-full px-8 py-4 text-base font-semibold text-ink shadow-[0_10px_40px_-10px_rgba(255,117,24,0.7)] transition-all hover:-translate-y-0.5 hover:shadow-[0_16px_50px_-10px_rgba(255,117,24,0.9)]"
     >
       {CTA_LABEL}
       <span aria-hidden className="transition-transform group-hover:translate-x-1">

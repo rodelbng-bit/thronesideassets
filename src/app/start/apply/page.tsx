@@ -26,7 +26,7 @@ export default async function ApplyPage({
       <main className="relative flex-1 overflow-hidden font-sans">
         <div
           aria-hidden
-          className="absolute left-1/2 top-0 h-[520px] w-[900px] -translate-x-1/2 -translate-y-1/3 rounded-full bg-[radial-gradient(closest-side,rgba(212,175,55,0.14),transparent)]"
+          className="absolute left-1/2 top-0 h-[520px] w-[900px] -translate-x-1/2 -translate-y-1/3 rounded-full bg-[radial-gradient(closest-side,rgba(255,117,24,0.14),transparent)]"
         />
         <div className="relative mx-auto max-w-xl px-4 py-12 sm:px-6 md:py-20">
           <div className="text-center">
